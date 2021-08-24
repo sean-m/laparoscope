@@ -20,15 +20,5 @@ namespace aadcapi.Controllers.Server
             runner.Run();
             return Ok(runner.Results.ToDict());
         }
-
-        // POST api/<controller>
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
     }
 }
