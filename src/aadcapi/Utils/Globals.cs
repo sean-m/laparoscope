@@ -33,6 +33,8 @@ namespace aadcapi.Utils
         /// <summary>
         /// The TenantId is the DirectoryId of the Azure AD tenant being used in the sample
         /// </summary>
-        public static string TenantId { get; } = ConfigurationManager.AppSettings["ida:TenantId"];
+        public static string TenantId { 
+            get; 
+        } = ConfigurationManager.AppSettings["ida:TenantId"];
     }
 }

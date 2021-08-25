@@ -10,7 +10,7 @@ namespace aadcapi.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "AADC API";
 
             return View();
         }
