@@ -18,9 +18,9 @@ namespace aadcapi.Controllers.Server
     {
         // GET api/<controller>
         /// <summary>
-        /// Get-ADSyncScheduler
+        /// Executes Get-ADSyncScheduler and returns the result as a list of hashtables.
         /// </summary>
-        /// <returns>Dictionary&lt;string,object&gt;</returns>
+        /// <returns>List&lt; Dictionary &lt; string, object &gt; &gt;</returns>
         public dynamic Get()
         {
             var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncScheduler");
