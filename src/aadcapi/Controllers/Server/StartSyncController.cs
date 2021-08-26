@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 
 namespace aadcapi.Controllers.Server
 {
@@ -37,8 +38,8 @@ namespace aadcapi.Controllers.Server
         {   
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Start_ADSyncDelta);
             runner.Run();
-            var result = Ok(runner.Results.CapturePSResult<SyncResult>());
-            return result;
+            var result = runner.Results.CapturePSResult<SyncResult>().FirstOrDefault();
+            return Ok(result);
         }
     }
 }
