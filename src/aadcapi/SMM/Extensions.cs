@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net;
 using System.Management.Automation;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace SMM.Helper
 {
@@ -26,6 +27,10 @@ namespace SMM.Helper
             return res;
         }
 
+        public static bool Like(this string Base, string Pattern)
+        {
+            return LikeOperator.LikeString(Base, Pattern, Microsoft.VisualBasic.CompareMethod.Text);
+        }
 
         public static Dictionary<string, object> ToDict(this PSObject input)
         {
@@ -51,6 +56,69 @@ namespace SMM.Helper
             {
                 result.Add(i.ToDict());
             }
+            return result;
+        }
+
+        /// <summary>
+        /// Attempts to map properties from the PSObject to properties from the
+        /// desired result type using a case insensitive property name match.
+        /// If successful, the dynamic result will be of the desired type.
+        /// </summary>
+        /// <typeparam name="T">The type to map to.</typeparam>
+        /// <param name="input">The PSObject we're mapping values from.</param>
+        /// <returns></returns>
+    public static dynamic CapturePSResult<T>(this PSObject input)
+        {
+            dynamic result = default(dynamic);
+            var asType = typeof(T);
+
+            bool captureSuccess = true;
+
+            try {
+                result = Activator.CreateInstance(asType);
+                var hintType = asType.GetTypeInfo();
+                var props = hintType.DeclaredProperties;
+                foreach (var p in props)
+                {
+                    var psprop = input.Properties.FirstOrDefault(x => x.Name.Like(p.Name));
+                    if (psprop != null)
+                    {
+                        p.SetValue(result, psprop.Value);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e.GetAllMessages());
+                captureSuccess = false;
+            }
+
+            // Capturing the PSObject as the desired type failed.
+            // Fall back to returning a Dictionary<string, object>.
+            if (!captureSuccess) result = input.ToDict();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Loop through the collection and capture the PSObjects as the desired type T.
+        /// If the mapping fails, results are returned as a Dictionary(string, object) so
+        /// though the return type is dynamic, it should be checked with the as operator
+        /// or GetType().
+        /// </summary>
+        /// <typeparam name="T">Desired result type.</typeparam>
+        /// <param name="input">PSObject collection to capture values from.</param>
+        /// <returns></returns>
+        public static List<dynamic> CapturePSResult<T>(this PSDataCollection<PSObject> input)
+        {
+            var result = new List<dynamic>();
+            var asType = typeof(T);
+
+            foreach (var i in input)
+            {
+                result.Add(i.CapturePSResult<T>());
+            }
+
             return result;
         }
 
