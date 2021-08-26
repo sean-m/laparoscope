@@ -15,7 +15,7 @@
 - [ ] Get-ADSyncAADPasswordResetConfiguration *
 - [ ] Get-ADSyncAADPasswordSyncConfiguration *
 - [ ] Get-ADSyncCSObject *
-- [ ] Get-ADSyncConnector *
+- [x] Get-ADSyncConnector *
 
 ### Other ADSync Commands (might not do all of them).
 - [ ] Get-ADSyncAADCompanyFeature
