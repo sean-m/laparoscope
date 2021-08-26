@@ -27,11 +27,25 @@ namespace SMM.Helper
             return res;
         }
 
+        /// <summary>
+        /// VisualBasic's string comparison with wildcard support.
+        /// </summary>
+        /// <param name="Base">The value to check.</param>
+        /// <param name="Pattern">The pattern compared to 'Base'. Supports wildcards
+        /// and other niceties. More info: https://docs.microsoft.com/en-us/office/vba/Language/Reference/User-Interface-Help/wildcard-characters-used-in-string-comparisons.
+        /// </param>
+        /// <returns></returns>
         public static bool Like(this string Base, string Pattern)
         {
             return LikeOperator.LikeString(Base, Pattern, Microsoft.VisualBasic.CompareMethod.Text);
         }
 
+        /// <summary>
+        /// Naivly unboxes a single PSObject into a Dictionary(string, object).
+        /// If the PSObject is a string, it is stored as "Output": value.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static Dictionary<string, object> ToDict(this PSObject input)
         {
             var result = new Dictionary<string, object>();
@@ -49,6 +63,12 @@ namespace SMM.Helper
             return result;
         }
 
+        /// <summary>
+        /// Unboxes a collection of PSObjects, returning as a List(Dictionary(string, object)).
+        /// The resulting value is not very ergonomic but serializes to JSON well.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static List<Dictionary<string, object>> ToDict(this PSDataCollection<PSObject> input)
         {
             var result = new List<Dictionary<string, object>>();
@@ -67,7 +87,7 @@ namespace SMM.Helper
         /// <typeparam name="T">The type to map to.</typeparam>
         /// <param name="input">The PSObject we're mapping values from.</param>
         /// <returns></returns>
-    public static dynamic CapturePSResult<T>(this PSObject input)
+        public static dynamic CapturePSResult<T>(this PSObject input)
         {
             dynamic result = default(dynamic);
             var asType = typeof(T);
