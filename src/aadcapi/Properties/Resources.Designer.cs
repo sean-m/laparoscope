@@ -73,5 +73,32 @@ namespace aadcapi.Properties {
                 return ResourceManager.GetString("Get-ADSyncConnectorsBasic", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import-Module ADSync
+        ///
+        ///&lt;#
+        ///Don&apos;t dispatch a sync if the last run was less than 10 minutes ago.
+        ///#&gt;
+        ///
+        ///$lastRun = $null
+        ///$lastRun = Get-ADSyncRunProfileResult | select -First 1
+        ///$schedule = Get-ADSyncScheduler
+        ///$threshold = 10
+        ///
+        ///$mostReccent = if ($lastRun.StartDate -gt $lastRun.EndDate) { $lastRun.StartDate } else { $lastRun.EndDate }
+        ///
+        ///$return = New-Object PSObject -Property @{
+        ///    Result=&apos;&apos;
+        ///    Started=$false
+        ///}
+        ///
+        ///if (($schedule.SyncCycleEnabled) -and (-not $schedule.SyncCycleInProgress) -and ((-not [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Start_ADSyncDelta {
+            get {
+                return ResourceManager.GetString("Start-ADSyncDelta", resourceCulture);
+            }
+        }
     }
 }
