@@ -30,9 +30,16 @@ namespace SMM.Helper
         public static Dictionary<string, object> ToDict(this PSObject input)
         {
             var result = new Dictionary<string, object>();
-            foreach (var p in input.Properties)
+            if (input.TypeNames.Contains(typeof(string).FullName))
             {
-                result.Add(p.Name, p.Value);
+                result.Add("Output", String.Copy(input.ToString()));
+            }
+            else
+            {
+                foreach (var p in input.Properties)
+                {
+                    result.Add(p.Name, p.Value);
+                }
             }
             return result;
         }
