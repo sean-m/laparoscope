@@ -40,6 +40,7 @@ namespace SMM.Helper
             return LikeOperator.LikeString(Base, Pattern, Microsoft.VisualBasic.CompareMethod.Text);
         }
 
+        #region PSObjectHandling
         /// <summary>
         /// Naivly unboxes a single PSObject into a Dictionary(string, object).
         /// If the PSObject is a string, it is stored as "Output": value.
@@ -141,6 +142,7 @@ namespace SMM.Helper
 
             return result;
         }
+        #endregion  // PSObjectHandling
 
         private readonly static object _lock = new object();
 
