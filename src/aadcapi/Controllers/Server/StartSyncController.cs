@@ -27,12 +27,10 @@ namespace aadcapi.Controllers.Server
         /// Results are returned as JSON. If a sync cycle was started the .Started
         /// property is true.
         /// 
-        /// [
-        ///      {
-        ///      "Result": "Last sync was less than 10 minutes ago, not starting sync.",
-        ///      "Started": false
-        ///      }
-        ///  ]
+        /// {
+        ///   "Result": "Last sync was less than 10 minutes ago, 08/26/2021 19:13:47 UTC, not starting sync.",
+        ///   "Started": false
+        /// }
         /// </returns>
         public dynamic Get()
         {   

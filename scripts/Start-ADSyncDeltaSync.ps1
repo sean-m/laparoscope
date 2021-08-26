@@ -45,5 +45,5 @@ if ($schedule.SyncCycleInProgress) {
     return $return
 }
     
-$return.Result = "Last sync was less than $threshold minutes ago, not starting sync."
+$return.Result = "Last sync was less than $threshold minutes ago, $mostReccent UTC, not starting sync."
 return $return
