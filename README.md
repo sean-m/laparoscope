@@ -8,10 +8,11 @@
 - [ ] Admin view for managing roles.
 - [ ] Admin API for configuration change at runtime.
 - [ ] Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.
+- [ ] Embed scripts with Fody.
 
 ### Priority Commands
 - [x] Get-ADSyncScheduler
-- [ ] Start-ADSyncSyncCycle * Rate limit, should not invoke if syncing or last sync cycle was < 10 minutes ago.
+- [x] Start-ADSyncSyncCycle * Rate limit, should not invoke if syncing or last sync cycle was < 10 minutes ago.
 - [ ] Get-ADSyncAADPasswordResetConfiguration *
 - [ ] Get-ADSyncAADPasswordSyncConfiguration *
 - [ ] Get-ADSyncCSObject *
