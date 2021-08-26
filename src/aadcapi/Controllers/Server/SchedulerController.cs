@@ -25,7 +25,7 @@ namespace aadcapi.Controllers.Server
         {
             var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncScheduler");
             runner.Run();
-            var result = Ok(runner.Results.ToDict());
+            var result = Ok(runner.Results.ToDict().FirstOrDefault());
             return result;
         }
     }
