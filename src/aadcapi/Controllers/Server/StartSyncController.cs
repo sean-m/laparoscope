@@ -1,21 +1,15 @@
 ﻿using aadcapi.Models;
 using SMM.Automation;
 using SMM.Helper;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Web.Http;
-using System.Web.Mvc;
-using Newtonsoft.Json;
 
 namespace aadcapi.Controllers.Server
 {
     /// <summary>
     /// Enables starting of Delta sync cycles no sooner than every 10 minutes.
     /// </summary>
+    [Authorize]
     public class StartSyncController : ApiController
     {
         // GET: Connectors

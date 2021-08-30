@@ -1,13 +1,6 @@
 ﻿using SMM.Automation;
 using SMM.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Web.Http;
-using System.Web.Mvc;
 
 namespace aadcapi.Controllers.Server
 {
@@ -15,6 +8,7 @@ namespace aadcapi.Controllers.Server
     /// Unqualified GET returns a subset of information for connectors. With multiple connectors
     /// the result can be 100MB+ so some properties are left out.
     /// </summary>
+    [Authorize]
     public class ConnectorController : ApiController
     {
         // GET: Connectors
