@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Globals:</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td>Property</td>
+            <td>Value</td>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var p in typeof(aadcapi.Utils.Globals).GetProperties().OrderBy(x => x.Name))
+        {
+            <tr>
+                <td>@p.Name</td>
+                <td>@( SMM.Helper.Extensions.Like(p.Name, "*Secret*") ? "**************" : p.GetValue(null, null) )</td>
+            </tr>
+        }
+    </tbody>
+</table>
