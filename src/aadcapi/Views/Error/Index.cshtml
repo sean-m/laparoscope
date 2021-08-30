@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Error</h2>
+
+@foreach (var k in HttpContext.Current.Request.QueryString.AllKeys)
+{
+    @k.ToString()
+    @HttpContext.Current.Request.QueryString[k]
+}
