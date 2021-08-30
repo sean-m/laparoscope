@@ -6,7 +6,6 @@ namespace aadcapi.Utils
     {
         public const string ConsumerTenantId = "9188040d-6c67-4c5b-b112-36a304b66dad";
         public const string IssuerClaim = "iss";
-        public const string Authority = "https://login.microsoftonline.com/common/v2.0/";
         public const string TenantIdClaimType = "http://schemas.microsoft.com/identity/claims/tenantid";
         public const string MicrosoftGraphGroupsApi = "https://graph.microsoft.com/v1.0/groups";
         public const string MicrosoftGraphUsersApi = "https://graph.microsoft.com/v1.0/users";
@@ -50,5 +49,10 @@ namespace aadcapi.Utils
             get;
         } = ConfigurationManager.AppSettings["AppName"] ?? "Didn't fill out your AppName did you?";
 
+        /// <summary>
+        /// This is shows as the login endpoint when configuring authentication in the Azure AD Portal.
+        /// For a multi-tenant configured app, populate the Authority attribte in the web.config.
+        /// </summary>
+        public static string Authority { get; } = ConfigurationManager.AppSettings["ida:Authority"] ??  $"https://login.microsoftonline.com/{TenantId}/";
     }
 }

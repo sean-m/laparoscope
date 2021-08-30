@@ -7,12 +7,12 @@
 <h2>Me</h2>
 
 <h3>@ViewBag.UserId.Name</h3>
-<table>
+<table class="table table-striped">
     <thead>
-    
-    <td>Type</td>
-    <td>Value</td>
-    
+        <tr>
+            <td>Type</td>
+            <td>Value</td>
+        </tr>
     </thead>
     <tbody>
         @foreach (var c in ViewBag.UserId.Claims)
