@@ -8,6 +8,7 @@
 
 @foreach (var k in HttpContext.Current.Request.QueryString.AllKeys)
 {
-    @k.ToString()
+    <strong>@k.ToString()</strong>
     @HttpContext.Current.Request.QueryString[k]
+    <br />
 }
