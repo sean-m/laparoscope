@@ -7,7 +7,6 @@ namespace aadcapi.Utils
         public const string ConsumerTenantId = "9188040d-6c67-4c5b-b112-36a304b66dad";
         public const string IssuerClaim = "iss";
         public const string Authority = "https://login.microsoftonline.com/common/v2.0/";
-        public const string RedirectUri = "https://localhost:44321/";
         public const string TenantIdClaimType = "http://schemas.microsoft.com/identity/claims/tenantid";
         public const string MicrosoftGraphGroupsApi = "https://graph.microsoft.com/v1.0/groups";
         public const string MicrosoftGraphUsersApi = "https://graph.microsoft.com/v1.0/users";
@@ -33,8 +32,23 @@ namespace aadcapi.Utils
         /// <summary>
         /// The TenantId is the DirectoryId of the Azure AD tenant being used in the sample
         /// </summary>
-        public static string TenantId { 
-            get; 
+        public static string TenantId {
+            get;
         } = ConfigurationManager.AppSettings["ida:TenantId"];
+
+        /// <summary>
+        /// This must be in the allowed redirect uris in the app registration.
+        /// </summary>
+        public static string RedirectUri { 
+            get; 
+        } = ConfigurationManager.AppSettings["ida:RedirectUri"];
+
+        /// <summary>
+        /// This is exposed at the bottom of the global layout view.
+        /// </summary>
+        public static string AppName {
+            get;
+        } = ConfigurationManager.AppSettings["AppName"] ?? "Didn't fill out your AppName did you?";
+
     }
 }
