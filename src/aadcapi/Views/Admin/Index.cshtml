@@ -4,18 +4,21 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Globals:</h2>
+
+<h2>Configuration</h2>
+
+<h3>Globals:</h3>
 
 <table class="table table-striped">
-    <thead>
+    <thead class="">
         <tr>
-            <td>Property</td>
-            <td>Value</td>
+            <th>Property</th>
+            <th>Value</th>
         </tr>
     </thead>
     <tbody>
 
-        @foreach (var p in typeof(aadcapi.Utils.Globals).GetProperties().OrderBy(x => x.Name))
+        @foreach (var p in ViewBag.GlobalProps)
         {
             <tr>
                 <td>@p.Name</td>

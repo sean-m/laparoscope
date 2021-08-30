@@ -4,19 +4,19 @@
 {
     ClaimsPrincipal cp = User as ClaimsPrincipal;
     <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink("Hello " + cp.FindFirst(Globals.NameClaimType).Value, "", "Me", routeValues: null, htmlAttributes: new { title = "My Claims" })
+        <li class="nav-item">
+            @Html.ActionLink(cp.FindFirst(Globals.NameClaimType).Value, "", "Me", routeValues: null, htmlAttributes: new { title = "My Claims", @class= "nav-link" })
         </li>
-        <li>
-            @Html.ActionLink("Sign out", "SignOut", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+        <li class="nav-item">
+            @Html.ActionLink("Sign out", "SignOut", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })
         </li>
     </ul>
 }
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink("Sign in", "SignIn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+        <li class="nav-item">
+            @Html.ActionLink("Sign in", "SignIn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })
         </li>
     </ul>
 }
