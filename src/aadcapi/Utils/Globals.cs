@@ -54,5 +54,6 @@ namespace aadcapi.Utils
         /// For a multi-tenant configured app, populate the Authority attribte in the web.config.
         /// </summary>
         public static string Authority { get; } = ConfigurationManager.AppSettings["ida:Authority"] ??  $"https://login.microsoftonline.com/{TenantId}/";
+
     }
 }

@@ -34,6 +34,7 @@ namespace aadcapi
 		public void Configuration(IAppBuilder app)
 		{
 			ConfigureAuth(app);
+			ConfigureAuthorizationFilters(app);
 		}
 	}
 }
