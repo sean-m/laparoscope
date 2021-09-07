@@ -54,7 +54,7 @@ namespace aadcapi.Controllers.Server
             return Ok();
         }
 
-        private bool IsAuthorized<T>(T Connector, string Controller)
+        private bool IsAuthorized<T>(T Model, string Controller)
         {
             var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByController(Controller);
             var connType = typeof(T);
@@ -64,7 +64,7 @@ namespace aadcapi.Controllers.Server
                 var roleMatch = RequestContext.Principal.IsInRole(r.Role);
                 if (roleMatch)
                 {
-                    var testValue = connType.GetProperty(r.ModelProperty)?.GetValue(Connector).ToString();
+                    var testValue = connType.GetProperty(r.ModelProperty)?.GetValue(Model).ToString();
                     // bail out if there's no property with that name on the value
                     if (testValue == null) return false;
 

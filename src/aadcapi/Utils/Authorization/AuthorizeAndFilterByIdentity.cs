@@ -51,13 +51,13 @@ namespace aadcapi.Utils
         public static void RegisterRoleControllerModel(this RoleControllerModel Model)
         {
             _models.Add(Model);
-            if (!String.IsNullOrEmpty(Model.Controller))
+            if (!String.IsNullOrEmpty(Model.Context))
             {
-                if (!_modelsByController.ContainsKey(Model.Controller))
+                if (!_modelsByController.ContainsKey(Model.Context))
                 {
-                    _modelsByController.Add(Model.Controller, new List<RoleControllerModel>());
+                    _modelsByController.Add(Model.Context, new List<RoleControllerModel>());
                 }
-                _modelsByController[Model.Controller]?.Add(Model);
+                _modelsByController[Model.Context]?.Add(Model);
             }
         }
 

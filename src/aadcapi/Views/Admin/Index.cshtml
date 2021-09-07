@@ -55,11 +55,19 @@
                         <div class="col-9"><input id="in-role" oninput="triggerDelay()" /></div>
                     </div>
                     <div class="row">
-                        <div class="col">Controller</div>
+                        <div class="col">Context</div>
                         <div class="col-9"><input id="in-controller" oninput="triggerDelay()" /></div>
                     </div>
                     <div class="row">
-                        <div class="col">Property</div>
+                        <div class="col">Claim Property</div>
+                        <div class="col-9"><input id="in-claimprop" oninput="triggerDelay()" /></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">Claim Value</div>
+                        <div class="col-9"><input id="in-claimvalue" oninput="triggerDelay()" /></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">Model Property</div>
                         <div class="col-9"><input id="in-property" oninput="triggerDelay()" /></div>
                     </div>
                     <div class="row">
@@ -70,7 +78,6 @@
                         <div class="col">Values</div>
                         <div class="col-9"><input id="in-values" oninput="triggerDelay()" /></div>
                     </div>
-
                     <div class="row">
                         <div class="col col-md-auto">Rule</div>
                         <div class="col col-8-auto" id="rule-string"></div>
@@ -97,18 +104,23 @@
     }
 
     function makeRuleString() {
-        var inrole       = document.getElementById('in-role').value;
-        var incontroller = document.getElementById('in-controller').value;
-        var inproperty   = document.getElementById('in-property').value;
-        var invalue      = document.getElementById('in-value').value;
-        var invalues     = document.getElementById('in-values').value.split(',');
+        var inrole        = document.getElementById('in-role').value;
+        var incontroller  = document.getElementById('in-controller').value;
+        var inclaimprop   = document.getElementById('in-claimprop').value;
+        var inclaimpvalue = document.getElementById('in-claimvalue').value;
+        var incontroller  = document.getElementById('in-controller').value;
+        var inproperty    = document.getElementById('in-property').value;
+        var invalue       = document.getElementById('in-value').value;
+        var invalues      = document.getElementById('in-values').value.split(',');
 
         var rule = {
             'Role': inrole,
-            'Controller': incontroller,
+            'Context': incontroller,
+            'ClaimProperty': inclaimprop,
+            'ClaimValue': inclaimpvalue,
             'ModelProperty': inproperty,
-            'Value': invalue,
-            'Values' : null
+            'ModelValue': invalue,
+            'ModelValues': null
         }
 
         for (i in invalues) {
