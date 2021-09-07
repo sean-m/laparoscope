@@ -24,17 +24,27 @@ namespace aadcapi.Controllers.Server
         /// <returns></returns>
         public dynamic Get(string Name=null)
         {   
+            // Run PowerShell command to get AADC connector configurations
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncConnectorsBasic);
             runner.Parameters.Add( "Name", Name );
             runner.Run();
 
+            // Map PowerShell objects to models, C# classes with matching property names
             var resultValues = runner.Results.CapturePSResult<AadcConnector>().Where(
-                   x => { if (x is AadcConnector connector) {
-                           return IsAuthorized<AadcConnector>(connector, this.ControllerName());
+                   x => { 
+                       // All results should be AadcConnector but CapturePSResult can return as
+                       // type: dynamic if the PowerShell object doesn't successfully map to the
+                       // desired model type. For those that are the correct model, we pass them
+                       // to the IsAuthorized method which loads and runs any rules for this connector
+                       // who match the requestors roles.
+                       if (x is AadcConnector connector) {
+                            return IsAuthorized<AadcConnector>(connector, this.ControllerName());
                        }
                        return false;
-                   });
-            
+                   });  // The Where() will filter out any object 'x' where the => {} function
+                        // returns false. That would include any that couldn't be mapped to the
+                        // model and any whose IsAuthorized call returns false.
+
             if (resultValues != null)
             {
                 var result = Ok(resultValues);
