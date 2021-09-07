@@ -30,7 +30,7 @@ namespace aadcapi.Controllers.Server
 
             var resultValues = runner.Results.CapturePSResult<AadcConnector>().Where(
                    x => { if (x is AadcConnector connector) {
-                           return Authorized(connector);
+                           return IsAuthorized<AadcConnector>(connector, this.ControllerName());
                        }
                        return false;
                    });
@@ -44,10 +44,10 @@ namespace aadcapi.Controllers.Server
             return Ok();
         }
 
-        private bool Authorized(AadcConnector Connector)
+        private bool IsAuthorized<T>(T Connector, string Controller)
         {
-            var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByController("Connector");
-            var connType = typeof(AadcConnector);
+            var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByController(Controller);
+            var connType = typeof(T);
 
             return rules.Any(r =>
             {
@@ -66,7 +66,8 @@ namespace aadcapi.Controllers.Server
                     * would look like this:
                     *   Role: "Admin"
                     *   ModelProperty: "Name"
-                    *   ModelValue: "garage.mcardletech.com"  // actual example not shilling my website, it's truly not worth your time.
+                    *   ModelValue: "garage.mcardletech.com"  // actual example used in my lab not shilling my website, 
+                    *                                         // it's truly not worth your time.
                     */
                     if (r.ModelValues != null && r.ModelValues.Count() > 0)
                     {

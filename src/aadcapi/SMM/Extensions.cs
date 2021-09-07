@@ -13,11 +13,23 @@ using System.Net.Http;
 using System.Net;
 using System.Management.Automation;
 using Microsoft.VisualBasic.CompilerServices;
+using System.Web.Http;
 
 namespace SMM.Helper
 {
     public static class Extensions
     {
+        /// <summary>
+        /// Helper for returning the name of a given controller. Helpful when calling
+        /// an authorization routine that loads rules based on controller name.
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <returns></returns>
+        public static string ControllerName (this ApiController conn)
+        {
+            return conn.ControllerContext.RouteData.Values["controller"].ToString();
+        }
+
         public static HttpResponseMessage AsAppJsonResult(this HttpRequestMessage Request, IEnumerable<object> input = null) {
 
             var res = Request.CreateResponse(HttpStatusCode.OK);
