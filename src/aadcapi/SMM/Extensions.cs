@@ -116,7 +116,20 @@ namespace SMM.Helper
                     var psprop = input.Properties.FirstOrDefault(x => x.Name.Like(p.Name));
                     if (psprop != null)
                     {
-                        p.SetValue(result, psprop.Value);
+                        if (psprop.Value is PSObject psobj)
+                        {
+                            p.SetValue(result, psobj.ToDict());
+                        }
+                        else if (psprop.Value.GetType() == typeof(System.Management.Automation.PSCustomObject))
+                        {
+                            PSCustomObject custompsobj = (PSCustomObject) psprop.Value;
+                            var val = custompsobj.CapturePSResult<T>();
+                            p.SetValue(result, val);
+                        }
+                        else
+                        {
+                            p.SetValue(result, psprop.Value);
+                        }
                     }
                 }
             }
@@ -129,6 +142,51 @@ namespace SMM.Helper
             // Capturing the PSObject as the desired type failed.
             // Fall back to returning a Dictionary<string, object>.
             if (!captureSuccess) result = input.ToDict();
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// Attempts to map properties from the PSObject to properties from the
+        /// desired result type using a case insensitive property name match.
+        /// If successful, the dynamic result will be of the desired type.
+        /// </summary>
+        /// <typeparam name="T">The type to map to.</typeparam>
+        /// <param name="input">The PSObject we're mapping values from.</param>
+        /// <returns></returns>
+        public static dynamic CapturePSResult<T>(this PSCustomObject input)
+        {
+            throw new NotImplementedException("This has not been tested!!!");
+
+            dynamic result = default(dynamic);
+            var asType = typeof(T);
+            var inType = typeof(PSCustomObject);
+            bool captureSuccess = true;
+
+            try
+            {
+                result = Activator.CreateInstance(asType);
+                var hintType = asType.GetTypeInfo();
+                var props = hintType.DeclaredProperties;
+                foreach (var p in props)
+                {
+                    var psprop = inType.GetProperties().FirstOrDefault(x => x.Name.Like(p.Name));
+                    if (psprop != null)
+                    {
+                       p.SetValue(result, psprop);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e.GetAllMessages());
+                captureSuccess = false;
+            }
+
+            // Capturing the PSObject as the desired type failed.
+            // Fall back to returning a Dictionary<string, object>.
+            //if (!captureSuccess) result = input.ToDict();
 
             return result;
         }

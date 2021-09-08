@@ -66,7 +66,22 @@ namespace aadcapi.Properties {
         ///Import-Module ADSync;
         ///$param = @{}
         ///if ($Name) { $param.Add(&apos;Name&apos;, $Name) }
-        ///Get-ADSyncConnector @param | select Name, Identifier, Description, CreationTime, LastModificationTime, ObjectInclusionList, AttributeInclusionList, AnchorConstructionSettings, CompanyName, Type, Subtype.
+        ///$fmt_connectivity_params = @{
+        ///    Name=&quot;ConnectivityParameters&quot;
+        ///    Expression={
+        ///        $val = New-Object PSObject
+        ///        $_.ConnectivityParameters | foreach {
+        ///            $p = $_
+        ///            $val | Add-Member -MemberType NoteProperty -Name $p.Name -Value $p.Value
+        ///        }
+        ///        $val
+        ///    }
+        ///}
+        ///$fmt_partition_params = @{
+        ///    Name=&quot;Partitions&quot;
+        ///    Expression={
+        ///        $fmt_params = @{
+        ///             [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Get_ADSyncConnectorsBasic {
             get {
