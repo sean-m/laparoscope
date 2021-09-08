@@ -14,6 +14,8 @@ namespace aadcapi.Models
         public dynamic LastModificationTime { get; set; }
         public dynamic ObjectInclusionList { get; set; }
         public dynamic AttributeInclusionList { get; set; }
+        public dynamic ConnectivityParameters { get; set; }
+        public dynamic Partitions { get; set; }
         public dynamic AnchorConstructionSettings { get; set; }
         public dynamic CompanyName { get; set; }
         public dynamic Type { get; set; }
