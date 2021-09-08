@@ -157,6 +157,7 @@ namespace SMM.Helper
         /// <returns></returns>
         public static dynamic CapturePSResult<T>(this PSCustomObject input)
         {
+            // TODO (Sean) thoroughly test this.
             throw new NotImplementedException("This has not been tested!!!");
 
             dynamic result = default(dynamic);
