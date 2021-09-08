@@ -23,10 +23,13 @@ namespace aadcapi
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            /*
+            // TODO (Sean) This doesn't really work in most tested situations, fix that.
             config.Formatters.JsonFormatter.SupportedMediaTypes
                 .Add(new MediaTypeHeaderValue("text/html"));
 
             config.Formatters.Add(new BrowserJsonFormatter());
+            */
 
             var appXmlType = config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
             config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
