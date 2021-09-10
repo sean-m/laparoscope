@@ -87,7 +87,36 @@
                         <div class="col"><button type="button" class="btn btn-secondary" onclick="copyRule()" style="margin-top: 2px;">Copy</button></div>
                     </div>
                 </div>
-
+                <div class="container container-lg">
+                    <h4>Configured Rules</h4>
+                    <table class="table table-striped">
+                        <thead class="">
+                            <tr>
+                                <th>Role</th>
+                                <th>Context</th>
+                                <th>ClaimProperty</th>
+                                <th>ClaimValue</th>
+                                <th>ModelProperty</th>
+                                <th>ModelValue</th>
+                                <th>ModelValues</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in ViewBag.AuthorizationRules)
+                            {
+                            <tr>
+                                <td>@r.Role</td>
+                                <td>@r.Context</td>
+                                <td>@r.ClaimProperty</td>
+                                <td>@r.ClaimValue</td>
+                                <td>@r.ModelProperty</td>
+                                <td>@r.ModelValue</td>
+                                <td>@{String.Join(", ", r.ModelValues);}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

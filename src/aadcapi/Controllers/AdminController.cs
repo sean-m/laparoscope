@@ -1,4 +1,5 @@
-﻿using System;
+﻿using aadcapi.Utils.Authorization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,6 +14,8 @@ namespace aadcapi.Controllers
         public ActionResult Index()
         {
             ViewBag.GlobalProps = typeof(aadcapi.Utils.Globals).GetProperties().OrderBy(x => x.Name);
+
+            ViewBag.AuthorizationRules = RegisteredRoleControllerRules.GetRoleControllerModels();
             return View();
         }
     }
