@@ -8,6 +8,6 @@ namespace aadcapi.Utils.Authorization
 {
     public interface IFilterFunction
     {
-        bool IsAuthorized();
+        bool IsAuthorized(object Resource, IEnumerable<string> Roles);
     }
 }

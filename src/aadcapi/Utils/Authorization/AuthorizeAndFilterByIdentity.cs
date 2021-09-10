@@ -1,10 +1,11 @@
 ﻿using aadcapi.Models;
+using aadcapi.Utils.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace aadcapi.Utils
+namespace aadcapi.Utils.Authorization
 {
     public static class AuthorizeAndFilterByIdentity
     {
@@ -13,15 +14,15 @@ namespace aadcapi.Utils
         //    IFilterFunction filter = RegisteredAuthorizationFilters.GetFilterForType(Record.GetType());
             
         //    return false;
+        ////}
+
+        //public static IEnumerable<T> WhereAuthorized<T>(this IEnumerable<T> Collection, IEnumerable<string> Roles)
+        //{
+        //    IFilterFunction filter = RegisteredAuthorizationFilters.GetFilterForType(typeof(T));
+        //    // TODO LOGME need to log when there's no registered filter for the resource type.
+
+        //    return Collection.Where(x => (bool)filter?.IsAuthorized(x, Roles));
         //}
-
-        public static IEnumerable<T> WhereAuthorized<T>(this IEnumerable<T> Collection, IEnumerable<string> Roles)
-        {
-            IFilterFunction filter = RegisteredAuthorizationFilters.GetFilterForType(typeof(T));
-            // TODO LOG need to log when there's no registered filter for the resource type.
-
-            return Collection.Where(x => (bool)filter?.IsAuthorized(x, Roles));
-        }
     }
 
     public static class RegisteredAuthorizationFilters
@@ -46,29 +47,29 @@ namespace aadcapi.Utils
 
     public static class RegisteredRoleControllerRules
     {
-        private static List<RoleControllerModel> _models = new List<RoleControllerModel>();
-        private static Dictionary<string, List<RoleControllerModel>> _modelsByController = new Dictionary<string, List<RoleControllerModel>>();
-        public static void RegisterRoleControllerModel(this RoleControllerModel Model)
+        private static List<RoleFilterModel> _models = new List<RoleFilterModel>();
+        private static Dictionary<string, List<RoleFilterModel>> _modelsByContext = new Dictionary<string, List<RoleFilterModel>>();
+        public static void RegisterRoleControllerModel(this RoleFilterModel Model)
         {
             _models.Add(Model);
             if (!String.IsNullOrEmpty(Model.Context))
             {
-                if (!_modelsByController.ContainsKey(Model.Context))
+                if (!_modelsByContext.ContainsKey(Model.Context))
                 {
-                    _modelsByController.Add(Model.Context, new List<RoleControllerModel>());
+                    _modelsByContext.Add(Model.Context, new List<RoleFilterModel>());
                 }
-                _modelsByController[Model.Context]?.Add(Model);
+                _modelsByContext[Model.Context]?.Add(Model);
             }
         }
 
-        public static IEnumerable<RoleControllerModel> GetRoleControllerModels () {
+        public static IEnumerable<RoleFilterModel> GetRoleControllerModels () {
             return _models;
         }
 
-        public static IEnumerable<RoleControllerModel> GetRoleControllerModelsByController(string Name)
+        public static IEnumerable<RoleFilterModel> GetRoleControllerModelsByContext(string Name)
         {
-            List<RoleControllerModel> result;
-            if (_modelsByController.TryGetValue(Name, out result))
+            List<RoleFilterModel> result;
+            if (_modelsByContext.TryGetValue(Name, out result))
             {
                 return result;
             }
@@ -76,12 +77,6 @@ namespace aadcapi.Utils
             return null;
         }
     }
-
-    public interface IFilterFunction
-    {
-        bool IsAuthorized(object Resource, IEnumerable<string> Roles);
-    }
-
     public class FilterFunction<T> : IFilterFunction
     {
         public T ForType { get; private set; }

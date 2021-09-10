@@ -16,7 +16,7 @@ namespace aadcapi
         {
             // TODO load from Azure configuration.
             var adminRoleConnectorAuth = "{\"Role\":\"Admin\",\"Context\":\"Connector\",\"ClaimProperty\":\"\",\"ClaimValue\":\"\",\"ModelProperty\":\"Name\",\"ModelValue\":\"*garage*\",\"ModelValues\":[]}";
-            var deserialized = JsonConvert.DeserializeObject<RoleControllerModel>(adminRoleConnectorAuth);
+            var deserialized = JsonConvert.DeserializeObject<RoleFilterModel>(adminRoleConnectorAuth);
             
             RegisteredRoleControllerRules.RegisterRoleControllerModel(deserialized);
         }

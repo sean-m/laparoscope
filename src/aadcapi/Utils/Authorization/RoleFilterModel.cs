@@ -8,7 +8,7 @@ using System.Web;
 
 namespace aadcapi.Models
 {
-    public class RoleControllerModel
+    public class RoleFilterModel
     {
         // Authorization scoped to role and context
         public string Role { get; set; }
@@ -26,7 +26,7 @@ namespace aadcapi.Models
 
         public IEnumerable<string> ModelValues { get; set; }
 
-        public RoleControllerModel() {
+        public RoleFilterModel() {
             ModelValues = new List<string>();
         }
     }

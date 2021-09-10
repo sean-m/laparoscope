@@ -20,16 +20,6 @@ namespace SMM.Helper
 {
     public static class Extensions
     {
-        /// <summary>
-        /// Helper for returning the name of a given controller. Helpful when calling
-        /// an authorization routine that loads rules based on controller name.
-        /// </summary>
-        /// <param name="conn"></param>
-        /// <returns></returns>
-        public static string ControllerName (this ApiController conn)
-        {
-            return conn.ControllerContext.RouteData.Values["controller"].ToString();
-        }
 
         public static HttpResponseMessage AsAppJsonResult(this HttpRequestMessage Request, IEnumerable<object> input = null) {
 
@@ -154,7 +144,7 @@ namespace SMM.Helper
         /// <typeparam name="T">Desired result type.</typeparam>
         /// <param name="input">PSObject collection to capture values from.</param>
         /// <returns></returns>
-        public static List<dynamic> CapturePSResult<T>(this PSDataCollection<PSObject> input)
+        public static IEnumerable<dynamic> CapturePSResult<T>(this PSDataCollection<PSObject> input)
         {
             var result = new List<dynamic>();
             var asType = typeof(T);
