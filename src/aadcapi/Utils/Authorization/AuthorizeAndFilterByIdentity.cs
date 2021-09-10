@@ -1,5 +1,6 @@
 ﻿using aadcapi.Models;
 using aadcapi.Utils.Authorization;
+using SMM.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,24 +8,6 @@ using System.Web;
 
 namespace aadcapi.Utils.Authorization
 {
-    public static class AuthorizeAndFilterByIdentity
-    {
-        //public static bool IsAuthorizedForThisData(this object Record, string KeyProperty, IEnumerable<string> Roles)
-        //{
-        //    IFilterFunction filter = RegisteredAuthorizationFilters.GetFilterForType(Record.GetType());
-            
-        //    return false;
-        ////}
-
-        //public static IEnumerable<T> WhereAuthorized<T>(this IEnumerable<T> Collection, IEnumerable<string> Roles)
-        //{
-        //    IFilterFunction filter = RegisteredAuthorizationFilters.GetFilterForType(typeof(T));
-        //    // TODO LOGME need to log when there's no registered filter for the resource type.
-
-        //    return Collection.Where(x => (bool)filter?.IsAuthorized(x, Roles));
-        //}
-    }
-
     public static class RegisteredAuthorizationFilters
     {   
         private static readonly Dictionary<Type, IFilterFunction> _filters = new Dictionary<Type, IFilterFunction>();

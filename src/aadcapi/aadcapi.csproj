@@ -316,6 +316,7 @@
     </Compile>
     <Compile Include="Models\AadcConnector.cs" />
     <Compile Include="Utils\Authorization\ControllerAuthorizationExtensions.cs" />
+    <Compile Include="Utils\Authorization\Filter.cs" />
     <Compile Include="Utils\Authorization\RoleFilterModel.cs" />
     <Compile Include="Models\SyncResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
