@@ -7,6 +7,22 @@ namespace aadcapi.Utils.Authorization
 {
     public static class Filter
     {
+        /// <summary>
+        /// For a given Context, an list of Roles, retrieve any matching rules and evaluate them
+        /// against the Model. For AADC controllers it would be obvious
+        /// to check if there is a rule that specifies a role that should allow access to
+        /// connectors with a given name. The rule would for admins accessing my lab connector
+        /// would look like this:
+        ///   Role: "Admin"
+        ///   ModelProperty: "Name"
+        ///   ModelValue: "garage.mcardletech.com"  // actual example used in my lab not shilling my website,
+        ///                                         // it's truly not worth your time.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Model"></param>
+        /// <param name="Context"></param>
+        /// <param name="Roles"></param>
+        /// <returns></returns>
         public static bool IsAuthorized<T>(T Model, string Context, IEnumerable<string> Roles)
         {
             var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByContext(Context);
@@ -29,17 +45,6 @@ namespace aadcapi.Utils.Authorization
                         // bail out if there's no property with that name on the value
                         if (testValue == null) return false;
 
-                        /*
-                        * Check if there are any model values that match the specified property on the model
-                        * matches one of the specified values. For AADC controllers it would be obvious
-                        * to check if there is a rule that specifies a role that should be allowd to access
-                        * connectors with a given name. The rule would for admins accessing my lab connector
-                        * would look like this:
-                        *   Role: "Admin"
-                        *   ModelProperty: "Name"
-                        *   ModelValue: "garage.mcardletech.com"  // actual example used in my lab not shilling my website, 
-                        *                                         // it's truly not worth your time.
-                        */
                         if (rule.ModelValues != null && rule.ModelValues.Count() > 0)
                         {
                             return rule.ModelValues.Any(pattern => testValue.Like(pattern));   // Uses Like extension method that supports wildcards
@@ -52,6 +57,20 @@ namespace aadcapi.Utils.Authorization
                             return testValue.Like(pattern);
                         }
                     });
+        }
+
+        /// <summary>
+        /// IEnumerable version of IsAuthorized&lt;T&gt;. Allows filtering a collection
+        /// via extension method to make chaining with Linq methods more natural.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Collection"></param>
+        /// <param name="Context"></param>
+        /// <param name="Roles"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> IsAuthorized<T>(this IEnumerable<T> Collection, string Context, IEnumerable<string> Roles)
+        {
+            return Collection.Where(x => IsAuthorized(x, Context, Roles));
         }
     }
 }
