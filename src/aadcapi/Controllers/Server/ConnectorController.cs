@@ -5,6 +5,8 @@ using SMM.Helper;
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Linq;
+using System.Security.Claims;
+using aadcapi.Utils.Authorization;
 
 namespace aadcapi.Controllers.Server
 {
@@ -29,22 +31,15 @@ namespace aadcapi.Controllers.Server
             runner.Parameters.Add( "Name", Name );
             runner.Run();
 
-            // Map PowerShell objects to models, C# classes with matching property names
-            var resultValues = runner.Results.CapturePSResult<AadcConnector>().Where(
-                   x => { 
-                       // All results should be AadcConnector but CapturePSResult can return as
-                       // type: dynamic if the PowerShell object doesn't successfully map to the
-                       // desired model type. For those that are the correct model, we pass them
-                       // to the IsAuthorized method which loads and runs any rules for this connector
-                       // who match the requestors roles.
-                       if (x is AadcConnector connector) {
-                            return IsAuthorized<AadcConnector>(connector, this.ControllerName());
-                       }
-                       return false;
-                   });  // The Where() will filter out any object 'x' where the => {} function
-                        // returns false. That would include any that couldn't be mapped to the
-                        // model and any whose IsAuthorized call returns false.
-
+            // Map PowerShell objects to models, C# classes with matching property names.
+            // All results should be AadcConnector but CapturePSResult can return as
+            // type: dynamic if the PowerShell object doesn't successfully map to the
+            // desired model type. For those that are the correct model, we pass them
+            // to the IsAuthorized method which loads and runs any rules for this connector
+            // who match the requestors roles.
+            var resultValues = runner.Results.CapturePSResult<AadcConnector>().Where(x => x is AadcConnector);
+            resultValues = this.WhereAuthorized(resultValues);
+            
             if (resultValues != null)
             {
                 var result = Ok(resultValues);
@@ -52,47 +47,6 @@ namespace aadcapi.Controllers.Server
             }
 
             return Ok();
-        }
-
-        private bool IsAuthorized<T>(T Model, string Controller)
-        {
-            var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByController(Controller);
-            var connType = typeof(T);
-
-            return rules.Any(r =>
-            {
-                var roleMatch = RequestContext.Principal.IsInRole(r.Role);
-                if (roleMatch)
-                {
-                    var testValue = connType.GetProperty(r.ModelProperty)?.GetValue(Model).ToString();
-                    // bail out if there's no property with that name on the value
-                    if (testValue == null) return false;
-
-                    /*
-                    * Check if there are any model values that match the specified property on the model
-                    * matches one of the specified values. For AADC controllers it would be obvious
-                    * to check if there is a rule that specifies a role that should be allowd to access
-                    * connectors with a given name. The rule would for admins accessing my lab connector
-                    * would look like this:
-                    *   Role: "Admin"
-                    *   ModelProperty: "Name"
-                    *   ModelValue: "garage.mcardletech.com"  // actual example used in my lab not shilling my website, 
-                    *                                         // it's truly not worth your time.
-                    */
-                    if (r.ModelValues != null && r.ModelValues.Count() > 0)
-                    {
-                        return r.ModelValues.Any(pattern => testValue.Like(pattern));   // Uses Like extension method that supports wildcards
-                                                                                        // so you could say role: GarageAdmins could see all
-                                                                                        // connectors that match: garage.* .
-                    }
-                    else
-                    {
-                        var pattern = r.ModelValue;
-                        return testValue.Like(pattern);
-                    }
-                }
-                return false;  // If there's no matching rule, assume they shouldn't see it.
-            });
         }
     }
 }
