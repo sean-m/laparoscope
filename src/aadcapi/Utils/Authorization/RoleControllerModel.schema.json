@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "RoleFilterRule",
+  "description": "A role and context targeted resource based authorization rule.",
+  "type": "object",
+  "properties": {
+    "Role": {
+      "description": "Roles the rule applies to.",
+      "type": "string"
+    },
+    "Context": {
+      "description": "A given context where the rule applies. Specified by the caller.",
+      "type": "string"
+    },
+    "ClaimProperty": {
+      "description": "Name of a principal claim to inspect. Rule failes if claim does not exist.",
+      "type": "string"
+    },
+    "ClaimValue": {
+      "description": "Pattern to match against a given claim.",
+      "type": "string"
+    },
+    "ModelProperty": {
+      "description": "A resource property to inspect as part of rule evaluation.",
+      "type": "string"
+    },
+    "ModelValue": {
+      "description": "Pattern used to inspect the specified model property.",
+      "type": "string"
+    },
+    "ModelValues": {
+      "description": "Multiple patterns to evaluated against the model property in a logical 'or' fashion. Rule succeeds if any patterns match.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "required": [ "Role", "Context" ]
+}
