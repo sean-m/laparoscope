@@ -11,7 +11,8 @@ namespace aadcapi.Utils.Authorization
         {
             var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByContext(Context);
             var connType = typeof(T);
-
+            if (connType == typeof(object)) connType = Model.GetType();
+            
             return rules.Where(
                     rule => {
                         bool result = (bool)Roles?.Any(
