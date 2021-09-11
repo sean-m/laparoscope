@@ -152,6 +152,7 @@
             'ModelValues': null
         }
 
+        // Add rule values that were split out from invalues. If none, leave null;
         for (i in invalues) {
             if (i && !(invalues[i].trim() == "")) {
                 if (!rule.ModelValues || rule.ModelValues[0] === "") {
