@@ -344,8 +344,6 @@
     <Compile Include="SMM\Extensions.cs" />
     <Compile Include="SMM\SimpleScriptRunner.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utils\Authorization\IFilterFunction.cs" />
-    <Compile Include="Utils\Authorization\AuthorizeAndFilterByIdentity.cs" />
     <Compile Include="Utils\ClaimPrincipalExtension.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\Globals.cs" />
