@@ -33,6 +33,8 @@ namespace aadcapi
 
             var appXmlType = config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
             config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
+
+            config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings();
         }
     }
 
