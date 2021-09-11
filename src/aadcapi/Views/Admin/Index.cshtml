@@ -4,18 +4,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@using System.Linq;
 
-<h3>Applicatoin Configuration</h3>
+
+<h3>Application Configuration</h3>
 <div class="accordion">
     <div class="card" id="globals">
         <div class="card-header" id="headingOne">
             <h4>
-                <a class="btn btn-link" href="#globals" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <a class="btn btn-link collapsed" href="#globals" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                     Application Globals
                 </a>
             </h4>
         </div>
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
             <div class="card-body">
                 <table class="table table-striped">
                     <thead class="">
@@ -38,11 +40,42 @@
         </div>
     </div>
 
+    <div class="card" id="globals">
+        <div class="card-header" id="headingSettings">
+            <h4>
+                <a class="btn btn-link collapsed" href="#globals" data-toggle="collapse" data-target="#collapseSettings" aria-expanded="true" aria-controls="collapseSettings">
+                    Application Settings
+                </a>
+            </h4>
+        </div>
+        <div id="collapseSettings" class="collapse" aria-labelledby="headingSettings">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead class="">
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var k in ViewBag.SettingKeys)
+                        {
+                            <tr>
+                                <td>@k</td>
+                                <td>@( SMM.Helper.Extensions.Like(k, "*Secret*") ? "**************" : ViewBag.AppSettings[k] )</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div class="card" id="rbac-rules">
         <div class="card-header" id="headingTwo">
             <h4>
                 <a class="btn btn-link" href="#rbac-rules" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    RBAC Rules
+                    Authorization Rules
                 </a>
             </h4>
         </div>
@@ -104,15 +137,15 @@
                         <tbody>
                             @foreach (var r in ViewBag.AuthorizationRules)
                             {
-                            <tr>
-                                <td>@r.Role</td>
-                                <td>@r.Context</td>
-                                <td>@r.ClaimProperty</td>
-                                <td>@r.ClaimValue</td>
-                                <td>@r.ModelProperty</td>
-                                <td>@r.ModelValue</td>
-                                <td>@{if (r.ModelValues != null) { String.Join(", ", r.ModelValues); } }</td>
-                            </tr>
+                                <tr>
+                                    <td>@r.Role</td>
+                                    <td>@r.Context</td>
+                                    <td>@r.ClaimProperty</td>
+                                    <td>@r.ClaimValue</td>
+                                    <td>@r.ModelProperty</td>
+                                    <td>@r.ModelValue</td>
+                                    <td>@{if (r.ModelValues != null) { String.Join(", ", r.ModelValues); } }</td>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -170,4 +203,9 @@
         var ruleString = document.getElementById('rule-string');
         navigator.clipboard.writeText(ruleString.innerText);
     }
+
+    // Make content full width since it's displaying settings that may be wider than the viewport
+    var parent = document.getElementById('renderBody');
+    parent.classList.remove('container')
+    parent.classList.remove('container-fluid')
 </script>
