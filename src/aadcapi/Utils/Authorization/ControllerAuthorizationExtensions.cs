@@ -54,5 +54,25 @@ namespace aadcapi.Utils.Authorization
 
             return Collection.Where(x => Filter.IsAuthorized<T>(x, context, roles));
         }
+
+        /// <summary>
+        /// IsAuthorized extension method for evaluating rules against a single object
+        /// from within a controller method.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Controller"></param>
+        /// <param name="Model"></param>
+        /// <returns></returns>
+        public static bool IsAuthorized<T>(this ApiController Controller, T Model)
+        {
+            var context = Controller.ControllerName();
+            var roles = ((ClaimsPrincipal)Controller?.RequestContext?.Principal)?.RoleClaims();
+            if (roles != null)
+            {
+                // TODO LOGME (Sean) log null role set
+            }
+
+            return Filter.IsAuthorized<T>(Model, context, roles);
+        }
     }
 }
