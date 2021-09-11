@@ -23,6 +23,7 @@ SOFTWARE.
 ***********************************************************************************************/
 
 using Microsoft.Owin;
+using Microsoft.Configuration.ConfigurationBuilders;
 using Owin;
 
 [assembly: OwinStartup(typeof(aadcapi.Startup))]

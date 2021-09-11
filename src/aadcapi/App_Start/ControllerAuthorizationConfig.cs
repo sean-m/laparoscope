@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using aadcapi.Models;
 using aadcapi.Utils.Authorization;
+using Microsoft.Configuration.ConfigurationBuilders;
+using System.Configuration;
+using System.Diagnostics;
 
 namespace aadcapi
 {
@@ -17,9 +20,27 @@ namespace aadcapi
         {
             // TODO load from Azure configuration.
             var adminRoleConnectorAuth = "{\"Role\":\"Admin\",\"Context\":\"Connector\",\"ClaimProperty\":\"\",\"ClaimValue\":\"\",\"ModelProperty\":\"Name\",\"ModelValue\":\"*garage*\",\"ModelValues\":[]}";
-            var deserialized = JsonConvert.DeserializeObject<RoleFilterModel>(adminRoleConnectorAuth);
-            
+            RoleFilterModel deserialized = JsonConvert.DeserializeObject<RoleFilterModel>(adminRoleConnectorAuth);
+
             RegisteredRoleControllerRules.RegisterRoleControllerModel(deserialized);
+
+            //Microsoft.Configuration.ConfigurationBuilders.AzureAppConfigurationBuilder()
+            foreach (string k in ConfigurationManager.AppSettings.Keys)
+            {
+                if (! k.StartsWith("Rule.", StringComparison.CurrentCultureIgnoreCase)) { continue; }
+
+                try
+                {
+                    var rule = ConfigurationManager.AppSettings[k];
+                    deserialized = JsonConvert.DeserializeObject<RoleFilterModel>(rule);
+                    RegisteredRoleControllerRules.RegisterRoleControllerModel(deserialized);
+                }
+                catch (Exception e)
+                {
+                    // TODO LOGME (Sean) Log failure to deserialize and store rule.
+                    Trace.WriteLine($"Failed to deserialize key: {k}. Error:\n{e.Message}");
+                }
+            }
         }
     }
 }

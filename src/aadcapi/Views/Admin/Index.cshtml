@@ -111,7 +111,7 @@
                                 <td>@r.ClaimValue</td>
                                 <td>@r.ModelProperty</td>
                                 <td>@r.ModelValue</td>
-                                <td>@{String.Join(", ", r.ModelValues);}</td>
+                                <td>@{if (r.ModelValues != null) { String.Join(", ", r.ModelValues); } }</td>
                             </tr>
                             }
                         </tbody>
@@ -153,9 +153,11 @@
         }
 
         for (i in invalues) {
-            if (i && i.trim() !== "") {
-                if (! rule.Values) { rule["Values"] = []; }
-                rule.Values.push(invalues[i].trim());
+            if (i && !(invalues[i].trim() == "")) {
+                if (!rule.ModelValues || rule.ModelValues[0] === "") {
+                    rule["ModelValues"] = [];
+                }
+                rule.ModelValues.push(invalues[i].trim());
             }
         }
 
