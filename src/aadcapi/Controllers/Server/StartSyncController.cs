@@ -26,7 +26,7 @@ namespace aadcapi.Controllers.Server
         ///   "Started": false
         /// }
         /// </returns>
-        public dynamic Get()
+        public dynamic Post()
         {   
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Start_ADSyncDelta);
             runner.Run();
