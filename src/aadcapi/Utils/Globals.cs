@@ -55,5 +55,9 @@ namespace aadcapi.Utils
         /// </summary>
         public static string Authority { get; } = ConfigurationManager.AppSettings["ida:Authority"] ??  $"https://login.microsoftonline.com/{TenantId}/";
 
+        /// <summary>
+        /// Users in this specified role will be able to query and manage application settings at runtime via the api.
+        /// </summary>
+        public static string AuthorizedConfigRole { get; } = ConfigurationManager.AppSettings["ops:ConfigManagerRole"] ?? "Admin";
     }
 }
