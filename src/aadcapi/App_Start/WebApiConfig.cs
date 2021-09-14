@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using App.Metrics.Extensions.Owin.WebApi;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,10 @@ namespace aadcapi
             config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
 
             config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings();
+
+            // Add App.Metrics handler
+            // TODO (Sean) move to modern Startup.cs pattern then work on metrics again
+            //config.MessageHandlers.Add(new MetricsWebApiMessageHandler());
         }
     }
 

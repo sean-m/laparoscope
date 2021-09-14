@@ -25,6 +25,16 @@ SOFTWARE.
 using Microsoft.Owin;
 using Microsoft.Configuration.ConfigurationBuilders;
 using Owin;
+using Microsoft.Extensions.DependencyInjection;
+
+using System;
+using System.Reflection;
+using System.Web.Hosting;
+using System.Web.Http;
+using App.Metrics;
+using App.Metrics.Extensions.Owin.WebApi;
+using App.Metrics.Reporting.Abstractions;
+
 
 [assembly: OwinStartup(typeof(aadcapi.Startup))]
 
@@ -34,8 +44,16 @@ namespace aadcapi
 	{
 		public void Configuration(IAppBuilder app)
 		{
+			var services = new ServiceCollection();
+			ConfigureServices(services);
+
 			ConfigureAuth(app);
 			ConfigureAuthorizationFilters(app);
 		}
+
+		public void ConfigureServices(IServiceCollection services)
+        {
+			services.AddLogging();
+        }
 	}
 }
