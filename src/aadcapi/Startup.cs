@@ -34,7 +34,7 @@ using System.Web.Http;
 using App.Metrics;
 using App.Metrics.Extensions.Owin.WebApi;
 using App.Metrics.Reporting.Abstractions;
-
+using System.Diagnostics;
 
 [assembly: OwinStartup(typeof(aadcapi.Startup))]
 
@@ -42,18 +42,22 @@ namespace aadcapi
 {
     public partial class Startup
 	{
+		public void ConfigureServices(IServiceCollection services)
+        {
+			Trace.WriteLine(">> ConfigureServices() called!!!");
+			services.AddLogging();
+        }
+
 		public void Configuration(IAppBuilder app)
 		{
+			Trace.WriteLine(">> Configuration() called!!!");
 			var services = new ServiceCollection();
 			ConfigureServices(services);
 
-			ConfigureAuth(app);
+
+
+            ConfigureAuth(app);
 			ConfigureAuthorizationFilters(app);
 		}
-
-		public void ConfigureServices(IServiceCollection services)
-        {
-			services.AddLogging();
-        }
 	}
 }
