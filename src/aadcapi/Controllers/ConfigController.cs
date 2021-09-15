@@ -30,7 +30,9 @@ namespace aadcapi.Controllers
             // Only users of the role specified as allowed to access config via the api may call this (Admin by default).
             if (!this.RequestContext.Principal.IsInRole(Globals.AuthorizedConfigRole)) { return Unauthorized(); }
 
-            var nameOrId = String.IsNullOrEmpty(Setting) ? this.RequestContext.RouteData.Values["id"]?.ToString() ?? String.Empty : Setting.TrimStart('\'', '"').TrimEnd('\'', '"');
+            // Take either the Setting variable from the query string or 'id' property implicitly from the route. Trim quote marks.
+            var nameOrId = String.IsNullOrEmpty(Setting) ? this.RequestContext.RouteData.Values["id"]?.ToString() ?? String.Empty : Setting.Trim('\'', '"');
+            // Tokenize the comma separated input value.
             var names = String.IsNullOrEmpty(nameOrId) ? new string[] { nameOrId } : nameOrId?.Split(',')?.Select(x => x.Trim());
 
             var appSettings = ConfigurationManager.AppSettings.AllKeys;
