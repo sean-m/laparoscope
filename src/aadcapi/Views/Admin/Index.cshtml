@@ -82,6 +82,10 @@
 
                 <div class="container container-lg">
                     <div class="row">
+                        <div class="col">Id</div>
+                        <div class="col-9"><input id="in-id" oninput="triggerDelay()" /></div>
+                    </div>
+                    <div class="row">
                         <div class="col">Role</div>
                         <div class="col-9"><input id="in-role" oninput="triggerDelay()" /></div>
                     </div>
@@ -111,11 +115,14 @@
                     </div>
                     <div class="row">
                         <div class="col col-md-auto">Rule</div>
-                        <div class="col col-8-auto" id="rule-string"></div>
+                        <textarea class="col col-8-auto" id="rule-string"></textarea>
                     </div>
-                    <div class="row">
-                        <div class="col"></div>
-                        <div class="col"><button type="button" class="btn btn-secondary" onclick="copyRule()" style="margin-top: 2px;">Copy</button></div>
+                    <div class="row align-content-lg-start">
+                        
+                        <div class="col">
+                            <button type="button" class="btn btn-secondary" onclick="copyRule()" style="margin-top: 2px; margin-left: 1em;">Copy</button>
+                            <button type="button" class="btn btn-secondary" onclick="populateFields()" style="margin-top: 2px;">Load</button>
+                        </div>
                     </div>
                 </div>
                 <div class="container container-lg">
@@ -154,6 +161,14 @@
 </div>
 
 <script type="text/javascript">
+    'use strict';
+
+    function uuidv4() {
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
+    }
+
     // This is to add a 1/4 second buffer to the input fields so
     // rule computation isn't just spinning all the time. Helps
     // with UI responsiveness and only adds 5 lines.
@@ -164,27 +179,28 @@
     }
 
     function makeRuleString() {
+        var inid          = document.getElementById('in-id').value;
         var inrole        = document.getElementById('in-role').value;
         var incontroller  = document.getElementById('in-controller').value;
         var inclaimprop   = document.getElementById('in-claimprop').value;
         var inclaimpvalue = document.getElementById('in-claimvalue').value;
-        var incontroller  = document.getElementById('in-controller').value;
         var inproperty    = document.getElementById('in-property').value;
         var invalue       = document.getElementById('in-value').value;
         var invalues      = document.getElementById('in-values').value.split(',');
 
         var rule = {
-            'Role': inrole,
-            'Context': incontroller,
-            'ClaimProperty': inclaimprop,
-            'ClaimValue': inclaimpvalue,
-            'ModelProperty': inproperty,
-            'ModelValue': invalue,
+            'Id': inid ? inid : uuidv4().toString(),
+            'Role': inrole ? inrole : null,
+            'Context': incontroller ? incontroller : null,
+            'ClaimProperty': inclaimprop ? inclaimprop : null,
+            'ClaimValue': inclaimpvalue ? inclaimpvalue : null,
+            'ModelProperty': inproperty ? inproperty : null,
+            'ModelValue': invalue ? invalue : null,
             'ModelValues': null
         }
 
         // Add rule values that were split out from invalues. If none, leave null;
-        for (i in invalues) {
+        for (var i in invalues) {
             if (i && !(invalues[i].trim() == "")) {
                 if (!rule.ModelValues || rule.ModelValues[0] === "") {
                     rule["ModelValues"] = [];
@@ -194,8 +210,44 @@
         }
 
         var ruleString = document.getElementById('rule-string');
-        ruleString.innerText = JSON.stringify(rule);
+        ruleString.value = JSON.stringify(rule);
     }
+
+
+    function populateFields() {
+        var rule = null;
+
+        var ruleString = document.getElementById('rule-string');
+        try {
+            rule = JSON.parse(ruleString.value.trim());
+
+            document.getElementById('in-id').value = rule.Id;
+            document.getElementById('in-role').value = rule.Role;
+            document.getElementById('in-controller').value = rule.Context;
+            document.getElementById('in-claimprop').value = rule.ClaimProperty;
+            document.getElementById('in-claimvalue').value = rule.ClaimValue;
+            document.getElementById('in-property').value = rule.ModelProperty;
+            document.getElementById('in-value').value = rule.ModelValue;
+            document.getElementById('in-values').value = rule.ModelValues ? rule.ModelValues.join(', ') : null;
+
+
+            // Add rule values that were split out from invalues. If none, leave null;
+            /*
+            for (i in invalues) {
+                if (i && !(invalues[i].trim() == "")) {
+                    if (!rule.ModelValues || rule.ModelValues[0] === "") {
+                        rule["ModelValues"] = [];
+                    }
+                    rule.ModelValues.push(invalues[i].trim());
+                }
+            }
+            */
+        }
+        catch {
+            console.log("Could not parse string: " + ruleString.innerText);
+        }
+    }
+
 
     function copyRule() {
         var ruleString = document.getElementById('rule-string');
