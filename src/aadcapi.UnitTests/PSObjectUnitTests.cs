@@ -6,16 +6,8 @@ using static SMM.Helper.Extensions;
 
 namespace aadcapi.UnitTests
 {
-    public class PSObjectExtension
+    public partial class PSObjectExtension
     {
-        public class FooTest
-        {
-            public string Foo { get; set; }
-            public string FooBar { get; set; }
-            public FooTest Nested { get; set; }
-            public FooTest() { }
-        }
-
         FooTest result;
 
         [SetUp]
