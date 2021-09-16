@@ -10,6 +10,8 @@ namespace aadcapi.Models
 {
     public class RoleFilterModel
     {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         // Authorization scoped to role and context
         public string Role { get; set; }
 
