@@ -1,0 +1,12 @@
+[
+	{
+		"Id": "424e5cfd-5139-417c-9300-79aa0fabc3c1",
+		"Role": "Admin:Garage",
+		"Context": "Connector",
+		"ClaimProperty": "",
+		"ClaimValue": "",
+		"ModelProperty": "Name",
+		"ModelValue": "garage.mcardletech.com",
+		"ModelValues": null
+	}
+]
