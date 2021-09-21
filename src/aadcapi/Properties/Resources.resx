@@ -169,6 +169,54 @@ $fmt_partition_params = @{
 Get-ADSyncConnector @param | select Name, Identifier, Description, CreationTime, LastModificationTime, $fmt_partition_params, $fmt_connectivity_params, ObjectInclusionList, AttributeInclusionList, AnchorConstructionSettings, CompanyName, Type, Subtype</value>
     <comment>Semi-reduced output from Get-ADSyncConnector. Full output has too much nested data and is 100+ MB when there are many connectors.</comment>
   </data>
+  <data name="Get-ADSyncCSObjectStrict" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    $ConnectorName,
+    [Parameter(Mandatory=$true)]
+    $DistinguishedName)
+
+Import-Module ADSync
+
+$attributes = @(
+"ObjectId",
+"ConnectorId",
+"ConnectorName",
+"ConnectorType",
+"PartitionId",
+"DistinguishedName",
+"AnchorValue",
+"ObjectType",
+"IsTransient",
+"IsPlaceHolder",
+"IsConnector",
+"HasSyncError",
+"HasExportError",
+"ExportError",
+"SynchronizationError",
+"ConnectedMVObjectId",
+"Lineage",
+"Attributes"
+)
+
+Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName | select $attributes</value>
+  </data>
+  <data name="Get-ADSyncMVObjectStrict" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    $Identifier
+    )
+
+Import-Module ADSync
+
+$attributes = @(
+"ObjectId",
+"Lineage",
+"Attributes"
+)
+
+Get-ADSyncMVObject -Identifier $Identifier | select $attributes</value>
+  </data>
   <data name="Start-ADSyncDelta" xml:space="preserve">
     <value>Import-Module ADSync
 

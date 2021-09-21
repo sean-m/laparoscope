@@ -14,11 +14,14 @@
 
 ### Priority Commands
 - [x] Get-ADSyncScheduler
-- [x] Start-ADSyncSyncCycle * Rate limit, should not invoke if syncing or last sync cycle was < 10 minutes ago.
+- [x] Start-ADSyncSyncCycle 
 - [ ] Get-ADSyncAADPasswordResetConfiguration *
 - [ ] Get-ADSyncAADPasswordSyncConfiguration *
 - [ ] Get-ADSyncCSObject *
+- [ ] Get-ADSyncMVObject *
 - [x] Get-ADSyncConnector *
+
+\* Rate limit, should not invoke if syncing or last sync cycle was < 10 minutes ago.
 
 ### Other ADSync Commands (might not do all of them).
 - [ ] Get-ADSyncAADCompanyFeature
@@ -42,7 +45,6 @@
 - [ ] Get-ADSyncExportDeletionThreshold
 - [ ] Get-ADSyncGlobalSettings
 - [ ] Get-ADSyncGlobalSettingsParameter
-- [ ] Get-ADSyncMVObject
 - [ ] Get-ADSyncPartitionPasswordSyncState
 - [ ] Get-ADSyncRule
 - [ ] Get-ADSyncRuleAudit

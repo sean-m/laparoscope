@@ -534,6 +534,8 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MeController.cs" />
+    <Compile Include="Controllers\Server\CSObjectController.cs" />
+    <Compile Include="Controllers\Server\MVObjectController.cs" />
     <Compile Include="Controllers\Server\StartSyncController.cs" />
     <Compile Include="Controllers\Server\ConnectorController.cs" />
     <Compile Include="Controllers\Server\SchedulerController.cs" />
@@ -541,6 +543,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AadcConnector.cs" />
+    <Compile Include="Models\AadcCSObject.cs" />
     <Compile Include="Utils\Authorization\ControllerAuthorizationExtensions.cs" />
     <Compile Include="Utils\Authorization\Filter.cs" />
     <Compile Include="Utils\Authorization\RegisteredRoleControllerRules.cs" />
@@ -731,6 +734,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Connectors\" />
+    <Folder Include="Views\CSObject\" />
     <Folder Include="Views\Scheduler\" />
   </ItemGroup>
   <ItemGroup>

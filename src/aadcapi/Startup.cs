@@ -23,17 +23,8 @@ SOFTWARE.
 ***********************************************************************************************/
 
 using Microsoft.Owin;
-using Microsoft.Configuration.ConfigurationBuilders;
 using Owin;
 using Microsoft.Extensions.DependencyInjection;
-
-using System;
-using System.Reflection;
-using System.Web.Hosting;
-using System.Web.Http;
-using App.Metrics;
-using App.Metrics.Extensions.Owin.WebApi;
-using App.Metrics.Reporting.Abstractions;
 using System.Diagnostics;
 
 [assembly: OwinStartup(typeof(aadcapi.Startup))]

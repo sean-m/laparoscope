@@ -90,6 +90,66 @@ namespace aadcapi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to param (
+        ///    [Parameter(Mandatory=$true)]
+        ///    $ConnectorName,
+        ///    [Parameter(Mandatory=$true)]
+        ///    $DistinguishedName)
+        ///
+        ///Import-Module ADSync
+        ///
+        ///$attributes = @(
+        ///&quot;ObjectId&quot;,
+        ///&quot;ConnectorId&quot;,
+        ///&quot;ConnectorName&quot;,
+        ///&quot;ConnectorType&quot;,
+        ///&quot;PartitionId&quot;,
+        ///&quot;DistinguishedName&quot;,
+        ///&quot;AnchorValue&quot;,
+        ///&quot;ObjectType&quot;,
+        ///&quot;IsTransient&quot;,
+        ///&quot;IsPlaceHolder&quot;,
+        ///&quot;IsConnector&quot;,
+        ///&quot;HasSyncError&quot;,
+        ///&quot;HasExportError&quot;,
+        ///&quot;ExportError&quot;,
+        ///&quot;SynchronizationError&quot;,
+        ///&quot;ConnectedMVObjectId&quot;,
+        ///&quot;Lineage&quot;,
+        ///&quot;Attributes&quot;
+        ///)
+        ///
+        ///Get-ADSyncCSObject -Connector [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Get_ADSyncCSObjectStrict {
+            get {
+                return ResourceManager.GetString("Get-ADSyncCSObjectStrict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to param (
+        ///    [Parameter(Mandatory=$true)]
+        ///    $Identifier
+        ///    )
+        ///
+        ///Import-Module ADSync
+        ///
+        ///$attributes = @(
+        ///&quot;ObjectId&quot;,
+        ///&quot;Lineage&quot;,
+        ///&quot;Attributes&quot;
+        ///)
+        ///
+        ///Get-ADSyncMVObject -Identifier $Identifier | select $attributes.
+        /// </summary>
+        internal static string Get_ADSyncMVObjectStrict {
+            get {
+                return ResourceManager.GetString("Get-ADSyncMVObjectStrict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import-Module ADSync
         ///
         ///&lt;#

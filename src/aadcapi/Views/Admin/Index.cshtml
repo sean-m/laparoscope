@@ -251,7 +251,7 @@
 
     function copyRule() {
         var ruleString = document.getElementById('rule-string');
-        navigator.clipboard.writeText(ruleString.innerText);
+        navigator.clipboard.writeText(ruleString.textContent);
     }
 
     // Make content full width since it's displaying settings that may be wider than the viewport
