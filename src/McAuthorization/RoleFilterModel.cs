@@ -1,12 +1,11 @@
-﻿using aadcapi.Utils.Authorization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace aadcapi.Models
+namespace McAuthorization.Models
 {
     public class RoleFilterModel
     {

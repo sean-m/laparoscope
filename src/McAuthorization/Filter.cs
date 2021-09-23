@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace aadcapi.Utils.Authorization
+namespace McAuthorization
 {
     public static class Filter
     {

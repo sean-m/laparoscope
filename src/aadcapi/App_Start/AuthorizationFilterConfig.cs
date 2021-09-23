@@ -11,6 +11,8 @@ using aadcapi.Utils.Authorization;
 using Microsoft.Configuration.ConfigurationBuilders;
 using System.Configuration;
 using System.Diagnostics;
+using McAuthorization.Models;
+using McAuthorization;
 
 namespace aadcapi
 {

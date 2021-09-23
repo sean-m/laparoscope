@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\aadcapi\aadcapi.csproj" />
+    <ProjectReference Include="..\McAuthorization\McAuthorization.csproj" />
   </ItemGroup>
 
   <ItemGroup>
