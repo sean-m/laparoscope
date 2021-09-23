@@ -1,0 +1,112 @@
+[
+  {
+    "Prop1": "Foo",
+    "Prop2": "Bar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Bar",
+    "Prop2": "Baz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "FooBar",
+    "Prop2": "Bar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Baz",
+    "Prop2": "Bar",
+    "Prop3": 2
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "Bar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "Bar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Bar",
+    "Prop2": "Baz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "FooBar",
+    "Prop2": "Bar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Baz",
+    "Prop2": "Bar",
+    "Prop3": 2
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "Bar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "FooBarBaz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Bar",
+    "Prop2": "Baz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "FooBar",
+    "Prop2": "BarBaz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Baz",
+    "Prop2": "Bar",
+    "Prop3": 2
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "FooBar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Baz",
+    "Prop2": "Bar",
+    "Prop3": 2
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "Bar",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "FooBarBaz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Bar",
+    "Prop2": "Baz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "FooBar",
+    "Prop2": "BarBaz",
+    "Prop3": 5
+  },
+  {
+    "Prop1": "Baz",
+    "Prop2": "Bar",
+    "Prop3": 2
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "FooBar",
+    "Prop3": 5
+  }
+]

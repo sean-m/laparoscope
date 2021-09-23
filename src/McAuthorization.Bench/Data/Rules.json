@@ -1,0 +1,44 @@
+[
+  /*
+  {
+    "Id": "",
+    "Context": "",
+    "Role": "",
+    "ClaimProperty": "",
+    "ClaimValue": "",
+    "ModelProperty": "",
+    "ModelValue": "",
+    "ModelValues": []
+  }
+  */
+  {
+    "Id": "4A6AE1E9-1A6E-40BC-87CA-E0320E189ED7",
+    "Context": "This",
+    "Role": "Guy",
+    "ClaimProperty": "",
+    "ClaimValue": "",
+    "ModelProperty": "Prop1",
+    "ModelValue": "Foo*",
+    "ModelValues": []
+  },
+  {
+    "Id": "4A6AE1E9-1A6E-40BC-87CB-E0320E179ED7",
+    "Context": "This",
+    "Role": "Guy",
+    "ClaimProperty": "",
+    "ClaimValue": "",
+    "ModelProperty": "Prop3",
+    "ModelValue": "2",
+    "ModelValues": []
+  },
+  {
+    "Id": "4A6AE1E9-1A6E-40BC-87CA-E0320E179ED7",
+    "Context": "This",
+    "Role": "Guy",
+    "ClaimProperty": "",
+    "ClaimValue": "",
+    "ModelProperty": "Prop2",
+    "ModelValue": "*Bar*",
+    "ModelValues": []
+  }
+]
