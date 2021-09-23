@@ -19,16 +19,22 @@ namespace SMM.Helper
         /// VisualBasic's string comparison with wildcard support.
         /// </summary>
         /// <param name="Base">The value to check.</param>
-        /// <param name="Pattern">The pattern compared to 'Base'. Supports wildcards
-        /// and other niceties. More info: https://docs.microsoft.com/en-us/office/vba/Language/Reference/User-Interface-Help/wildcard-characters-used-in-string-comparisons.
+        /// <param name="Pattern">The pattern compared to 'Base'. Supports simple wildcards: *, ?.
         /// </param>
         /// <returns></returns>
-        public static bool Like(this string Base, string Pattern)
+        public static bool Like(this string Base, string Pattern, bool CaseSensitive = false)
         {
             var pattern = WildCardToRegular(Pattern);
-            return Regex.IsMatch(Base, pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+            var options = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase;  // Case insensitive is the default.
+            if (CaseSensitive) { options = options ^ RegexOptions.IgnoreCase; }
+            return Regex.IsMatch(Base, pattern, options);
         }
 
+        /// <summary>
+        /// Decompose simple wildcard characters in to their regex equals.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private static String WildCardToRegular(String value)
         {
             return "^" + Regex.Escape(value).Replace("\\?", ".").Replace("\\*", ".*") + "$";
