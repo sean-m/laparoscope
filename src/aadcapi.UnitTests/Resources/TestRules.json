@@ -5,8 +5,8 @@
 		"Context": "Connector",
 		"ClaimProperty": "",
 		"ClaimValue": "",
-		"ModelProperty": "Name",
-		"ModelValue": "garage.mcardletech.com",
+		"ModelProperty": "Foo",
+		"ModelValue": "Bar",
 		"ModelValues": null
 	}
 ]
