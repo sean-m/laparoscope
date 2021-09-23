@@ -11,9 +11,11 @@ namespace McAuthorization
 
         private static Dictionary<Guid,RoleFilterModel> _models = new Dictionary<Guid, RoleFilterModel>();
         private static Dictionary<string, List<Guid>> _modelsByContext = new Dictionary<string, List<Guid>>();
+        private static HashSet<Guid> _modelsWithWildcardContext = new HashSet<Guid>();
         
         public static void RegisterRoleControllerModel(this RoleFilterModel Model)
         {
+            bool isWildcardContext = Model.Context.Equals("*");
             lock (_lock)
             {
                 if (_models.ContainsKey(Model.Id))
@@ -37,6 +39,15 @@ namespace McAuthorization
                     _models.Add(Model.Id, Model);
                 }
 
+                // Accomodate rules where the Context == "*". These rules should apply
+                // to any model authorization.
+                if (isWildcardContext && !_modelsWithWildcardContext.Contains(Model.Id))
+                {
+                    _modelsWithWildcardContext.Add(Model.Id);
+                }
+
+                // Append rule model to the list of models for the given context or make
+                // a new list.
                 if (!String.IsNullOrEmpty(Model.Context))
                 {
                     if (!_modelsByContext.ContainsKey(Model.Context))
@@ -49,6 +60,7 @@ namespace McAuthorization
                     var models = _modelsByContext[Model.Context].Distinct().ToList();
                     _modelsByContext[Model.Context] = models;
                 }
+
             }
         }
 
@@ -60,20 +72,34 @@ namespace McAuthorization
         }
 
         public static IEnumerable<RoleFilterModel> GetRoleControllerModelsByContext(string Name)
-        {
+        {   
             lock (_lock)
             {
                 List<Guid> ids;
                 if (_modelsByContext.TryGetValue(Name, out ids))
                 {
-                    return ids.Select(x => {
+                    var result = ids.Select(x => {
                         RoleFilterModel model;
                         if (_models.TryGetValue(x, out model))
                         {
                             return model;
                         }
                         return null;
-                    }).Where(x => x != null).ToArray();
+                    }).Where(x => x != null);
+                    
+                    // TODO make wildcard rules optional for evaluation. There are instances
+                    // where a blanket rule is inappropriate: security important configuration etc.
+                    var wildcards = _modelsWithWildcardContext.Select(x => {
+                        RoleFilterModel model;
+                        if (_models.TryGetValue(x, out model))
+                        {
+                            return model;
+                        }
+                        return null;
+                    }).Where(x => x != null);
+
+
+                    return result.Concat(wildcards).ToArray();
                 }
             }
 

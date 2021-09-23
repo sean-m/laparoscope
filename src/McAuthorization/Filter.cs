@@ -1,6 +1,7 @@
 ﻿using SMM.Helper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace McAuthorization
@@ -32,16 +33,21 @@ namespace McAuthorization
             return rules.Where(
                     rule => {
                         bool result = (bool)Roles?.Any(
-                            role => String.Equals(role, rule.Role, StringComparison.CurrentCultureIgnoreCase)); // short circuits when a matching rule is found.
-                                                                                                                // Returns false if no roles match those defined
-                                                                                                                // in rules for the specified context.
+                            role => {
+                                var match = role.Like(rule.Role) || rule.Role.Like(role);
+                                if (!match) { Trace.WriteLine($"Rule role: {rule.Role} doesn't match specified role: {role}"); }
+                                return match;
+                            }); // short circuits when a matching rule is found.
+                                // Returns false if no roles match those defined
+                                // in rules for the specified context.
                         if (!result)
                         {
+                            Trace.WriteLine($"Searching for rules for the given context: {Context} and roles: {String.Join(", ", Roles)} yields no results");
                             // TODO LOGME (Sean) $"Searching for rules for the given context: {Context} and roles: {String.Join(', ', Roles)} yields no results"
                         }
                         return result;
                     }).Any(rule => {
-                        var testValue = connType.GetProperty(rule.ModelProperty)?.GetValue(Model).ToString();
+                        var testValue = connType.GetProperties().FirstOrDefault(p => p.Name.Like(rule.ModelProperty))?.GetValue(Model).ToString();
                         // bail out if there's no property with that name on the value
                         if (testValue == null) return false;
 
