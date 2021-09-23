@@ -34,7 +34,7 @@ namespace aadcapi.UnitTests
         [Test]
         public void TestAnyMatchingRule()
         {
-            var match = Filter.IsAuthorized(result, "Connector", testRoles);
+            var match = result.Any(x => Filter.IsAuthorized(x, "Connector", testRoles));
             Assert.IsNotNull(match);
         }
 
