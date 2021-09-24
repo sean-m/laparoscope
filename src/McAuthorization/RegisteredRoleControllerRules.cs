@@ -71,7 +71,7 @@ namespace McAuthorization
             }
         }
 
-        public static IEnumerable<RoleFilterModel> GetRoleControllerModelsByContext(string Name)
+        public static IEnumerable<RoleFilterModel> GetRoleControllerModelsByContext(string Name, bool WildcardContextAllowed=true)
         {   
             lock (_lock)
             {
@@ -86,18 +86,23 @@ namespace McAuthorization
                         }
                         return null;
                     }).Where(x => x != null);
-                    
-                    // TODO make wildcard rules optional for evaluation. There are instances
-                    // where a blanket rule is inappropriate: security important configuration etc.
-                    var wildcards = _modelsWithWildcardContext.Select(x => {
-                        RoleFilterModel model;
-                        if (_models.TryGetValue(x, out model))
-                        {
-                            return model;
-                        }
-                        return null;
-                    }).Where(x => x != null);
 
+                    IEnumerable<RoleFilterModel> wildcards = new List<RoleFilterModel>();
+
+                    if (WildcardContextAllowed)
+                    { 
+                        // TODO TEST (Sean) Ensure wildcard records work as expected and don't include a null record in the resulting array.
+                        // There are instances where a blanket rule is inappropriate: security important configuration etc.
+                        // Those calls must explicitly disallow wildcard rules.
+                        wildcards = _modelsWithWildcardContext.Select(x => {
+                            RoleFilterModel model;
+                            if (_models.TryGetValue(x, out model))
+                            {
+                                return model;
+                            }
+                            return null;
+                        }).Where(x => x != null);
+                    }
 
                     return result.Concat(wildcards).ToArray();
                 }
