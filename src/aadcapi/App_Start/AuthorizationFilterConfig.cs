@@ -20,7 +20,6 @@ namespace aadcapi
     {
         private void ConfigureAuthorizationFilters(IAppBuilder app)
         {
-            // TODO load from Azure configuration.
             var adminRoleConnectorAuth = "{\"Role\":\"Admin\",\"Context\":\"*\",\"ClaimProperty\":\"\",\"ClaimValue\":\"\",\"ModelProperty\":\"*id*\",\"ModelValue\":\"*\",\"ModelValues\":[]}";
             RoleFilterModel deserialized = JsonConvert.DeserializeObject<RoleFilterModel>(adminRoleConnectorAuth);
 
