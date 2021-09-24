@@ -17,12 +17,15 @@
             <div class="navbar-collapse collapse" id="navBarContent">
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item">@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li class="nav-item">@Html.ActionLink("API Help", "Index", "Help", new { area = "" }, new { @class = "nav-link" })</li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li class="nav-item">@Html.ActionLink("API Help", "Index", "Help", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item">@Html.ActionLink("Admin", "Index", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
                     }
-                </ul>
+                    </ul>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
