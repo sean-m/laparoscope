@@ -11,9 +11,20 @@ namespace aadcapi.Controllers.Server
     [Authorize]
     public class MVObjectController : ApiController
     {
-        // TODO (Sean) Document
+        /// <summary>
+        /// Controller for the Get-ADSyncMVObject command. Records are only retrieved by ObjectID
+        /// which can only be discovered from an unbounded metaverse search (not allowed by this
+        /// api) or by cross walking from the connector space.
+        /// 
+        /// Note: if validating a merged
+        /// identity (one that exists in multiple source connector spaces), inspect the 'Lineage'
+        /// property for all connectors joined to the metaverse record.
+        /// </summary>
+        /// <param name="Id">Guid identifying a single metaverse record.</param>
+        /// <returns>
+        /// https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsyncmvobject
+        /// </returns>
         // GET api/<controller>
-        // Get-ADSyncMVObject
         public dynamic Get(string Id)
         {
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncMVObjectStrict);
