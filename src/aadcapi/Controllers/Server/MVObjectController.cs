@@ -31,6 +31,12 @@ namespace aadcapi.Controllers.Server
             runner.Parameters.Add("Identifier", Id);
             runner.Run();
 
+            if (runner.HadErrors)
+            {
+                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                return InternalServerError(err);
+            }
+
             var resultValues = runner.Results.ToDict();
 
             return Ok(resultValues);

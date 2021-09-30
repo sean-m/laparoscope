@@ -39,6 +39,12 @@ namespace aadcapi.Controllers.Server
             runner.Parameters.Add("DistinguishedName", DistinguishedName);
             runner.Run();
 
+            if (runner.HadErrors)
+            {
+                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                return InternalServerError(err);
+            }
+
             var resultValues = runner.Results.CapturePSResult<AadcCSObject>()
                 .Where(x => x is AadcCSObject)
                 .Select(x => x as AadcCSObject);
