@@ -1,6 +1,7 @@
 ﻿
 using SMM.Helper;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,7 +35,6 @@ namespace SMM.Automation
         /// <param name="ScriptSource"></param>
         public SimpleScriptRunner(string ScriptSource)
         {
-
             currentPowerShell = PowerShell.Create();
             _source = ScriptSource;
             Script = ScriptBlock.Create(ScriptSource);
@@ -60,6 +60,25 @@ namespace SMM.Automation
         public int ExitCode { get; private set; } = 0;
 
         public bool HadErrors => currentPowerShell?.HadErrors ?? false;
+
+        public Exception LastError  {
+            get {
+                var errors = currentPowerShell.Runspace.SessionStateProxy.GetVariable("Error");
+                if (errors is ArrayList a)
+                {
+                    foreach (var e in a)
+                    {
+                        if (e is ErrorRecord err)
+                        {
+                            return err.Exception;
+                        }
+                        break;
+                    }
+                }
+
+                return null;
+            }
+        }
 
         public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
 
