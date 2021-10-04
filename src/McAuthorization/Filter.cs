@@ -30,7 +30,7 @@ namespace McAuthorization
             var connType = typeof(T);
             if (connType == typeof(object)) connType = Model.GetType();
             
-            return rules.Where(
+            return (bool) rules.Where(
                     rule => {
                         bool result = (bool)Roles?.Any(
                             role => {
@@ -46,7 +46,7 @@ namespace McAuthorization
                             // TODO LOGME (Sean) $"Searching for rules for the given context: {Context} and roles: {String.Join(', ', Roles)} yields no results"
                         }
                         return result;
-                    }).Any(rule => {
+                    })?.Any(rule => {
                         var testValue = connType.GetProperties().FirstOrDefault(p => p.Name.Like(rule.ModelProperty))?.GetValue(Model).ToString();
                         // bail out if there's no property with that name on the value
                         if (testValue == null) return false;
