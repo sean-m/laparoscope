@@ -537,6 +537,7 @@
     <Compile Include="Controllers\Server\CSObjectController.cs" />
     <Compile Include="Controllers\Server\GlobalSettingsController.cs" />
     <Compile Include="Controllers\Server\MVObjectController.cs" />
+    <Compile Include="Controllers\Server\PartitionPasswordSyncStateController.cs" />
     <Compile Include="Controllers\Server\StartSyncController.cs" />
     <Compile Include="Controllers\Server\ConnectorController.cs" />
     <Compile Include="Controllers\Server\SchedulerController.cs" />
@@ -545,6 +546,7 @@
     </Compile>
     <Compile Include="Models\AadcConnector.cs" />
     <Compile Include="Models\AadcCSObject.cs" />
+    <Compile Include="Models\PasswordSyncState.cs" />
     <Compile Include="Utils\Authorization\ControllerAuthorizationExtensions.cs" />
     <Compile Include="Models\SyncResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

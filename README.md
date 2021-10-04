@@ -45,7 +45,7 @@
 - [ ] Get-ADSyncExportDeletionThreshold
 - [x] Get-ADSyncGlobalSettings
 - ~~Get-ADSyncGlobalSettingsParameter~~ Covered by Get-ADSyncGlobalSettings
-- [ ] Get-ADSyncPartitionPasswordSyncState
+- [x] Get-ADSyncPartitionPasswordSyncState
 - [ ] Get-ADSyncRule
 - [ ] Get-ADSyncRuleAudit
 - [ ] Get-ADSyncRunProfileResult
