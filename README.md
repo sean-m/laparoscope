@@ -43,8 +43,8 @@
 - [ ] Get-ADSyncDatabaseConfiguration
 - [ ] Get-ADSyncDomainReachabilityStatus
 - [ ] Get-ADSyncExportDeletionThreshold
-- [ ] Get-ADSyncGlobalSettings
-- [ ] Get-ADSyncGlobalSettingsParameter
+- [x] Get-ADSyncGlobalSettings
+- ~~Get-ADSyncGlobalSettingsParameter~~ Covered by Get-ADSyncGlobalSettings
 - [ ] Get-ADSyncPartitionPasswordSyncState
 - [ ] Get-ADSyncRule
 - [ ] Get-ADSyncRuleAudit

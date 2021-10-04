@@ -535,6 +535,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MeController.cs" />
     <Compile Include="Controllers\Server\CSObjectController.cs" />
+    <Compile Include="Controllers\Server\GlobalSettingsController.cs" />
     <Compile Include="Controllers\Server\MVObjectController.cs" />
     <Compile Include="Controllers\Server\StartSyncController.cs" />
     <Compile Include="Controllers\Server\ConnectorController.cs" />

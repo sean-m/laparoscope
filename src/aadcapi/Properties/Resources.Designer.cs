@@ -128,6 +128,26 @@ namespace aadcapi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $global_config = Get-ADSyncGlobalSettings
+        ///$parameters = @{}
+        ///$global_config.Parameters | foreach {
+        ///    $parameters.Add($_.Name, $_.Value)
+        ///}
+        ///
+        ///New-Object PSObject -Property @{
+        ///    Version = $global_config.Version
+        ///    InstanceId = $global_config.InstanceId
+        ///    SqlSchemaVersion = $global_config.SqlSchemaVersion
+        ///    Parameters = $parameters
+        ///}.
+        /// </summary>
+        internal static string Get_AdSyncGlobalSettingsStrict {
+            get {
+                return ResourceManager.GetString("Get-AdSyncGlobalSettingsStrict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to param (
         ///    [Parameter(Mandatory=$true)]
         ///    $Identifier
