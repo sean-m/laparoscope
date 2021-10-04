@@ -75,10 +75,30 @@ namespace McAuthorization
         {   
             lock (_lock)
             {
+                IEnumerable<RoleFilterModel> result = default(IEnumerable<RoleFilterModel>);
                 List<Guid> ids;
                 if (_modelsByContext.TryGetValue(Name, out ids))
                 {
-                    var result = ids.Select(x => {
+                    result = ids.Select(x => {
+                        RoleFilterModel model = default(RoleFilterModel);
+                        if (_models.TryGetValue(x, out model))
+                        {
+                            return model;
+                        }
+                        return model;
+                    })?.Where(x => x != null);
+
+
+                }
+
+                IEnumerable<RoleFilterModel> wildcards = new List<RoleFilterModel>();
+
+                if (WildcardContextAllowed)
+                {
+                    // TODO TEST (Sean) Ensure wildcard records work as expected and don't include a null record in the resulting array.
+                    // There are instances where a blanket rule is inappropriate: security important configuration etc.
+                    // Those calls must explicitly disallow wildcard rules.
+                    wildcards = _modelsWithWildcardContext.Select(x => {
                         RoleFilterModel model;
                         if (_models.TryGetValue(x, out model))
                         {
@@ -86,25 +106,15 @@ namespace McAuthorization
                         }
                         return null;
                     }).Where(x => x != null);
+                }
 
-                    IEnumerable<RoleFilterModel> wildcards = new List<RoleFilterModel>();
-
-                    if (WildcardContextAllowed)
-                    { 
-                        // TODO TEST (Sean) Ensure wildcard records work as expected and don't include a null record in the resulting array.
-                        // There are instances where a blanket rule is inappropriate: security important configuration etc.
-                        // Those calls must explicitly disallow wildcard rules.
-                        wildcards = _modelsWithWildcardContext.Select(x => {
-                            RoleFilterModel model;
-                            if (_models.TryGetValue(x, out model))
-                            {
-                                return model;
-                            }
-                            return null;
-                        }).Where(x => x != null);
-                    }
-
+                if (result != default(IEnumerable<RoleFilterModel>))
+                {
                     return result.Concat(wildcards).ToArray();
+                }
+                else
+                {
+                    return wildcards.ToArray();
                 }
             }
 
