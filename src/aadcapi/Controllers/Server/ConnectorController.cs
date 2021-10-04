@@ -40,7 +40,7 @@ namespace aadcapi.Controllers.Server
             var resultValues = runner.Results.CapturePSResult<AadcConnector>()
                 .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as AadcConnector.
                 .Select(x => x as AadcConnector);   // Take as AadcConnector so typed call to WhereAuthorized avoids GetType() call.
-                                                    // TODO PERF (Sean) profile this.
+
             resultValues = this.WhereAuthorized<AadcConnector>(resultValues);
             
             if (resultValues != null)
