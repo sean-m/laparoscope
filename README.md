@@ -9,7 +9,7 @@
 - [ ] MVC views for some of the object search functionality, a UI aids in troubleshooting sync errors.
 - [x] Admin view for managing roles.
 - [x] Admin API for configuration change at runtime.
-- [ ] Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.
+- [ ] ~~Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.~~ Azure APIM can do this and suites my use case. Leaving this out but may revisit later.
 - [ ] Embed scripts with Fody.
 
 ### Priority Commands
