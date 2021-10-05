@@ -534,6 +534,8 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MeController.cs" />
+    <Compile Include="Controllers\Server\AADCompanyFeature.cs" />
+    <Compile Include="Controllers\Server\AADPasswordSyncController.cs" />
     <Compile Include="Controllers\Server\CSObjectController.cs" />
     <Compile Include="Controllers\Server\GlobalSettingsController.cs" />
     <Compile Include="Controllers\Server\MVObjectController.cs" />

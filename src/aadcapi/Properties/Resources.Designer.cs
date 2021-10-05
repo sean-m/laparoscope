@@ -61,6 +61,17 @@ namespace aadcapi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to param($SourceConnector)
+        ///
+        ///Get-ADSyncAADPasswordSyncConfiguration -SourceConnector $SourceConnector.
+        /// </summary>
+        internal static string Get_ADSyncAADPasswordSyncConfiguration {
+            get {
+                return ResourceManager.GetString("Get-ADSyncAADPasswordSyncConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to param ($Name)
         ///
         ///Import-Module ADSync;

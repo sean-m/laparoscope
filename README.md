@@ -16,7 +16,7 @@
 - [x] Get-ADSyncScheduler
 - [x] Start-ADSyncSyncCycle 
 - [ ] Get-ADSyncAADPasswordResetConfiguration *
-- [ ] Get-ADSyncAADPasswordSyncConfiguration *
+- [x] Get-ADSyncAADPasswordSyncConfiguration *
 - [x] Get-ADSyncCSObject *
 - [x] Get-ADSyncMVObject *
 - [x] Get-ADSyncConnector *
@@ -24,7 +24,7 @@
 \* Rate limit, should not invoke if syncing or last sync cycle was < 10 minutes ago.
 
 ### Other ADSync Commands (might not do all of them).
-- [ ] Get-ADSyncAADCompanyFeature
+- [x] Get-ADSyncAADCompanyFeature
 - [ ] Get-ADSyncADConnectorSchemaDsml
 - [ ] Get-ADSyncAutoUpgrade
 - [ ] Get-ADSyncConnectorHierarchyProvisioningDNComponent
