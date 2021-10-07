@@ -138,6 +138,14 @@ namespace SMM.Automation
                     }
                 }
 
+                if (this.proxyVariables.Count != 0)
+                {
+                    foreach (var v in proxyVariables)
+                    {
+                        currentPowerShell.Runspace.SessionStateProxy.SetVariable(v.Item1, v.Item2);
+                    }
+                }
+
                 // Add the default outputter to the end of the pipe and then
                 // call the MergeMyResults method to merge the output and
                 // error streams from the pipeline. This will result in the
