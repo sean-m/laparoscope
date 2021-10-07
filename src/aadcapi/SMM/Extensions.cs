@@ -99,6 +99,12 @@ namespace SMM.Helper
             bool captureSuccess = true;
 
             try {
+                if (typeof(T) == typeof(bool))
+                {
+                    result = Convert.ToBoolean(input.BaseObject);
+                    return result;
+                }
+
                 result = Activator.CreateInstance(asType);
                 var hintType = asType.GetTypeInfo();
                 var props = hintType.DeclaredProperties;
