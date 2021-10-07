@@ -1,0 +1,12 @@
+﻿param ($FromOutside)
+
+function TestingParameterValidation {
+    param ( 
+        [ValidateScript({$_ -in $validationList})]
+        $TestInput
+    )
+
+    $TestInput
+}
+
+TestingParameterValidation -TestInput $FromOutside

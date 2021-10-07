@@ -61,7 +61,34 @@ namespace aadcapi.UnitTests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {&quot;Id&quot;:&quot;424e5cfd-5139-417c-9300-79aa0fabc3c1&quot;,&quot;Role&quot;:&quot;Admin:Garage&quot;,&quot;Context&quot;:&quot;Connector&quot;,&quot;ClaimProperty&quot;:&quot;&quot;,&quot;ClaimValue&quot;:&quot;&quot;,&quot;ModelProperty&quot;:&quot;Name&quot;,&quot;ModelValue&quot;:&quot;garage.mcardletech.com&quot;,&quot;ModelValues&quot;:null}.
+        ///   Looks up a localized string similar to function TestingParameterValidation {
+        ///    param ( 
+        ///        [ValidateScript({$_ -in $validationList})]
+        ///        $TestInput
+        ///    )
+        ///
+        ///    $TestInput
+        ///}.
+        /// </summary>
+        internal static string PoshValidateParameterScript {
+            get {
+                return ResourceManager.GetString("PoshValidateParameterScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [
+        ///	{
+        ///		&quot;Id&quot;: &quot;424e5cfd-5139-417c-9300-79aa0fabc3c1&quot;,
+        ///		&quot;Role&quot;: &quot;Admin:Garage&quot;,
+        ///		&quot;Context&quot;: &quot;Connector&quot;,
+        ///		&quot;ClaimProperty&quot;: &quot;&quot;,
+        ///		&quot;ClaimValue&quot;: &quot;&quot;,
+        ///		&quot;ModelProperty&quot;: &quot;Foo&quot;,
+        ///		&quot;ModelValue&quot;: &quot;Bar&quot;,
+        ///		&quot;ModelValues&quot;: null
+        ///	}
+        ///].
         /// </summary>
         internal static string TestRules {
             get {
