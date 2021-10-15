@@ -22,7 +22,7 @@ namespace SMM.Automation
 
         private object instanceLock = new object();
         private PowerShell currentPowerShell;
-        private List<(string, object)> proxyVariables = new List<(string, object)>();
+        private List<ProxyVar> proxyVariables = new List<ProxyVar>();
         internal string _source;
 
         #endregion  // fields
@@ -119,7 +119,13 @@ namespace SMM.Automation
 
         public void SetProxyVariable(string VariableName, object Value)
         {
-            proxyVariables.Add((VariableName, Value));
+            proxyVariables.Add(new ProxyVar { Name = VariableName, Value = Value });
+        }
+
+        public object GetProxyVariable(string VariableName)
+        {
+            var ret = proxyVariables.FirstOrDefault(x => x.Name.Equals(VariableName))?.Value;
+            return ret;
         }
 
         public void Run(object Input = null)
@@ -138,11 +144,14 @@ namespace SMM.Automation
                     }
                 }
 
+                // If proxyVariables have been populated, pass them through to the
+                // runspace. Can be used to variables that are expected to be in 
+                // an environment but not explicitly set by a script.
                 if (this.proxyVariables.Count != 0)
                 {
                     foreach (var v in proxyVariables)
                     {
-                        currentPowerShell.Runspace.SessionStateProxy.SetVariable(v.Item1, v.Item2);
+                        currentPowerShell.Runspace.SessionStateProxy.SetVariable(v.Name, v.Value);
                     }
                 }
 
@@ -153,12 +162,8 @@ namespace SMM.Automation
                 // classes instead of returning objects to the host application.
                 currentPowerShell.Commands.Commands[0].MergeMyResults(PipelineResultTypes.All, PipelineResultTypes.Output);
 
-
                 // If there is any input pass it in, otherwise just invoke
                 // the pipeline.
-                // If there is any input pass it in, otherwise just invoke
-                // the pipeline.
-
                 if (Input != null)
                 {
                     Results = new PSDataCollection<PSObject>(currentPowerShell.Invoke(new object[] { Input }));
@@ -186,6 +191,11 @@ namespace SMM.Automation
             }
         }
 
+        private class ProxyVar
+        {
+            public string Name { get; set; }
+            public object Value { get; set; }
+        }
 
         //public void RunAs(ImpersonatedUser user, object Input = null)
         //{
