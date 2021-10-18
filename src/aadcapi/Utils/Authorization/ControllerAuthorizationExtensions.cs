@@ -75,5 +75,43 @@ namespace aadcapi.Utils.Authorization
 
             return Filter.IsAuthorized<T>(Model, context, roles);
         }
+
+        /// <summary>
+        /// Given a controller, filter a collection of objects that the principal can access in that context.
+        /// Simply a helper function so filtering a collection from within a controller can be simplified.
+        /// </summary>
+        /// <param name="Controller"></param>
+        /// <param name="Collection"></param>
+        /// <returns></returns>
+        public static IEnumerable<Dictionary<string, object>> WhereAuthorized(this ApiController Controller, IEnumerable<Dictionary<string, object>> Collection)
+        {
+            var context = Controller.ControllerName();
+            var roles = ((ClaimsPrincipal)Controller?.RequestContext?.Principal)?.RoleClaims();
+            if (roles != null)
+            {
+                // TODO LOGME (Sean) log null role set
+            }
+
+            return Collection.Where(x => Filter.IsAuthorized(x, context, roles));
+        }
+
+        /// <summary>
+        /// IsAuthorized extension method for evaluating rules against a single object
+        /// from within a controller method.
+        /// </summary>
+        /// <param name="Controller"></param>
+        /// <param name="Model"></param>
+        /// <returns></returns>
+        public static bool IsAuthorized(this ApiController Controller, Dictionary<string, object> Model)
+        {
+            var context = Controller.ControllerName();
+            var roles = ((ClaimsPrincipal)Controller?.RequestContext?.Principal)?.RoleClaims();
+            if (roles != null)
+            {
+                // TODO LOGME (Sean) log null role set
+            }
+
+            return Filter.IsAuthorized(Model, context, roles);
+        }
     }
 }
