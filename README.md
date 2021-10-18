@@ -26,7 +26,7 @@
 ### Other ADSync Commands (might not do all of them).
 - [x] Get-ADSyncAADCompanyFeature
 - [ ] Get-ADSyncADConnectorSchemaDsml
-- [ ] Get-ADSyncAutoUpgrade
+- [x] Get-ADSyncAutoUpgrade
 - [ ] Get-ADSyncConnectorHierarchyProvisioningDNComponent
 - [ ] Get-ADSyncConnectorHierarchyProvisioningMapping
 - [ ] Get-ADSyncConnectorHierarchyProvisioningObjectClass
@@ -34,7 +34,7 @@
 - [ ] Get-ADSyncConnectorPartition
 - [ ] Get-ADSyncConnectorPartitionHierarchy
 - [ ] Get-ADSyncConnectorRunStatus
-- [ ] Get-ADSyncConnectorStatistics
+- [x] Get-ADSyncConnectorStatistics
 - [ ] Get-ADSyncConnectorTypes
 - [ ] Get-ADSyncCSGroupStatistics
 - [ ] Get-ADSyncCSGroupSummary
@@ -42,7 +42,7 @@
 - [ ] Get-ADSyncCSObjectReferences
 - [ ] Get-ADSyncDatabaseConfiguration
 - [x] Get-ADSyncDomainReachabilityStatus
-- [ ] Get-ADSyncExportDeletionThreshold
+- [x] Get-ADSyncExportDeletionThreshold
 - [x] Get-ADSyncGlobalSettings
 - ~~Get-ADSyncGlobalSettingsParameter~~ Covered by Get-ADSyncGlobalSettings
 - [x] Get-ADSyncPartitionPasswordSyncState

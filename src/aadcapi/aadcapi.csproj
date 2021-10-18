@@ -538,6 +538,7 @@
     <Compile Include="Controllers\Server\AADPasswordResetConfigurationController.cs" />
     <Compile Include="Controllers\Server\AADPasswordSyncController.cs" />
     <Compile Include="Controllers\Server\AutoUpgradeController.cs" />
+    <Compile Include="Controllers\Server\ConnectorStatisticsController.cs" />
     <Compile Include="Controllers\Server\CSObjectController.cs" />
     <Compile Include="Controllers\Server\DomainReachabilityStatusController.cs" />
     <Compile Include="Controllers\Server\ExportDeletionThresholdController.cs" />
