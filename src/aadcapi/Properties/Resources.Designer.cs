@@ -61,6 +61,21 @@ namespace aadcapi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $connector = @(Get-ADSyncConnector | ? Type -like &quot;Extensible2&quot; | ? Subtype -like &quot;Windows Azure Active Directory*&quot;)
+        ///
+        ///if ($connector.Count -gt 1) {
+        ///    throw &quot;Unsupported AADC configuration. More than one AAD connector is not supported.&quot;
+        ///}
+        ///
+        ///Get-ADSyncAADPasswordResetConfiguration -Connector ($connector.Name).
+        /// </summary>
+        internal static string Get_ADSyncAADPasswordResetConfiguration {
+            get {
+                return ResourceManager.GetString("Get-ADSyncAADPasswordResetConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to param($SourceConnector)
         ///
         ///Get-ADSyncAADPasswordSyncConfiguration -SourceConnector $SourceConnector.

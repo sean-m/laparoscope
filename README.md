@@ -15,7 +15,7 @@
 ### Priority Commands
 - [x] Get-ADSyncScheduler
 - [x] Start-ADSyncSyncCycle 
-- [ ] Get-ADSyncAADPasswordResetConfiguration *
+- [x] Get-ADSyncAADPasswordResetConfiguration *
 - [x] Get-ADSyncAADPasswordSyncConfiguration *
 - [x] Get-ADSyncCSObject *
 - [x] Get-ADSyncMVObject *
