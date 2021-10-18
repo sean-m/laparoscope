@@ -540,6 +540,7 @@
     <Compile Include="Controllers\Server\AutoUpgradeController.cs" />
     <Compile Include="Controllers\Server\CSObjectController.cs" />
     <Compile Include="Controllers\Server\DomainReachabilityStatusController.cs" />
+    <Compile Include="Controllers\Server\ExportDeletionThresholdController.cs" />
     <Compile Include="Controllers\Server\GlobalSettingsController.cs" />
     <Compile Include="Controllers\Server\MVObjectController.cs" />
     <Compile Include="Controllers\Server\PartitionPasswordSyncStateController.cs" />
