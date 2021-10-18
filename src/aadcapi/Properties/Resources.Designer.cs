@@ -87,6 +87,22 @@ namespace aadcapi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $state  = Get-ADSyncAutoUpgrade -Detail
+        ///$props  = $state | GM | ? MemberType -like &quot;Property&quot;
+        ///$result = New-Object PSObject
+        ///$props | foreach {
+        ///    $val = $state.($_.Name)
+        ///    $result | Add-Member -MemberType NoteProperty -Name ($_.Name) -Value ([string]$val)
+        ///}
+        ///$result.
+        /// </summary>
+        internal static string Get_ADSyncAutoUpgrade {
+            get {
+                return ResourceManager.GetString("Get-ADSyncAutoUpgrade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to param ($Name)
         ///
         ///Import-Module ADSync;

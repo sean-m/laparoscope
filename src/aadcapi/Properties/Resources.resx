@@ -131,6 +131,16 @@ Get-ADSyncAADPasswordResetConfiguration -Connector ($connector.Name)</value>
 
 Get-ADSyncAADPasswordSyncConfiguration -SourceConnector $SourceConnector</value>
   </data>
+  <data name="Get-ADSyncAutoUpgrade" xml:space="preserve">
+    <value>$state  = Get-ADSyncAutoUpgrade -Detail
+$props  = $state | GM | ? MemberType -like "Property"
+$result = New-Object PSObject
+$props | foreach {
+    $val = $state.($_.Name)
+    $result | Add-Member -MemberType NoteProperty -Name ($_.Name) -Value ([string]$val)
+}
+$result</value>
+  </data>
   <data name="Get-ADSyncConnectorsBasic" xml:space="preserve">
     <value>param ($Name)
 
