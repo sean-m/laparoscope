@@ -21,7 +21,6 @@ namespace aadcapi.Controllers.Server
         /// connectivity related no-start-ma sync status messages.
         /// </summary>
         /// <param name="Name"></param>
-        /// <returns></returns>
         public dynamic Get(string Name)
         {
             // Run PowerShell command to get AADC connector configurations
