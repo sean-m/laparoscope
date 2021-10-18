@@ -170,6 +170,17 @@ namespace aadcapi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to param ($ConnectorName)
+        ///
+        ///Get-ADSyncDomainReachabilityStatus -ConnectorName $ConnectorName.
+        /// </summary>
+        internal static string Get_ADSyncDomainReachabilityStatus {
+            get {
+                return ResourceManager.GetString("Get-ADSyncDomainReachabilityStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to $global_config = Get-ADSyncGlobalSettings
         ///$parameters = @{}
         ///$global_config.Parameters | foreach {

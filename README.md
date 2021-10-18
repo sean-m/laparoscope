@@ -41,7 +41,7 @@
 - [ ] Get-ADSyncCSObjectLog
 - [ ] Get-ADSyncCSObjectReferences
 - [ ] Get-ADSyncDatabaseConfiguration
-- [ ] Get-ADSyncDomainReachabilityStatus
+- [x] Get-ADSyncDomainReachabilityStatus
 - [ ] Get-ADSyncExportDeletionThreshold
 - [x] Get-ADSyncGlobalSettings
 - ~~Get-ADSyncGlobalSettingsParameter~~ Covered by Get-ADSyncGlobalSettings

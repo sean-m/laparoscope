@@ -539,6 +539,7 @@
     <Compile Include="Controllers\Server\AADPasswordSyncController.cs" />
     <Compile Include="Controllers\Server\AutoUpgradeController.cs" />
     <Compile Include="Controllers\Server\CSObjectController.cs" />
+    <Compile Include="Controllers\Server\DomainReachabilityStatusController.cs" />
     <Compile Include="Controllers\Server\GlobalSettingsController.cs" />
     <Compile Include="Controllers\Server\MVObjectController.cs" />
     <Compile Include="Controllers\Server\PartitionPasswordSyncStateController.cs" />
@@ -550,6 +551,7 @@
     </Compile>
     <Compile Include="Models\AadcConnector.cs" />
     <Compile Include="Models\AadcCSObject.cs" />
+    <Compile Include="Models\DomainReachabilityStatus.cs" />
     <Compile Include="Models\PasswordSyncState.cs" />
     <Compile Include="Utils\Authorization\ControllerAuthorizationExtensions.cs" />
     <Compile Include="Models\SyncResult.cs" />

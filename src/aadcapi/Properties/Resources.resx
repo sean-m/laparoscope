@@ -225,6 +225,11 @@ $attributes = @(
 
 Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName | select $attributes</value>
   </data>
+  <data name="Get-ADSyncDomainReachabilityStatus" xml:space="preserve">
+    <value>param ($ConnectorName)
+
+Get-ADSyncDomainReachabilityStatus -ConnectorName $ConnectorName</value>
+  </data>
   <data name="Get-AdSyncGlobalSettingsStrict" xml:space="preserve">
     <value>$global_config = Get-ADSyncGlobalSettings
 $parameters = @{}
