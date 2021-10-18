@@ -40,5 +40,15 @@
     "ModelProperty": "Prop2",
     "ModelValue": "*Bar*",
     "ModelValues": []
+  },
+  {
+    "Id": "4A6AE1E9-1A6E-40BC-87CA-E0320E179ED8",
+    "Context": "That",
+    "Role": "Alice",
+    "ClaimProperty": "",
+    "ClaimValue": "",
+    "ModelProperty": "*Name",
+    "ModelValue": "*Bar*",
+    "ModelValues": []
   }
 ]

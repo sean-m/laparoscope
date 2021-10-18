@@ -1,13 +1,36 @@
-﻿using SMM.Helper;
+﻿using F23.StringSimilarity;
+using SMM.Helper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace McAuthorization
 {
     public static class Filter
     {
+
+        private static readonly Regex HasWildcard = new Regex(@"(\?\*){1}", RegexOptions.Compiled);
+
+        private static readonly JaroWinkler jw = new JaroWinkler();
+        private static string Closest(this IEnumerable<string> Collection, string Target)
+        {
+            return Collection.Select(x => new { Input = x, Distance = jw.Distance(x, Target) })
+                .OrderByDescending(y => y.Distance)
+                .Select(x => x.Input)
+                .FirstOrDefault();
+        }
+
+        private static PropertyInfo Closest(this IEnumerable<PropertyInfo> Collection, string Target)
+        {
+            return Collection.Select(x => new { Input = x, Distance = jw.Distance(x.Name, Target) })
+                .OrderByDescending(y => y.Distance)
+                .Select(x => x.Input)
+                .FirstOrDefault();
+        }
+
         /// <summary>
         /// For a given Context, an list of Roles, retrieve any matching rules and evaluate them
         /// against the Model. For AADC controllers it would be obvious
@@ -47,7 +70,17 @@ namespace McAuthorization
                         }
                         return result;
                     })?.Any(rule => {
-                        var testValue = connType.GetProperties().FirstOrDefault(p => p.Name.Like(rule.ModelProperty))?.GetValue(Model).ToString();
+
+                        // If the model property contains wildcard values an JaroWinkler function
+                        // is employed to chose the property name that is the closest match
+                        // to the wildcard. Without that, property selection depends on the order
+                        // they're produced through reflection.
+                        var testValue = HasWildcard.IsMatch(rule.ModelProperty)
+                            ? connType.GetProperties().Where(p => p.Name.Like(rule.ModelProperty))
+                                ?.Closest(rule.ModelProperty)?.GetValue(Model).ToString()
+                            : connType.GetProperties().FirstOrDefault(p => p.Name.Like(rule.ModelProperty))
+                                ?.GetValue(Model).ToString();
+
                         // bail out if there's no property with that name on the value
                         if (testValue == null) return false;
 
@@ -117,6 +150,9 @@ namespace McAuthorization
                         return result;
                     })?.Any(rule => {
                         object testValue = default(object);
+
+                        var testKeys = Model.Keys.Where(x => x.Like(rule.ModelProperty)).Closest(rule.ClaimProperty); 
+                        
                         var gotValue = Model.TryGetValue(rule.ModelProperty, out testValue);
 
                         // bail out if there's no value with that key

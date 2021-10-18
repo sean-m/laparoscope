@@ -42,12 +42,40 @@ namespace McAuthorization.Bench
             }
             stopwatch.Stop();
 
+            // Load Test Models as Dictionary<string, object>
+            var models2 = new List<Dictionary<string, object>>();
+            using (var modelFile = System.IO.File.OpenText("./Data/Models.json"))
+            {
+                var text = modelFile.ReadToEnd();
+                models2 = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(text);
+            }
+
+            var stopwatch2 = new Stopwatch();
+            var roles2 = new string[] { "Guy" };
+            int count2 = 0;
+            stopwatch2.Start();
+            for (var i = 0; i < cycles; i++)
+            {
+                var matches2 = models2.Any(x => Filter.IsAuthorized(x, "This", roles2));
+                if (matches2) count2++;
+            }
+            stopwatch2.Stop();
+
+            Console.WriteLine("Matching POCO data objects.");
             Console.WriteLine($"Rules loaded: {rules.Count}");
             Console.WriteLine($"Models loaded: {models.Count}");
             Console.WriteLine($"Cyles: {(float)cycles / 1000.0} k");
             Console.WriteLine($"Elapsed miliseconds: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Elapsed seconds: {stopwatch.ElapsedMilliseconds / 1000.0}");
             Console.WriteLine($"Match count: {count}");
+            Console.WriteLine();
+            Console.WriteLine("Matching Dictionary data objects.");
+            Console.WriteLine($"Rules loaded: {rules.Count}");
+            Console.WriteLine($"Models loaded: {models2.Count}");
+            Console.WriteLine($"Cyles: {(float)cycles / 1000.0} k");
+            Console.WriteLine($"Elapsed miliseconds: {stopwatch2.ElapsedMilliseconds}");
+            Console.WriteLine($"Elapsed seconds: {stopwatch2.ElapsedMilliseconds / 1000.0}");
+            Console.WriteLine($"Match count: {count2}");
         }
     }
 
@@ -56,5 +84,8 @@ namespace McAuthorization.Bench
         public string Prop1 { get; set; }
         public string Prop2 { get; set; }
         public dynamic Prop3 { get; set; }
+        public string Name { get; set; }
+        public string ConnetorName { get; set; }
+        public string ConnetorTypeName { get; set; }
     }
 }

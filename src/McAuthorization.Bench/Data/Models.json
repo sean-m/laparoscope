@@ -108,5 +108,21 @@
     "Prop1": "Foo",
     "Prop2": "FooBar",
     "Prop3": 5
+  },
+  {
+    "Prop1": "Foo",
+    "Prop2": "FooBar",
+    "Prop3": 5
+  },
+  {
+    "ConnectorName": "Foo",
+    "ConnectorTypeName": "FooBar",
+    "Prop3": 5
+  },
+  {
+    "Name": "FooBarBaz",
+    "ConnectorName": "Foo",
+    "ConnectorTypeName": "FooBar",
+    "Prop3": 5
   }
 ]
