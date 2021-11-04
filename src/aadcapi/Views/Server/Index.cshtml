@@ -1,0 +1,132 @@
+﻿@Scripts.Render("~/Scripts/VueComponents.js")
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--
+    Show sync status
+    Show connectors you can see
+        Refresh
+        Show last password hash sync time
+        Show last time your connector was syncd
+        Enter DN, get MV info on user
+    Start sync button
+-->
+
+<div id="server">
+
+
+
+    <div id="syncScheduler">
+        <div class="container border">
+            <h3>Sync Scheduler</h3>
+            <table class="table table-responsive-sm">
+                <thead>
+                    <tr><td></td><td></td></tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(value, key, i) in scheduler"> <td>{{ key }}</td><td>{{ value }}</td></tr>
+                </tbody>
+            </table>
+            <button id="syncBtn" type="button" class="btn btn-secondary" v-on:click="startSync" style="margin-bottom:12px;">Start Sync</button>
+            <div style="float:right">{{schedMsg}}</div>
+        </div>
+    </div>
+
+    <div v-for="(c) in connectors">
+        <server-connector v-bind:connector="c"></server-connector>
+    </div>
+
+    <hr />
+    <!--Global status messages show at bottom of page-->
+    <div>{{statusMsg ? new Date().toLocaleTimeString() + " : " + statusMsg : ''}}</div>
+</div>
+
+<script type="text/x-template" id="server-connector-template">
+    <div>
+        <h3>{{connector.Name}}</h3>
+        <table class="table table-responsive-sm">
+            <thead>
+                <tr><td></td><td></td></tr>
+            </thead>
+            <tbody>
+                <tr v-for="(value, key, i) in connector"> <td>{{ key }}</td><td>{{ value }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+
+<script type="text/javascript">
+    setTimeout(() => {
+        var footerLine = document.getElementById("footerLine");
+        if (footerLine) { footerLine.remove(); }
+    }, 250);
+
+    // -----------------  Connector Component ------------------ //
+    Vue.component('server-connector', {
+        template: '#server-connector-template',
+        props: ['connector'],
+        data() {
+            return {
+                message: "Foo bar baz"
+            }
+        }
+    });
+
+    Vue.component('connector', {
+        template: ''
+    });
+
+    // -----------------  Main Vue App ------------------ //
+    const apiScheduler = "/api/Scheduler/";
+    const apiStartSync = "/api/StartSync/";
+    const apiConnector = "/api/Connector/"
+
+    var server = new Vue({
+        el: '#server',
+        data: {
+            something: "Here's it's still a thing",
+            scheduler: {},
+            schedMsg: "",
+            statusMsg: "",
+            connectors: {}
+        },
+        mounted: function () {
+            this.fetchScheduler();
+            this.fetchConnectors();
+        },
+        methods: {
+            fetchScheduler() {
+                var schedulerLoaded = false;
+
+                $.getJSON(apiScheduler, json => {
+                    this.scheduler = json;
+                });
+            },
+            fetchConnectors() {
+                $.getJSON(apiConnector, json => {
+                    this.connectors = json;
+                });
+            },
+            startSync() {
+                this.schedMsg = '';
+
+                $.post(apiStartSync).then(response => {
+                    var btn = document.getElementById("syncBtn");
+                    var btnClass = response.Started ? 'btn-success' : 'btn-warning';
+                    btn.classList.remove('btn-secondary');
+                    if (response.Started) {
+                        btn.classList.remove('btn-warning');
+                    } else {
+                        btn.classList.remove('btn-success');
+                    }
+                    btn.classList.add(btnClass);
+
+                    this.schedMsg = response.Result;
+                })
+            }
+        }
+    });
+
+</script>
