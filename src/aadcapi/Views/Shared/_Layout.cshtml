@@ -24,6 +24,7 @@
                     @if (Request.IsAuthenticated)
                     {
                         <li class="nav-item">@Html.ActionLink("API Help", "Index", "Help", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Server", "Index", "Server", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                     @if (User.IsInRole("Admin"))
                     {
