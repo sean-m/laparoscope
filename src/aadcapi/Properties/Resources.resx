@@ -284,7 +284,7 @@ if (($schedule.SyncCycleEnabled) -and (-not $schedule.SyncCycleInProgress) -and 
         $result = Start-ADSyncSyncCycle -PolicyType Delta | select -ExpandProperty Result
         
         if ($result -like "Success") {
-            $return.Result = "Delta sync started."
+            $return.Result = "Delta sync started at $(Get-Date)."
             $return.Started = $true
         }
         else {
