@@ -1,0 +1,57 @@
+﻿
+<script type="text/x-template" id="server-connector-template">
+    <div>
+        <h3>{{connector.Name}}</h3>
+        <table class="table table-responsive-sm">
+            <thead>
+                <tr><td></td><td></td></tr>
+            </thead>
+            <tbody>
+                <tr v-for="(value, key, i) in connector"> <td>{{ key }}</td><td>{{ value }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/javascript">
+    // -----------------  Connector Component ------------------ //
+    Vue.component('server-connector', {
+        template: '#server-connector-template',
+        props: ['connector'],
+        data() {
+            return {
+            }
+        }
+    });
+</script>
+
+<script type="text/x-template" id="object-table-template">
+    <div>
+        <table class="table table-responsive-sm">
+            <thead>
+                <tr><td><strong>{{ title }}</strong></td><td></td></tr>
+            </thead>
+            <tbody>
+                <tr v-for="(value, key, i) in record"> <td>{{ key }}</td><td>{{ value }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+
+<script type="text/javascript">
+    Vue.component('connector', {
+        template: ''
+    });
+
+    // ------------- Object Table Component ------------- //
+    Vue.component('object-table', {
+        template: '#object-table-template',
+        props: ['record', 'title'],
+        data() {
+            return {
+
+            }
+        }
+    });
+</script>

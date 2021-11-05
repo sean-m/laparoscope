@@ -12,132 +12,73 @@
         - [ ] Enter DN, get MV info on user
     - [x] Start sync button
 -->
-
-<div id="server" class="row" style="padding-top:0.5em">
-    <div class="col-3">
-        <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
-            <!-- Sync Scheduler Nav Tab -->
-            <li class="nav-item">
-                <a class="nav-link active" id="sched-tab" data-toggle="tab" href="#syncScheduler" role="tab" aria-orientation="vertical" aria-controls="Sync Scheduler" aria-selected="true">Sync Scheduler</a>
-            </li>
-
-            <!-- Hash Sync Nav Tab -->
-            <li class="nav-item">
-                <a v-bind:class="'nav-link' + (hashSyncEnabled ? '' : ' disabled')" id="hashSync-tab" data-toggle="tab" href="#hashSync" role="tab" aria-orientation="vertical" aria-controls="Password Hash Sync" aria-selected="true">Password Hash Sync</a>
-            </li>
-
-            <!-- Sync Connector Nav Tabs -->
-            <li class="nav-item" v-for="(c) in connectors">
-                <a class="nav-link" v-bind:id="'tab-' + c.Identifier" data-toggle="tab" v-bind:href="'#conn-' + c.Identifier" role="tab" v-bind:aria-controls="c.Name" aria-selected="false">{{c.Name}}</a>
-            </li>
-        </ul>
+<div id="server" class="row container fluid d-flex flex-column">
+    <div class="row progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+             v-bind:aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" v-bind:style="{width: progLoad + '%'}"></div>
     </div>
 
-    <div class="col-9">
-        <div class="tab-content" id="myTabContent">
+    <div class="row" style="padding-top:0.5em">
+        <div class="col-3">
+            <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
+                <!-- Sync Scheduler Nav Tab -->
+                <li class="nav-item">
+                    <a class="nav-link active" id="sched-tab" data-toggle="tab" href="#syncScheduler" role="tab" aria-orientation="vertical" aria-controls="Sync Scheduler" aria-selected="true">Sync Scheduler</a>
+                </li>
 
-            <!-- Sync Scheduler Tab -->
-            <div class="tab-pane fade show active" id="syncScheduler" role="tabpanel" aria-labelledby="sched-tab">
-                <div class="container border">
-                    @*<h3>Sync Scheduler</h3>*@
-                    <div class="row">
-                        <!-- Scheduler Status -->
-                        <object-table class="table table-responsive-sm col-6" v-bind:record="scheduler" title="Scheduler"></object-table>
-                        <!-- Company Features -->
-                        <object-table class="table table-responsive-sm col-6" v-bind:record="companyFeatures" title="Company Features"></object-table>
-                    </div>
-                    <div class="row">
-                        <button class="btn btn-secondary col-2" id="syncBtn" type="button" v-on:click="startSync" style="margin-left:0.5em; margin-bottom:12px;">Start Sync</button>
-                        <div class="col-9" style="float:right">{{schedMsg}}</div>
+                <!-- Hash Sync Nav Tab -->
+                <li class="nav-item">
+                    <a v-bind:class="'nav-link' + (hashSyncEnabled ? '' : ' disabled')" id="hashSync-tab" data-toggle="tab" href="#hashSync" role="tab" aria-orientation="vertical" aria-controls="Password Hash Sync" aria-selected="true">Password Hash Sync</a>
+                </li>
+
+                <!-- Sync Connector Nav Tabs -->
+                <li class="nav-item" v-for="(c) in connectors">
+                    <a class="nav-link" v-bind:id="'tab-' + c.Identifier" data-toggle="tab" v-bind:href="'#conn-' + c.Identifier" role="tab" v-bind:aria-controls="c.Name" aria-selected="false">{{c.Name}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-9">
+            <div class="tab-content" id="myTabContent">
+
+                <!-- Sync Scheduler Tab -->
+                <div class="tab-pane fade show active" id="syncScheduler" role="tabpanel" aria-labelledby="sched-tab">
+                    <div class="container border">
+                        <div class="row">
+                            <!-- Scheduler Status -->
+                            <object-table class="table table-responsive-sm col-6" v-bind:record="scheduler" title="Scheduler"></object-table>
+                            <!-- Company Features -->
+                            <object-table class="table table-responsive-sm col-6" v-bind:record="companyFeatures" title="Company Features"></object-table>
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-secondary col-2" id="syncBtn" type="button" v-on:click="startSync" style="margin-left:0.5em; margin-bottom:12px;">Start Sync</button>
+                            <div class="col-9" style="float:right">{{schedMsg}}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Hash Sync Status -->
-            <div class="tab-pane fade container border" id="hashSync" role="tabpanel" aria-labelledby="hashSync-tab">
-                <ul class="no-bullets" v-if="hashSyncEnabled">
-                    <li v-for="value in hashSync"><object-table v-bind:record="value" title="Password Hash Sync Status"></object-table></li>
-                </ul>
-            </div>
+                <!-- Hash Sync Status -->
+                <div class="tab-pane fade container border" id="hashSync" role="tabpanel" aria-labelledby="hashSync-tab">
+                    <ul class="no-bullets" v-if="hashSyncEnabled">
+                        <li v-for="value in hashSync"><object-table v-bind:record="value" title="Password Hash Sync Status"></object-table></li>
+                    </ul>
+                </div>
 
-            <!-- Sync Connector Tabs : will show 1 or more depending on your role -->
-            <div class="tab-pane fade container border" v-for="(c) in connectors" v-bind:id="'conn-' + c.Identifier" role="tabpanel">
-                <server-connector v-bind:connector="c"></server-connector>
+                <!-- Sync Connector Tabs : will show 1 or more depending on your role -->
+                <div class="tab-pane fade container border" v-for="(c) in connectors" v-bind:id="'conn-' + c.Identifier" role="tabpanel">
+                    <server-connector v-bind:connector="c"></server-connector>
+                </div>
             </div>
         </div>
+        <hr />
+        <!--Global status messages show at bottom of page-->
+        <div>{{statusMsg ? new Date().toLocaleTimeString() + " : " + statusMsg : ''}}</div>
     </div>
-    <hr />
-    <!--Global status messages show at bottom of page-->
-    <div>{{statusMsg ? new Date().toLocaleTimeString() + " : " + statusMsg : ''}}</div>
 </div>
 
-<script type="text/x-template" id="server-connector-template">
-    <div>
-        <h3>{{connector.Name}}</h3>
-        <table class="table table-responsive-sm">
-            <thead>
-                <tr><td></td><td></td></tr>
-            </thead>
-            <tbody>
-                <tr v-for="(value, key, i) in connector"> <td>{{ key }}</td><td>{{ value }}</td></tr>
-            </tbody>
-        </table>
-    </div>
-</script>
-
-<script type="text/x-template" id="object-table-template">
-    <div>
-        <table class="table table-responsive-sm">
-            <thead>
-                <tr><td><strong>{{ title }}</strong></td><td></td></tr>
-            </thead>
-            <tbody>
-                <tr v-for="(value, key, i) in record"> <td>{{ key }}</td><td>{{ value }}</td></tr>
-            </tbody>
-        </table>
-    </div>
-</script>
-
+@Html.Partial("_VueComponents")
 
 <script type="text/javascript">
-
-    // ---------------- Layout Modifications ----------------- //
-    // Remove bottom <hr> from layout so we can put our own things below it
-    setTimeout(() => {
-        var footerLine = document.getElementById("footerLine");
-        if (footerLine) { footerLine.remove(); }
-    }, 250);
-
-    // Make content full width since it's displaying settings that may be wider than the viewport
-    var parent = document.getElementById('renderBody');
-    parent.classList.remove('container')
-    parent.classList.remove('container-fluid')
-
-    // -----------------  Connector Component ------------------ //
-    Vue.component('server-connector', {
-        template: '#server-connector-template',
-        props: ['connector'],
-        data() {
-            return {
-                message: "Foo bar baz"
-            }
-        }
-    });
-
-    Vue.component('connector', {
-        template: ''
-    });
-
-    // ------------- Object Table Component ------------- //
-    Vue.component('object-table', {
-        template: '#object-table-template',
-        props: ['record', 'title'],
-        data() {
-            return {
-
-            }
-        }
-    });
 
     // -----------------  Main Vue App ------------------ //
     const apiScheduler = "/api/Scheduler/";
@@ -149,16 +90,22 @@
     var server = new Vue({
         el: '#server',
         data: {
-            companyFeatures: {},
+            
             scheduler: {},
             schedMsg: "",
-            statusMsg: "",
-            connectors: {},
-            hashSync: {},
+            companyFeatures: {},
             hashSyncEnabled: false,
+            hashSync: {},
+            connectors: {},
+            statusMsg: "",
+
+            // Loading Progress Bars
+            progLoad: 25,
         },
         computed: {
-            
+            progressWidth: function () {
+                return ""
+            }
         },
         mounted: function () {
             this.fetchScheduler();
@@ -166,28 +113,36 @@
             this.fetchConnectors();
         },
         methods: {
+            // Get sync scheduler status.
             fetchScheduler() {
                 $.getJSON(apiScheduler, json => {
                     this.scheduler = json;
+                    this.progLoad += 25;
                 });
             },
+            // List all connectors you have rights to.
             fetchConnectors() {
                 $.getJSON(apiConnector, json => {
                     this.connectors = json;
+                    this.progLoad += 25;
                 });
             },
+            // Show feature configurations that are AAD tenant wide.
             fetchCompanyFeatures() {
                 $.getJSON(apiCompanyFeatures, json => {
                     this.companyFeatures = json;
                     this.hashSyncEnabled = json.PasswordHashSync;
                     if (this.hashSyncEnabled) { this.fetchHashSyncStatus(); }
+                    this.progLoad += 25;
                 });
             },
+            // List the hash sync status for connectors you have rights to.
             fetchHashSyncStatus() {
                 $.getJSON(apiHashSyncStatus, json => {
                     this.hashSync = json;
                 });
             },
+            // Attempt to kick off a delta sync.
             startSync() {
                 this.schedMsg = '';
 
@@ -207,9 +162,28 @@
             }
         },
         watch: {
-
+            // Remove the progress bar after everything is fetched.
+            progLoad: function () {
+                if (this.progLoad >= 100) {
+                    console.log("Progress done!");
+                    $(".progress").fadeOut(200);
+                }
+            }
         }
     });
+
+
+    // ---------------- Layout Modifications ----------------- //
+    // Remove bottom <hr> from layout so we can put our own things below it
+    setTimeout(() => {
+        var footerLine = document.getElementById("footerLine");
+        if (footerLine) { footerLine.remove(); }
+    }, 250);
+
+    // Make content full width since it's displaying settings that may be wider than the viewport
+    var parent = document.getElementById('renderBody');
+    parent.classList.remove('container')
+    parent.classList.remove('container-fluid')
 
 </script>
 <style type="text/css">
