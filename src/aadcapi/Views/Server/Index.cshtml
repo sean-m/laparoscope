@@ -12,13 +12,13 @@
         - [ ] Enter DN, get MV info on user
     - [x] Start sync button
 -->
-<div id="server" class="row container fluid d-flex flex-column">
+<div id="server" class="row container fluid">
     <div class="row progress">
         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
              v-bind:aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" v-bind:style="{width: progLoad + '%'}"></div>
     </div>
 
-    <div class="row" style="padding-top:0.5em">
+    <div class="d-flex flex-row" style="padding-top:0.5em">
         <div class="col-3">
             <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
                 <!-- Sync Scheduler Nav Tab -->
@@ -39,20 +39,20 @@
         </div>
 
         <div class="col-9">
-            <div class="tab-content" id="myTabContent">
+            <div class="tab-content d-flex flex-column" id="myTabContent">
 
                 <!-- Sync Scheduler Tab -->
                 <div class="tab-pane fade show active" id="syncScheduler" role="tabpanel" aria-labelledby="sched-tab">
-                    <div class="container border">
-                        <div class="row">
+                    <div class="d-flex flex-column border">
+                        <div class="d-flex flex-row">
                             <!-- Scheduler Status -->
-                            <object-table class="table table-responsive-sm col-6" v-bind:record="scheduler" title="Scheduler"></object-table>
+                            <object-table class="table table-responsive-sm p-2" v-bind:record="scheduler" title="Scheduler"></object-table>
                             <!-- Company Features -->
-                            <object-table class="table table-responsive-sm col-6" v-bind:record="companyFeatures" title="Company Features"></object-table>
+                            <object-table class="table table-responsive-sm p-2" v-bind:record="companyFeatures" title="Company Features"></object-table>
                         </div>
-                        <div class="row">
-                            <button class="btn btn-secondary col-2" id="syncBtn" type="button" v-on:click="startSync" style="margin-left:0.5em; margin-bottom:12px;">Start Sync</button>
-                            <div class="col-9" style="float:right">{{schedMsg}}</div>
+                        <div class="d-flex flex-row">
+                            <button class="btn btn-secondary p-2" id="syncBtn" type="button" v-on:click="startSync" style="margin-left:0.5em; margin-bottom:12px;">Start Sync</button>
+                            <div class="p-2" style="float:right">{{schedMsg}}</div>
                         </div>
                     </div>
                 </div>
