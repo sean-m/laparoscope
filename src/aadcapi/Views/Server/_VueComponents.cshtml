@@ -1,23 +1,60 @@
-﻿
+﻿@*// ------------- Server Connector Component ------------- //*@
 <script type="text/x-template" id="server-connector-template">
     <div>
-        <h3>{{connector.Name}}</h3>
         <table class="table table-responsive-sm">
             <thead>
-                <tr><td></td><td></td></tr>
+                <tr><td><strong>{{connector.Name}}</strong></td><td></td></tr>
             </thead>
             <tbody>
-                <tr v-for="(value, key, i) in connector"> <td>{{ key }}</td><td>{{ value }}</td></tr>
+                <tr v-for="(value, key, i) in connector">
+                    <td>{{ key }}</td>
+                    <td v-if="key == 'AttributeInclusionList'">
+                        <div :id="'accordion' + key">
+                            <div class="card">
+                                <div class="card-header" :id="'heading' + key">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link" data-toggle="collapse" :data-target="'#collapse' + key" aria-expanded="false" :aria-controls="'collapse' + key">
+                                            Selected Attributes {{value.length}}
+                                        </button>
+                                    </h5>
+                                </div>
+
+                                <div :id="'collapse' + key" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key">
+                                    <div class="card-body">
+                                        <ul class="no-bullets">
+                                            <li v-for="(entry) in value.sort()">{{entry}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td v-else-if="key == 'ObjectInclusionList'">
+                        <ul class="no-bullets">
+                            <li v-for="(entry) in value.sort()">{{entry}}</li>
+                        </ul>
+                    </td>
+                    <td v-else-if="key == 'Partitions'">
+                        <object-table :record="value" :expand="['ConnectorPartitionScope']" :list="['ObjectClasses','ContainerInclusionList','ContainerExclusionList']"></object-table>
+                    </td>
+                    <td v-else-if="key == 'AnchorConstructionSettings'">
+                        <wide-object-table :record="value" :header="['ObjectType','Attributes','Locked']"></wide-object-table>
+                    </td>
+                    <td v-else-if="key == 'ConnectivityParameters'">
+                        <object-table :record="value"></object-table>
+                    </td>
+                    <td v-else>{{ value }}</td>
+                </tr>
             </tbody>
         </table>
+        <object-table :record="syncStatus"></object-table>
     </div>
 </script>
 
 <script type="text/javascript">
-    // -----------------  Connector Component ------------------ //
     Vue.component('server-connector', {
         template: '#server-connector-template',
-        props: ['connector'],
+        props: ['connector','syncStatus'],
         data() {
             return {
             }
@@ -25,29 +62,62 @@
     });
 </script>
 
+
+@*// ------------- Object Table Component ------------- //*@
 <script type="text/x-template" id="object-table-template">
     <div>
         <table class="table table-responsive-sm">
-            <thead>
+            <thead v-if="title">
                 <tr><td><strong>{{ title }}</strong></td><td></td></tr>
             </thead>
             <tbody>
-                <tr v-for="(value, key, i) in record"> <td>{{ key }}</td><td>{{ value }}</td></tr>
+                <tr v-for="(value, key, i) in record">
+                    <td>{{ key }}</td>
+                    <td v-if="expand && expand.includes(key)">
+                        <object-table :record="value" :list="list"></object-table>
+                    </td>
+                    <td v-else-if="list && list.includes(key)">
+                        <ul class="no-bullets">
+                            <li v-for="(entry) in value.sort()">{{entry}}</li>
+                        </ul>
+                    </td>
+                    <td v-else>{{ value }}</td>
+                </tr>
             </tbody>
         </table>
     </div>
 </script>
 
-
 <script type="text/javascript">
-    Vue.component('connector', {
-        template: ''
-    });
-
-    // ------------- Object Table Component ------------- //
     Vue.component('object-table', {
         template: '#object-table-template',
-        props: ['record', 'title'],
+        props: ['record', 'title', 'expand', 'list'],
+        data() {
+            return {
+
+            }
+        }
+    });
+</script>
+
+@*// ------------- Wide Object Table Component ------------- //*@
+<script type="text/x-template" id="wide-object-table-template">
+    <div>
+        <table class="table table-responsive-sm">
+            <thead>
+                <tr v-if="header"><th  v-for="(objKey, key, i) in header">{{objKey}}</th></tr>
+            </thead>
+            <tbody>
+                <tr v-for="(value, key, i) in record"><td v-for="(h, key, i) in header"> {{ value[h] }} </td></tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('wide-object-table', {
+        template: '#wide-object-table-template',
+        props: ['record', 'title', 'header'],
         data() {
             return {
 

@@ -3,19 +3,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!--
-    - [x] Show sync status
-    - [ ] Show connectors you can see
-        - [ ] Refresh
-        - [ ] Show last password hash sync time
-        - [ ] Show last time your connector was syncd
-        - [ ] Enter DN, get MV info on user
-    - [x] Start sync button
--->
 <div id="server" class="row container fluid">
     <div class="row progress">
         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-             v-bind:aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" v-bind:style="{width: progLoad + '%'}"></div>
+             :aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" :style="{width: progLoad + '%'}"></div>
     </div>
 
     <div class="d-flex flex-row" style="padding-top:0.5em">
@@ -33,7 +24,7 @@
 
                 <!-- Sync Connector Nav Tabs -->
                 <li class="nav-item" v-for="(c) in connectors">
-                    <a class="nav-link" v-bind:id="'tab-' + c.Identifier" data-toggle="tab" v-bind:href="'#conn-' + c.Identifier" role="tab" v-bind:aria-controls="c.Name" aria-selected="false">{{c.Name}}</a>
+                    <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{c.Name}}</a>
                 </li>
             </ul>
         </div>
@@ -43,12 +34,12 @@
 
                 <!-- Sync Scheduler Tab -->
                 <div class="tab-pane fade show active" id="syncScheduler" role="tabpanel" aria-labelledby="sched-tab">
-                    <div class="d-flex flex-column border">
+                    <div class="d-flex flex-column">
                         <div class="d-flex flex-row">
                             <!-- Scheduler Status -->
-                            <object-table class="table table-responsive-sm p-2" v-bind:record="scheduler" title="Scheduler"></object-table>
+                            <object-table class="table table-responsive-sm p-2" :record="scheduler" title="Scheduler"></object-table>
                             <!-- Company Features -->
-                            <object-table class="table table-responsive-sm p-2" v-bind:record="companyFeatures" title="Company Features"></object-table>
+                            <object-table class="table table-responsive-sm p-2" :record="companyFeatures" title="Company Features"></object-table>
                         </div>
                         <div class="d-flex flex-row">
                             <button class="btn btn-secondary p-2" id="syncBtn" type="button" v-on:click="startSync" style="margin-left:0.5em; margin-bottom:12px;">Start Sync</button>
@@ -58,18 +49,19 @@
                 </div>
 
                 <!-- Hash Sync Status -->
-                <div class="tab-pane fade container border" id="hashSync" role="tabpanel" aria-labelledby="hashSync-tab">
+                <div class="tab-pane fade flex-column container" id="hashSync" role="tabpanel" aria-labelledby="hashSync-tab">
                     <ul class="no-bullets" v-if="hashSyncEnabled">
-                        <li v-for="value in hashSync"><object-table v-bind:record="value" title="Password Hash Sync Status"></object-table></li>
+                        <li v-for="value in hashSync"><object-table :record="value" :title="'Domain: ' + value.DN"></object-table></li>
                     </ul>
                 </div>
 
                 <!-- Sync Connector Tabs : will show 1 or more depending on your role -->
-                <div class="tab-pane fade container border" v-for="(c) in connectors" v-bind:id="'conn-' + c.Identifier" role="tabpanel">
-                    <server-connector v-bind:connector="c"></server-connector>
+                <div class="tab-pane fade container fluid" v-for="(c) in connectors" :id="'conn-' + c.Identifier" role="tabpanel">
+                    <server-connector :connector="c" :hashSync="hashSync"></server-connector>
                 </div>
             </div>
         </div>
+
         <hr />
         <!--Global status messages show at bottom of page-->
         <div>{{statusMsg ? new Date().toLocaleTimeString() + " : " + statusMsg : ''}}</div>
@@ -95,7 +87,7 @@
             schedMsg: "",
             companyFeatures: {},
             hashSyncEnabled: false,
-            hashSync: {},
+            hashSync: [],
             connectors: {},
             statusMsg: "",
 
@@ -165,7 +157,6 @@
             // Remove the progress bar after everything is fetched.
             progLoad: function () {
                 if (this.progLoad >= 100) {
-                    console.log("Progress done!");
                     $(".progress").fadeOut(200);
                 }
             }
