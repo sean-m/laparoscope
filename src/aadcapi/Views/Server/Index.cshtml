@@ -100,11 +100,14 @@
             }
         },
         mounted: function () {
-            this.fetchScheduler();
-            this.fetchCompanyFeatures();
-            this.fetchConnectors();
+            this.refreshServerStatus();
         },
         methods: {
+            refreshServerStatus() {
+                this.fetchScheduler();
+                this.fetchCompanyFeatures();
+                this.fetchConnectors();
+            },
             // Get sync scheduler status.
             fetchScheduler() {
                 $.getJSON(apiScheduler, json => {

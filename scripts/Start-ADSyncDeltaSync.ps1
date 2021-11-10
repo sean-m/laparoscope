@@ -21,7 +21,7 @@ if (($schedule.SyncCycleEnabled) -and (-not $schedule.SyncCycleInProgress) -and 
         $result = Start-ADSyncSyncCycle -PolicyType Delta | select -ExpandProperty Result
         
         if ($result -like "Success") {
-            $return.Result = "Delta sync started."
+            $return.Result = "Delta sync started at $(Get-Date)."
             $return.Started = $true
         }
         else {
@@ -45,5 +45,5 @@ if ($schedule.SyncCycleInProgress) {
     return $return
 }
     
-$return.Result = "Last sync was less than $threshold minutes ago, $mostReccent UTC, not starting sync."
+$return.Result = "Last sync was less than $threshold minutes ago; $mostReccent UTC, not starting sync."
 return $return
