@@ -4,7 +4,7 @@
         <div class="d-flex flex-row" style="padding-top:0.5em">
             <ul id="configTab" class="nav nav-tabs" role="tablist">
                 <!-- Connector Config -->
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" :id="'tab-config-' + connector.Identifier" data-toggle="tab"
                        :href="'#connectorConfig-' + connector.Identifier" role="tab"
                        aria-controls="Connector Config" aria-selected="true">
@@ -12,8 +12,8 @@
                     </a>
                 </li>
 
-                <!-- CSObject Lookup -->
-                <li class="nav-item active">
+                <!-- CSObject Lookup - Only shown for AD connectors -->
+                <li class="nav-item" v-if="connector.Type == 'AD'">
                     <a class="nav-link" :id="'tab-conn-csobject-lookup-' + connector.Identifier" data-toggle="tab"
                        :href="'#csObjectLookup' + connector.Identifier" role="tab"
                        aria-controls="C S Object Lookup" aria-selected="true">
@@ -21,8 +21,8 @@
                     </a>
                 </li>
 
-                <!-- Hash Sync Status -->
-                <li class="nav-item">
+                <!-- Hash Sync Status - Only shown for AD connectors -->
+                <li class="nav-item" v-if="connector.Type == 'AD'">
                     <a class="nav-link" :id="'tab-conn-hash-sync-' + connector.Identifier" data-toggle="tab"
                        :href="'#hash-sync-' + connector.Identifier" role="tab"
                        aria-controls="Connector Hash Sync Status" aria-selected="true">
@@ -34,7 +34,7 @@
 
         <div class="tab-content d-flex flex-row">
             <!-- Connector Config Content -->
-            <div :id="'connectorConfig-' + connector.Identifier" class="tab-pane">
+            <div :id="'connectorConfig-' + connector.Identifier" class="tab-pane active">
                 <table class="table table-responsive-sm">
                     <thead>
                         <tr><td><strong>{{connector.Name}}</strong></td><td></td></tr>
@@ -85,12 +85,12 @@
             </div>
 
             <!-- CSObject Lookup Content -->
-            <div :id="'csObjectLookup' + connector.Identifier" class="tab-pane active">
+            <div :id="'csObjectLookup' + connector.Identifier" class="tab-pane" v-if="connector.Type == 'AD'">
                 <csobject-lookup :thisConnector="connector"></csobject-lookup>
             </div>
 
             <!-- Connector Hash Sync Status Content -->
-            <div :id="'hash-sync-' + connector.Identifier" class="tab-pane">
+            <div :id="'hash-sync-' + connector.Identifier" class="tab-pane" v-if="connector.Type == 'AD'">
                 <object-table record="{'foo'='bar'}"></object-table>
             </div>
 
