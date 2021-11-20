@@ -1,60 +1,110 @@
-﻿@*// ------------- Server Connector Component ------------- //*@
+﻿
+
+
+@*// ------------- Server Connector Component ------------- //*@
 <script type="text/x-template" id="server-connector-template">
     <div>
-        <table class="table table-responsive-sm">
-            <thead>
-                <tr><td><strong>{{connector.Name}}</strong></td><td></td></tr>
-            </thead>
-            <tbody>
-                <tr v-for="(value, key, i) in connector">
-                    <td>{{ key }}</td>
-                    <td v-if="key == 'AttributeInclusionList'">
-                        <div :id="'accordion' + key">
-                            <div class="card">
-                                <div class="card-header" :id="'heading' + key">
-                                    <h5 class="mb-0">
-                                        <button class="btn btn-link" data-toggle="collapse" :data-target="'#collapse' + key" aria-expanded="false" :aria-controls="'collapse' + key">
-                                            Selected Attributes {{value.length}}
-                                        </button>
-                                    </h5>
-                                </div>
+        <div class="d-flex flex-row" style="padding-top:0.5em">
+            <ul id="configTab" class="nav nav-tabs" role="tablist">
+                <!-- Connector Config -->
+                <li class="nav-item">
+                    <a class="nav-link active" :id="'tab-config-' + connector.Identifier" data-toggle="tab"
+                        :href="'#connectorConfig-' + connector.Identifier" role="tab"
+                        aria-controls="Connector Config" aria-selected="true">
+                        Connector Config
+                    </a>
+                </li>
 
-                                <div :id="'collapse' + key" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key">
-                                    <div class="card-body">
-                                        <ul class="no-bullets">
-                                            <li v-for="(entry) in value.sort()">{{entry}}</li>
-                                        </ul>
+                <!-- CSObject Lookup -->
+                <li class="nav-item">
+                    <a class="nav-link" :id="'tab-conn-csobject-lookup-' + connector.Identifier" data-toggle="tab"
+                        :href="'#csObjectLookup' + connector.Identifier" role="tab"
+                        aria-controls="C S Object Lookup" aria-selected="true">
+                        CSObject Lookup
+                    </a>
+                </li>
+
+                <!-- Hash Sync Status -->
+                <li class="nav-item">
+                    <a class="nav-link" :id="'tab-conn-hash-sync-' + connector.Identifier" data-toggle="tab"
+                        :href="'#hash-sync-' + connector.Identifier" role="tab"
+                        aria-controls="Connector Hash Sync Status" aria-selected="true">
+                        Hash Sync
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content d-flex flex-row">
+            <!-- Connector Config Content -->
+            <div :id="'connectorConfig-' + connector.Identifier" class="tab-pane">
+                <table class="table table-responsive-sm">
+                    <thead>
+                        <tr><td><strong>{{connector.Name}}</strong></td><td></td></tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(value, key, i) in connector">
+                            <td>{{ key }}</td>
+                            <td v-if="key == 'AttributeInclusionList'">
+                                <div :id="'accordion' + key">
+                                    <div class="card">
+                                        <div class="card-header" :id="'heading' + key">
+                                            <h5 class="mb-0">
+                                                <button class="btn btn-link" data-toggle="collapse" :data-target="'#collapse' + key" aria-expanded="false" :aria-controls="'collapse' + key">
+                                                    Selected Attributes {{value.length}}
+                                                </button>
+                                            </h5>
+                                        </div>
+
+                                        <div :id="'collapse' + key" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key">
+                                            <div class="card-body">
+                                                <ul class="no-bullets">
+                                                    <li v-for="(entry) in value.sort()">{{entry}}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </td>
-                    <td v-else-if="key == 'ObjectInclusionList'">
-                        <ul class="no-bullets">
-                            <li v-for="(entry) in value.sort()">{{entry}}</li>
-                        </ul>
-                    </td>
-                    <td v-else-if="key == 'Partitions'">
-                        <object-table :record="value" :expand="['ConnectorPartitionScope']" :list="['ObjectClasses','ContainerInclusionList','ContainerExclusionList']"></object-table>
-                    </td>
-                    <td v-else-if="key == 'AnchorConstructionSettings'">
-                        <wide-object-table :record="value" :header="['ObjectType','Attributes','Locked']"></wide-object-table>
-                    </td>
-                    <td v-else-if="key == 'ConnectivityParameters'">
-                        <object-table :record="value"></object-table>
-                    </td>
-                    <td v-else>{{ value }}</td>
-                </tr>
-            </tbody>
-        </table>
-        <object-table :record="syncStatus"></object-table>
+                            </td>
+                            <td v-else-if="key == 'ObjectInclusionList'">
+                                <ul class="no-bullets">
+                                    <li v-for="(entry) in value.sort()">{{entry}}</li>
+                                </ul>
+                            </td>
+                            <td v-else-if="key == 'Partitions'">
+                                <object-table :record="value" :expand="['ConnectorPartitionScope']" :list="['ObjectClasses','ContainerInclusionList','ContainerExclusionList']"></object-table>
+                            </td>
+                            <td v-else-if="key == 'AnchorConstructionSettings'">
+                                <wide-object-table :record="value" :header="['ObjectType','Attributes','Locked']"></wide-object-table>
+                            </td>
+                            <td v-else-if="key == 'ConnectivityParameters'">
+                                <object-table :record="value"></object-table>
+                            </td>
+                            <td v-else>{{ value }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- CSObject Lookup Content -->
+            <div :id="'csObjectLookup' + connector.Identifier" class="tab-pane active">
+                <csobject-lookup :thisConnector="connector"></csobject-lookup>
+            </div>
+
+            <!-- Connector Hash Sync Status Content -->
+            <div :id="'hash-sync-' + connector.Identifier" class="tab-pane">
+                <object-table record="{'foo'='bar'}"></object-table>
+            </div>
+
+        </div>
     </div>
 </script>
 
 <script type="text/javascript">
     Vue.component('server-connector', {
         template: '#server-connector-template',
-        props: ['connector','syncStatus'],
+        props: ['connector', 'hash-sync'],
         data() {
             return {
             }
@@ -100,12 +150,13 @@
     });
 </script>
 
+
 @*// ------------- Wide Object Table Component ------------- //*@
 <script type="text/x-template" id="wide-object-table-template">
     <div>
         <table class="table table-responsive-sm">
             <thead>
-                <tr v-if="header"><th  v-for="(objKey, key, i) in header">{{objKey}}</th></tr>
+                <tr v-if="header"><th v-for="(objKey, key, i) in header">{{objKey}}</th></tr>
             </thead>
             <tbody>
                 <tr v-for="(value, key, i) in record"><td v-for="(h, key, i) in header"> {{ value[h] }} </td></tr>
@@ -121,6 +172,38 @@
         data() {
             return {
 
+            }
+        }
+    });
+</script>
+
+
+@*// ------------- CSObject Lookup Component ------------- //*@
+<script type="text/x-template" id="csobject-lookup-template">
+    <div>
+        <p>{{ thisConnector.Name }}</p>
+        
+        <input type="text"
+               placeholder="DN of your record"
+               v-model="dn" />
+
+        <button type="button" v-on:click="resolveCsObjectToMv">Lookup</button>
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('csobject-lookup', {
+        template: '#csobject-lookup-template',
+        props: [ 'thisConnector', 'distinguishedName', 'value' ],
+        methods: {
+            resolveCsObjectToMv() {
+                console.log(this.dn)
+            }
+        },
+        data: function () {
+            return {
+                apiCSObject: "/api/CSObject?ConnectorName=" + this.thisConnector.Name + "&DistinguishedName=",
+                dn: ''
             }
         }
     });

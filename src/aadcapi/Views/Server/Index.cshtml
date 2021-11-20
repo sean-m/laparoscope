@@ -4,13 +4,17 @@
 }
 
 <div id="server" class="row container fluid">
-    <div class="row progress">
+
+
+    <div class="row progress flex-column p-2">
         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
              :aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" :style="{width: progLoad + '%'}"></div>
     </div>
 
+    
     <div class="d-flex flex-row" style="padding-top:0.5em">
-        <div class="col-3">
+        <!-- Vertical Tabs on the Left -->
+        <div class="flex-column">
             <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
                 <!-- Sync Scheduler Nav Tab -->
                 <li class="nav-item">
@@ -29,15 +33,16 @@
             </ul>
         </div>
 
+        <!-- Tab Content on the Right -->
         <div class="col-9">
-            <div class="tab-content d-flex flex-column" id="myTabContent">
+            <div id="myTabContent" class="tab-content d-flex flex-column">
 
                 <!-- Sync Scheduler Tab -->
-                <div class="tab-pane fade show active" id="syncScheduler" role="tabpanel" aria-labelledby="sched-tab">
+                <div id="syncScheduler" class="tab-pane active" role="tabpanel" aria-labelledby="sched-tab">
                     <div class="d-flex flex-column">
                         <div class="d-flex flex-row">
                             <!-- Scheduler Status -->
-                            <object-table class="table table-responsive-sm p-2" :record="scheduler" title="Scheduler"></object-table>
+                            <object-table class="table table-responsive-md p-2" :record="scheduler" title="Scheduler"></object-table>
                             <!-- Company Features -->
                             <object-table class="table table-responsive-sm p-2" :record="companyFeatures" title="Company Features"></object-table>
                         </div>
@@ -49,15 +54,15 @@
                 </div>
 
                 <!-- Hash Sync Status -->
-                <div class="tab-pane fade flex-column container" id="hashSync" role="tabpanel" aria-labelledby="hashSync-tab">
+                <div id="hashSync" class="tab-pane flex-column container" role="tabpanel" aria-labelledby="hashSync-tab">
                     <ul class="no-bullets" v-if="hashSyncEnabled">
                         <li v-for="value in hashSync"><object-table :record="value" :title="'Domain: ' + value.DN"></object-table></li>
                     </ul>
                 </div>
 
                 <!-- Sync Connector Tabs : will show 1 or more depending on your role -->
-                <div class="tab-pane fade container fluid" v-for="(c) in connectors" :id="'conn-' + c.Identifier" role="tabpanel">
-                    <server-connector :connector="c" :hashSync="hashSync"></server-connector>
+                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors" role="tabpanel">
+                    <server-connector :connector="c" :hash-sync="hashSync"></server-connector>
                 </div>
             </div>
         </div>
@@ -88,7 +93,7 @@
             companyFeatures: {},
             hashSyncEnabled: false,
             hashSync: [],
-            connectors: {},
+            connectors: [],
             statusMsg: "",
 
             // Loading Progress Bars
