@@ -11,7 +11,7 @@
              :aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" :style="{width: progLoad + '%'}"></div>
     </div>
 
-    
+
     <div class="d-flex flex-row" style="padding-top:0.5em">
         <!-- Vertical Tabs on the Left -->
         <div class="flex-column">
@@ -73,11 +73,13 @@
     </div>
 </div>
 
+<!-- These are defined in _VueComponents.cshtml and imported as a partial here. -->
 @Html.Partial("_VueComponents")
 
+
+<!-------------------  Main Vue App -------------------->
 <script type="text/javascript">
 
-    // -----------------  Main Vue App ------------------ //
     const apiScheduler = "/api/Scheduler/";
     const apiStartSync = "/api/StartSync/";
     const apiConnector = "/api/Connector/";
@@ -87,7 +89,7 @@
     var server = new Vue({
         el: '#server',
         data: {
-            
+
             scheduler: {},
             schedMsg: "",
             companyFeatures: {},
