@@ -34,7 +34,7 @@
 
         <div class="tab-content d-flex flex-row">
             <!-- Connector Config Content -->
-            <div :id="'connectorConfig-' + connector.Identifier" class="tab-pane active">
+            <div :id="'connectorConfig-' + connector.Identifier" class="tab-pane flex-fill active">
                 <table class="table table-responsive-sm">
                     <thead>
                         <tr><td><strong>{{connector.Name}}</strong></td><td></td></tr>
@@ -81,16 +81,15 @@
                         </tr>
                     </tbody>
                 </table>
-
             </div>
 
             <!-- CSObject Lookup Content -->
-            <div :id="'csObjectLookup' + connector.Identifier" class="tab-pane" v-if="connector.Type == 'AD'">
+            <div :id="'csObjectLookup' + connector.Identifier" class="tab-pane flex-fill" v-if="connector.Type == 'AD'">
                 <csobject-lookup :thisConnector="connector"></csobject-lookup>
             </div>
 
             <!-- Connector Hash Sync Status Content -->
-            <div :id="'hash-sync-' + connector.Identifier" class="tab-pane" v-if="connector.Type == 'AD'">
+            <div :id="'hash-sync-' + connector.Identifier" class="tab-pane flex-fill" v-if="connector.Type == 'AD'">
                 <object-table record="{'foo'='bar'}"></object-table>
             </div>
 
@@ -128,18 +127,57 @@
                             <li v-for="(entry) in value.sort()">{{entry}}</li>
                         </ul>
                     </td>
-                    <td v-else-if="key && accordion.includes(key)">
-                        <div :id="'accordion' + key">
+                    <td v-else>{{ value }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('object-table', {
+        template: '#object-table-template',
+        props: ['record', 'title', 'expand', 'list'],
+        methods: {
+
+        },
+        data() {
+            return {
+            }
+        }
+    });
+</script>
+
+@*// ------------- Object Table Component ------------- //*@
+<script type="text/x-template" id="accordion-object-table-template">
+    <div>
+        <table class="table table-responsive-sm">
+            <thead v-if="title">
+                <tr><td><strong>{{ title }}</strong></td><td></td></tr>
+            </thead>
+            <tbody>
+                <tr v-for="(value, key, i) in record">
+                    <td>{{ key }}</td>
+                    <td v-if="expand && expand.includes(key)">
+                        <object-table :record="value" :list="list"></object-table>
+                    </td>
+                    <td v-else-if="list && list.includes(key)">
+                        <ul class="no-bullets">
+                            <li v-for="(entry) in value.sort()">{{entry}}</li>
+                        </ul>
+                    </td>
+                    <td v-else-if="key && accordion && accordion.includes(key)">
+                        <div :id="'accordion' + key + seed">
                             <div class="card">
-                                <div class="card-header" :id="'heading' + key">
+                                <div class="card-header" :id="'heading' + key + seed">
                                     <h5 class="mb-0">
-                                        <button class="btn btn-link" data-toggle="collapse" :data-target="'#collapse' + key" aria-expanded="false" :aria-controls="'collapse' + key">
-                                            Selected Attributes {{value.length}}
+                                        <button class="btn btn-link" data-toggle="collapse" :data-target="'#collapse' + key" aria-expanded="false" :aria-controls="'collapse' + key + seed">
+                                            {{value.length}} Values
                                         </button>
                                     </h5>
                                 </div>
 
-                                <div :id="'collapse' + key" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key">
+                                <div :id="'collapse' + key + seed" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key + seed">
                                     <div class="card-body">
                                         <ul class="no-bullets">
                                             <li v-for="(entry) in value.sort()">{{entry}}</li>
@@ -157,12 +195,14 @@
 </script>
 
 <script type="text/javascript">
-    Vue.component('object-table', {
+    Vue.component('accordion-object-table', {
         template: '#object-table-template',
-        props: ['record', 'title', 'expand', 'list', 'accordion'],
+        props: ['record', 'title', 'expand', 'list', 'accordion', 'seed'],
+        methods: {
+
+        },
         data() {
             return {
-
             }
         }
     });
@@ -197,7 +237,7 @@
 
 
 
-@*// ------------- CSObject Table Component ------------- //*@
+@*// ------------- Sync Object Table Component ------------- //*@
 <script type="text/x-template" id="csobject-table-template">
     <div>
         <table class="table table-responsive-sm">
@@ -216,19 +256,21 @@
                         </ul>
                     </td>
                     <td v-else-if="key && accordion.includes(key)">
-                        <div :id="'accordion' + key + salt">
+                        <div :id="'accordion' + key + seed">
                             <div class="card">
                                 <div class="card-header" :id="'heading' + key">
                                     <h5 class="mb-0">
-                                        <button class="btn btn-link" data-toggle="collapse" :data-target="'#collapse' + key + salt" aria-expanded="false" :aria-controls="'collapse' + key">
-                                            Selected Attributes {{value.length}}
+                                        <button class="btn btn-link" data-toggle="collapse" :data-target="'#collapse' + key + seed" aria-expanded="false" :aria-controls="'collapse' + key + seed">
+                                            {{value.length}} Values
                                         </button>
                                     </h5>
                                 </div>
 
-                                <div :id="'collapse' + key + salt" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key + salt">
+                                <div :id="'collapse' + key + seed" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key + seed">
                                     <div class="card-body">
-                                        <wide-object-table :record="value" :header="['Name','Values']"></wide-object-table>
+
+                                        <wide-object-table v-if="(mvobject)" :record="value" :header="['Name','Values', 'ConnectorName']"></wide-object-table>
+                                        <wide-object-table v-else :record="value" :header="['Name','Values']"></wide-object-table>
                                     </div>
                                 </div>
                             </div>
@@ -245,7 +287,7 @@
 <script type="text/javascript">
     Vue.component('csobject-table', {
         template: '#csobject-table-template',
-        props: ['record', 'title', 'expand', 'salt', 'list', 'skip', 'accordion'],
+        props: ['record', 'title', 'expand', 'seed', 'list', 'skip', 'accordion', 'mvobject'],
         data() {
             return {
 
@@ -257,27 +299,38 @@
 
 @*// ------------- CSObject Lookup Component ------------- //*@
 <script type="text/x-template" id="csobject-lookup-template">
-    <div>
+    <div class="flex-column">
         <p>{{ thisConnector.Name }}</p>
 
         @*<input type="text"
-            placeholder="DN of your record"
-            pattern="^(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+))(?:\s*\,\s*(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)))*$"
-            v-model="dn" />*@
-        <input class="d-lg-flex"
+        placeholder="DN of your record"
+        pattern="^(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+))(?:\s*\,\s*(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)))*$"
+        v-model="dn" />*@
+        <input class="flex-row col-md-8"
                type="text"
                placeholder="DN of your record"
                v-model="dn" />
 
-        <button type="button" 
-                class="btn btn-outline-primary" 
-                v-on:click="resolveCsObjectToMv">Lookup</button>
+        <button type="button"
+                class="btn btn-outline-primary flex-row"
+                v-on:click="resolveCsObjectToMv">
+            Lookup
+        </button>
 
-        <csobject-table v-for="(c) in cs" 
-                        :record="c" 
-                        :salt="getRandomInt(0,100).toString()" 
+        <csobject-table class="flex-row"
+                        v-for="(c) in cs"
+                        :record="c"
+                        :seed="getRandomInt(0,100).toString()"
                         :accordion="['Attributes']"
-                        :skip="['Lineage']" ></csobject-table>
+                        :skip="['Lineage']"></csobject-table>
+
+        <csobject-table class="flex-row"
+                        title="Metaverse Object"
+                        :record="mv"
+                        :seed="getRandomInt(0,100).toString()"
+                        :accordion="['Attributes']"
+                        :skip="['Lineage']"
+                        mvobject="true"></csobject-table>
     </div>
 </script>
 
@@ -287,11 +340,38 @@
         props: ['thisConnector', 'distinguishedName'],
         methods: {
             resolveCsObjectToMv() {
-                var uri = this.apiCSObject + this.dn;
-                $.getJSON(uri, json => {
-                    this.cs = json;
-                    console.log("lookup done");
+
+                // Lookup connector space (CS) record by distinguished name.
+                // This would be the user, group or computer object that is synced from
+                // Active Directory. There is no method for searching, it has to be DN.
+                var csuri = this.apiCSObject + this.dn;
+                $.getJSON(csuri, json => {
+                    // If resolved, set things up.
+                    if (json) {
+                        this.cs = json;
+                        console.log("cs lookup done");
+                    }
+                }).then(() => {
+                    // If the CS object was retrieved and it has a ConectedMVObjectId, look up
+                    // the metaverse record that is connected to it. This can be used to 
+                    // troubleshoot issues where a user isn't syncing to the cloud correctly
+                    // as the metaverse record will show if it is also projected to the 
+                    // AAD connector space.
+                    if (this.cs) {
+                        for (i in this.cs) {
+                            console.log(i);
+                            let cs = this.cs[i];
+                            if (cs.ConnectedMVObjectId) {
+                                var mvuri = this.apiMVObject + cs.ConnectedMVObjectId;
+                                $.getJSON(mvuri, json => {
+                                    this.mv = json[0];
+                                    console.log("mv lookup done");
+                                });
+                            }
+                        }
+                    }
                 });
+
             },
             getRandomInt(min, max) {
                 min = Math.ceil(min);
@@ -302,6 +382,7 @@
         data: function () {
             return {
                 apiCSObject: "/api/CSObject?ConnectorName=" + this.thisConnector.Name + "&DistinguishedName=",
+                apiMVObject: "/api/MVObject/",
                 dn: '',
                 cs: [],
                 mv: {}
