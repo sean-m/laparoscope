@@ -110,6 +110,14 @@
             this.refreshServerStatus();
         },
         methods: {
+            getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+            },
+            getSeed() {
+                return this.getRandomInt(0, 10000).toString();
+            },
             refreshServerStatus() {
                 this.fetchScheduler();
                 this.fetchCompanyFeatures();
