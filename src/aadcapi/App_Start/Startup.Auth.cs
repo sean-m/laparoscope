@@ -93,6 +93,7 @@ namespace aadcapi
             IConfidentialClientApplication confidentialClient = MsalAppBuilder.BuildConfidentialClientApplication(new ClaimsPrincipal(context.AuthenticationTicket.Identity));
 
             // Upon successful sign in, get & cache a token using MSAL
+	    // TODO (sean) Investigate using this for custom scopes on id tokens.	
             //AuthenticationResult result = await confidentialClient.AcquireTokenByAuthorizationCode(new[] { "user.readbasic.all" }, context.Code).ExecuteAsync();
             AuthenticationResult result = await confidentialClient.AcquireTokenByAuthorizationCode(new[] { "profile" }, context.Code).ExecuteAsync();
         }
