@@ -40,6 +40,12 @@
                         <tr><td><strong>{{connector.Name}}</strong></td><td></td></tr>
                     </thead>
                     <tbody>
+                        <!-- 
+                            Enumerate the connector attributes and conditionally
+                            format some values as a list. AttributeInclusionList for
+                            instance can be huge and doesn't make sense to show by default
+                            so it is rendered as a collapsed accordion element.
+                        -->
                         <tr v-for="(value, key, i) in connector">
                             <td>{{ key }}</td>
                             <td v-if="key == 'AttributeInclusionList'">
@@ -63,14 +69,27 @@
                                     </div>
                                 </div>
                             </td>
+                            <!-- 
+                                Show ObjectInclusionList as an unsorted list. 
+                                Should only have a few values so it's not collapsed.
+                            -->
                             <td v-else-if="key == 'ObjectInclusionList'">
                                 <ul class="no-bullets">
                                     <li v-for="(entry) in value.sort()">{{entry}}</li>
                                 </ul>
                             </td>
+                            <!--
+                                Partitions offer some reasonable complex information about the
+                                connector's configuration so it's rendered as a nested object table.
+                            -->
                             <td v-else-if="key == 'Partitions'">
                                 <object-table :record="value" :expand="['ConnectorPartitionScope']" :list="['ObjectClasses','ContainerInclusionList','ContainerExclusionList']"></object-table>
                             </td>
+                            <!--
+                                AnchorConstructionSettings show a list of anchor attributes by object
+                                type so render best as a wide object table, think of it like Format-Table
+                                in PowerShell.
+                            -->
                             <td v-else-if="key == 'AnchorConstructionSettings'">
                                 <wide-object-table :record="value" :header="['ObjectType','Attributes','Locked']"></wide-object-table>
                             </td>
@@ -237,8 +256,23 @@
 
 
 
+<!--
+    This can be used to look up a user/group/computer connector space record
+    provided you have rights to the connector and know the object's distinguished
+    name. If you do not have rights to the connector it should return unauthorized.
+    That said, it should also have never shown that connector in the UI.
+
+    The authorization rules for /api/Connector and /api/CSObject, /api/MVObject are
+    separate rules that key off different properties on the results. Connectors
+    are generally keyed on the Name property, where CSObjects would be by ConnectorName.
+    An authorization rule whose Context=*Name would match both and should work for this.
+    MVObjects are available to any users who are authenticated since records can
+    only be resolved by GUID and those aren't easily guessable values. This isn't
+    satisfying from an infosec standpoint but only specific people should have access
+    to this API so it's a compromise worth making right now.
+-->
 @*// ------------- Sync Object Table Component ------------- //*@
-<script type="text/x-template" id="csobject-table-template">
+<script type="text/x-template" id="syncobject-table-template">
     <div>
         <table class="table table-responsive-sm">
             <thead v-if="title">
@@ -246,8 +280,19 @@
             </thead>
             <tbody>
                 <tr v-for="(value, key, i) in record">
-                    <td v-if="key && !skip.includes(key)">{{ key }}</td>
-                    <td v-if="expand && expand.includes(key)">
+                    <td v-if="key && (!skip || !skip.includes(key))">{{ key }}</td>
+
+                    <!-- Lineage for MVObject Reference -->
+                    <td v-if="key && key == 'Lineage' && mvobject">
+                        <wide-object-table :record="value" :header="['ConnectorName','ConnectedCsObjectDN']"></wide-object-table>
+                    </td>
+
+                    <!-- Lineage for CSObject Reference -->
+                    <td v-else-if="key && key == 'Lineage' && !mvobject">
+                        <wide-object-table :record="value" :header="['SyncRuleName','Operation']"></wide-object-table>
+                    </td>
+
+                    <td v-else-if="expand && expand.includes(key)">
                         <object-table :record="value" :list="list"></object-table>
                     </td>
                     <td v-else-if="list && list.includes(key)">
@@ -268,7 +313,6 @@
 
                                 <div :id="'collapse' + key + seed" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key + seed">
                                     <div class="card-body">
-
                                         <wide-object-table v-if="(mvobject)" :record="value" :header="['Name','Values', 'ConnectorName']"></wide-object-table>
                                         <wide-object-table v-else :record="value" :header="['Name','Values']"></wide-object-table>
                                     </div>
@@ -276,7 +320,8 @@
                             </div>
                         </div>
                     </td>
-                    <td v-else-if="key && skip.includes(key)"></td>
+                    <td v-else-if="key && skip && skip.includes(key)"></td>
+
                     <td v-else>{{ value }}</td>
                 </tr>
             </tbody>
@@ -285,12 +330,11 @@
 </script>
 
 <script type="text/javascript">
-    Vue.component('csobject-table', {
-        template: '#csobject-table-template',
+    Vue.component('syncobject-table', {
+        template: '#syncobject-table-template',
         props: ['record', 'title', 'expand', 'seed', 'list', 'skip', 'accordion', 'mvobject'],
         data() {
             return {
-
             }
         }
     });
@@ -303,9 +347,9 @@
         <p>{{ thisConnector.Name }}</p>
 
         @*<input type="text"
-        placeholder="DN of your record"
-        pattern="^(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+))(?:\s*\,\s*(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)))*$"
-        v-model="dn" />*@
+            placeholder="DN of your record"
+            pattern="^(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+))(?:\s*\,\s*(?<RDN>(?<Key>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)\=(?<Value>(?:\\[0-9A-Fa-f]{2}|\\\[^=\,\\]|[^=\,\\]+)+)))*$"
+            v-model="dn" />*@
         <input class="flex-row col-md-8"
                type="text"
                placeholder="DN of your record"
@@ -317,20 +361,18 @@
             Lookup
         </button>
 
-        <csobject-table class="flex-row"
+        <syncobject-table class="flex-row"
                         v-for="(c) in cs"
                         :record="c"
                         :seed="getRandomInt(0,100).toString()"
-                        :accordion="['Attributes']"
-                        :skip="['Lineage']"></csobject-table>
+                        :accordion="['Attributes']"></syncobject-table>
 
-        <csobject-table class="flex-row"
+        <syncobject-table class="flex-row"
                         title="Metaverse Object"
                         :record="mv"
                         :seed="getRandomInt(0,100).toString()"
                         :accordion="['Attributes']"
-                        :skip="['Lineage']"
-                        mvobject="true"></csobject-table>
+                        mvobject="true"></syncobject-table>
     </div>
 </script>
 
@@ -353,9 +395,9 @@
                     }
                 }).then(() => {
                     // If the CS object was retrieved and it has a ConectedMVObjectId, look up
-                    // the metaverse record that is connected to it. This can be used to 
+                    // the metaverse record that is connected to it. This can be used to
                     // troubleshoot issues where a user isn't syncing to the cloud correctly
-                    // as the metaverse record will show if it is also projected to the 
+                    // as the metaverse record will show if it is also projected to the
                     // AAD connector space.
                     if (this.cs) {
                         for (i in this.cs) {

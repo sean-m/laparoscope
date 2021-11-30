@@ -2,20 +2,20 @@
 ## TODO
 - [x] Embed powershell runner
 - [x] Return json from powershell commands
-- [ ] List which OUs are synced per connector. This will necessarily need to be compared with AD proper to derive which OUs are in scope but excluded/included/implicitly-included could be indicated.
+- [x] List which OUs are synced per connector. This will necessarily need to be compared with AD proper to derive which OUs are in scope but excluded/included/implicitly-included could be indicated.
 	+ [x] API
     + [ ] UI
       - [x] Show sync status
         - [x] Start sync button
       - [x] Show password hash sync for all visible connectors
       - [x] Show connectors you can see
-        - [ ] Refresh
+        - [x] Refresh
         - [ ] Show last password hash sync time for a given conector
         - [ ] Show last time your connector was syncd
-        - [ ] Enter DN, get MV info on user
+        - [x] Enter DN, get MV info on user
         
 - [x] Role based connector interaction. The results of Get-ADSyncConnector shouldn't be filtered by role but the ability to query a CSObject or inspect a connector's configuration should by granted by role. In instances where a single sync service handles many disparite Active Directory domains, the admins of those domains shouldn't have complete visibility into one another's business.
-- [ ] MVC views for some of the object search functionality, a UI aids in troubleshooting sync errors.
+- [x] MVC views for some of the object search functionality, a UI aids in troubleshooting sync errors.
 - [x] Admin view for managing roles.
 - [x] Admin API for configuration change at runtime.
 - [ ] ~~Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.~~ Azure APIM can do this and suites my use case. Leaving this out but may revisit later.
