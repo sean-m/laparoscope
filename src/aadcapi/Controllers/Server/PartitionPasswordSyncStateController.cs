@@ -45,6 +45,11 @@ namespace aadcapi.Controllers.Server
 
             resultValues = this.WhereAuthorized<PasswordSyncState>(resultValues);
 
+            // Without this, the enum value is stored as an integer. It's a hack
+            // but still worth the flexibility of using dynamic types on the model.
+            foreach (var r in resultValues)
+                r.PasswordSyncLastCycleStatus = r.PasswordSyncLastCycleStatus?.ToString() ?? "Unknown";
+
             return Ok(resultValues);
         }
     }
