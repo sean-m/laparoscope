@@ -83,16 +83,17 @@ namespace aadcapi
         private async Task OnAuthorizationCodeReceived(AuthorizationCodeReceivedNotification context)
         {
             /*
-			 The `MSALPerUserMemoryTokenCache` is created and hooked in the `UserTokenCache` used by `IConfidentialClientApplication`.
-			 At this point, if you inspect `ClaimsPrinciple.Current` you will notice that the Identity is still unauthenticated and it has no claims,
-			 but `MSALPerUserMemoryTokenCache` needs the claims to work properly. Because of this sync problem, we are using the constructor that
-			 receives `ClaimsPrincipal` as argument and we are getting the claims from the object `AuthorizationCodeReceivedNotification context`.
-			 This object contains the property `AuthenticationTicket.Identity`, which is a `ClaimsIdentity`, created from the token received from 
-			 Azure AD and has a full set of claims.
-			 */
+	         The `MSALPerUserMemoryTokenCache` is created and hooked in the `UserTokenCache` used by `IConfidentialClientApplication`.
+	         At this point, if you inspect `ClaimsPrinciple.Current` you will notice that the Identity is still unauthenticated and it has no claims,
+	         but `MSALPerUserMemoryTokenCache` needs the claims to work properly. Because of this sync problem, we are using the constructor that
+	         receives `ClaimsPrincipal` as argument and we are getting the claims from the object `AuthorizationCodeReceivedNotification context`.
+	         This object contains the property `AuthenticationTicket.Identity`, which is a `ClaimsIdentity`, created from the token received from 
+	         Azure AD and has a full set of claims.
+	        */
             IConfidentialClientApplication confidentialClient = MsalAppBuilder.BuildConfidentialClientApplication(new ClaimsPrincipal(context.AuthenticationTicket.Identity));
 
             // Upon successful sign in, get & cache a token using MSAL
+	        // TODO (sean) Investigate using this for custom scopes on id tokens.	
             AuthenticationResult result = await confidentialClient.AcquireTokenByAuthorizationCode(new[] { "profile" }, context.Code).ExecuteAsync();
         }
 
