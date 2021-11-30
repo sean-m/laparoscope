@@ -41,8 +41,8 @@
         <div class="d-flex flex-row" style="padding-top:0.5em">
             <ul id="configTab" class="nav nav-tabs" role="tablist">
                 <!-- Connector Config -->
-                <li class="nav-item active">
-                    <a class="nav-link" :id="'tab-config-' + connector.Identifier" data-toggle="tab"
+                <li class="nav-item">
+                    <a class="nav-link active" :id="'tab-config-' + connector.Identifier" data-toggle="tab"
                        :href="'#connectorConfig-' + connector.Identifier" role="tab"
                        aria-controls="Connector Config" aria-selected="true">
                         Connector Config
@@ -373,7 +373,7 @@
 @*// ------------- CSObject Lookup Component ------------- //*@
 <script type="text/x-template" id="csobject-lookup-template">
     <div class="flex-column">
-        <p>{{ thisConnector.Name }}</p>
+        <br>
 
         @*<input type="text"
             placeholder="DN of your record"
