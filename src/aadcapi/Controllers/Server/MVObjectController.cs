@@ -27,6 +27,7 @@ namespace aadcapi.Controllers.Server
         // GET api/<controller>
         public dynamic Get(string Id)
         {
+            // TODO require an MVObject role
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncMVObjectStrict);
             runner.Parameters.Add("Identifier", Id);
             runner.Run();
