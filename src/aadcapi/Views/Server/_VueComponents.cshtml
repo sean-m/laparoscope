@@ -321,6 +321,10 @@
                         <wide-object-table :record="value" :header="['SyncRuleName','Operation']"></wide-object-table>
                     </td>
 
+                    <td v-else-if="key && key == 'AnchorValue'">
+                        <a :href="'https://gchq.github.io/CyberChef/#recipe=From_Base64(\'A-Za-z0-9%2B/%3D\',true)To_Hex(\'Space\',16)&input=' + btoa(value)">{{value}}</a>
+                    </td>
+
                     <td v-else-if="expand && expand.includes(key)">
                         <object-table :record="value" :list="list"></object-table>
                     </td>
@@ -362,6 +366,11 @@
     Vue.component('syncobject-table', {
         template: '#syncobject-table-template',
         props: ['record', 'title', 'expand', 'seed', 'list', 'skip', 'accordion', 'mvobject'],
+        methods: {
+            btoa: function (input) {
+                return window.btoa(input);
+            }
+        },
         data() {
             return {
             }
