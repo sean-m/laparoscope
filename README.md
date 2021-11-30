@@ -10,7 +10,7 @@
       - [x] Show password hash sync for all visible connectors
       - [x] Show connectors you can see
         - [x] Refresh
-        - [ ] Show last password hash sync time for a given conector
+        - [x] Show last password hash sync time for a given conector
         - [ ] Show last time your connector was syncd
         - [x] Enter DN, get MV info on user
         

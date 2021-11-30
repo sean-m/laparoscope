@@ -62,7 +62,7 @@
 
                 <!-- Sync Connector Tabs : will show 1 or more depending on your role -->
                 <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors" role="tabpanel">
-                    <server-connector :connector="c" :hash-sync="hashSync"></server-connector>
+                    <server-connector :connector="c" :hashsync="hashSync"></server-connector>
                 </div>
             </div>
         </div>
