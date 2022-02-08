@@ -45,8 +45,6 @@ namespace aadcapi
 			var services = new ServiceCollection();
 			ConfigureServices(services);
 
-
-
             ConfigureAuth(app);
 			ConfigureAuthorizationFilters(app);
 		}
