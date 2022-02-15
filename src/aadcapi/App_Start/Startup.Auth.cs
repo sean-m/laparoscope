@@ -35,6 +35,7 @@ using Owin;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace aadcapi
 {
@@ -104,7 +105,7 @@ namespace aadcapi
         {
             // Verify the user signing in is a business user, not a consumer user.
             string[] issuer = context.AuthenticationTicket.Identity.FindFirst(Globals.IssuerClaim).Value.Split('/');
-            string tenantId = issuer[(issuer.Length - 2)];
+            string tenantId = issuer.Last(x => !String.IsNullOrEmpty(x)); // Taking last non-empty element instead of indexing into an array. Haven't tested but it seems more robust.
             if (tenantId == Globals.ConsumerTenantId)
             {
                 throw new SecurityTokenValidationException("Please log in with your work account.");
