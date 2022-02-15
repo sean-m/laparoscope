@@ -57,7 +57,7 @@ namespace aadcapi
                     TokenValidationParameters = new TokenValidationParameters
                     {
                         // In a real application you would use ValidateIssuer = true for additional checks and security.
-                        ValidateIssuer = false,
+                        ValidateIssuer = true,
                         NameClaimType = "name",
                     },
                     Notifications = new OpenIdConnectAuthenticationNotifications()
