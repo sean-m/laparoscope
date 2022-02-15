@@ -68,8 +68,11 @@ namespace aadcapi
                     },
                     // Handling SameSite cookie according to https://docs.microsoft.com/en-us/aspnet/samesite/owin-samesite
                     CookieManager = new SameSiteCookieManager(
-                                     new SystemWebCookieManager())
+                                     new SystemWebCookieManager()),
                 });
+
+            // TODO make tunable
+            Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
         }
 
         private Task OnAuthenticationFailed(AuthenticationFailedNotification<OpenIdConnectMessage, OpenIdConnectAuthenticationOptions> context)
