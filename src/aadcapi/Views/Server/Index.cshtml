@@ -98,6 +98,8 @@
             connectors: [],
             statusMsg: "",
 
+            schedulePolling: null,
+
             // Loading Progress Bars
             progLoad: 25,
         },
@@ -122,6 +124,15 @@
                 this.fetchScheduler();
                 this.fetchCompanyFeatures();
                 this.fetchConnectors();
+                this.schedulePolling = setInterval((ctx) => {
+                    $.getJSON(apiScheduler, json => {
+                        ctx.scheduler = json;
+                    });
+
+                    $.getJSON(apiHashSyncStatus, json => {
+                        ctx.hashSync = json;
+                    });
+                }, (30 * 1000), this);
             },
             // Get sync scheduler status.
             fetchScheduler() {
@@ -169,6 +180,9 @@
 
                     this.schedMsg = response.Result;
                 })
+            },
+            beforeDestroy() {
+                clearInterval(this.schedulePolling);
             }
         },
         watch: {
