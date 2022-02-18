@@ -14,11 +14,12 @@
         - [ ] Show last time your connector was syncd
         - [x] Enter DN, get MV info on user
         
-- [x] Role based connector interaction. The results of Get-ADSyncConnector shouldn't be filtered by role but the ability to query a CSObject or inspect a connector's configuration should by granted by role. In instances where a single sync service handles many disparite Active Directory domains, the admins of those domains shouldn't have complete visibility into one another's business.
+- [x] Role based connector interaction.  
+> The results of Get-ADSyncConnector shouldn't be filtered by role but the ability to query a CSObject or inspect a connector's configuration should by granted by role. In instances where a single sync service handles many disparite Active Directory domains, the admins of those domains shouldn't have complete visibility into one another's business.
 - [x] MVC views for some of the object search functionality, a UI aids in troubleshooting sync errors.
 - [x] Admin view for managing roles.
 - [x] Admin API for configuration change at runtime.
-- [ ] ~~Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.~~ Azure APIM can do this and suites my use case. Leaving this out but may revisit later.
+- [ ] ~~Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.~~ Azure APIM can do this and suits my use case. Leaving this out but may revisit later.
 - [ ] Embed scripts with Fody.
 
 ### Priority Commands
