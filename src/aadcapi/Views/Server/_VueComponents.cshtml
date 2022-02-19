@@ -7,7 +7,7 @@
             </thead>
             <tbody>
                 <tr v-for="(value, key, i) in record">
-                    <td>{{ expandCase(key) }}</td>
+                    <td>{{ expandOnCase(key) }}</td>
                     <td v-if="expand && expand.includes(key)">
                         <object-table :record="value" :list="list"></object-table>
                     </td>
@@ -32,7 +32,7 @@
             }
         },
         methods: {
-            expandCase (input) {
+            expandOnCase (input) {
                 return input.replace(/([a-z])([A-Z])/g, '$1 $2')
             }
         },
@@ -89,7 +89,7 @@
                             so it is rendered as a collapsed accordion element.
                         -->
                         <tr v-for="(value, key, i) in connector">
-                            <td>{{ expandCase(key) }}</td>
+                            <td>{{ expandOnCase(key) }}</td>
                             <td v-if="key == 'AttributeInclusionList'">
                                 <div :id="'accordion' + key">
                                     <div class="card">
@@ -158,7 +158,7 @@
                 <table class="table table-responsive-sm">
                     <tbody>
                         <tr v-for="(value, key, i) in getHashSyncForThisConnector">
-                            <td>{{ key }}</td>
+                            <td>{{ expandOnCase(key) }}</td>
                             <td>{{ value }}</td>
                         </tr>
                     </tbody>
@@ -190,7 +190,7 @@
             }
         },
         methods: {
-            expandCase(input) {
+            expandOnCase(input) {
                 return input.replace(/([a-z])([A-Z])/g, '$1 $2')
             }
         }
