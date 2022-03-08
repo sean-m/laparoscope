@@ -5,13 +5,24 @@ $LaparoscopeSession = [ordered]@{
     TenantId    = $null
     ClientId    = $null
     Secret      = $null
-    Resource       = $null
+    Resource    = $null
     Endpoint    = $null
-    AccessToken = $null    
+    AccessToken = $null
+    Scope       = $null
 }
 New-Variable -Scope Script -Name LaparoscopeSession -Value $LaparoscopeSession -Force
 
 function Connect-LaparoscopeTenant {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
     [CmdLetBinding()]
     param (
         [Parameter(Mandatory=$true)]
@@ -23,8 +34,9 @@ function Connect-LaparoscopeTenant {
         $ServiceEndpoint,
         [Parameter(Mandatory=$true)]
         $Resource,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         $ClientSecret,
+        $Scope,
         [switch]
         $NoBrowserLaunch
     )
@@ -35,57 +47,53 @@ function Connect-LaparoscopeTenant {
         $LaparoscopeSession.Resource = $Resource
         $LaparoscopeSession.Endpoint = $ServiceEndpoint
         $LaparoscopeSession.Secret   = $ClientSecret
+        $LaparoscopeSession.Scope    = $Scope
     }
     process {
         
-        $deviceParams = @{
-            Uri = "https://login.microsoftonline.com/$($LaparoscopeSession.TenantId)/oauth2/v2.0/devicecode"            
+        $tokenParams = @{
+            Uri = "https://login.microsoftonline.com/$($LaparoscopeSession.TenantId)/oauth2/v2.0/token"            
             Method = 'POST'
             Body= @{
                 client_id = $LaparoscopeSession.ClientId
-                resource = $LaparoscopeSession.Resource
+                tenant = $LaparoscopeSession.TenantId
+                scope = "$($LaparoscopeSession.Scope)"
+                client_secret = $LaparoscopeSession.Secret
+                grant_type = 'client_credentials'
             }
         }
 
-        $deviceResponse = Invoke-RestMethod @deviceParams
-        Write-Host $deviceResponse.Message
-        Write-Host ''
-        Read-Host "After following the instructions above, press enter to continue"
-
-        $tokenParams = @{
-            Uri    = "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token"
-            Method = 'POST'
-            Body   = @{
-                grant_type = "urn:ietf:params:oauth:grant-type:device_code"
-                code = $deviceResponse.device_code
-                client_id  = $LaparoscopeSession.ClientId
-            }
-        }
-        if ($LaparoscopeSession.Secret) {
-            $tokenParams.Body.Add('client_secret', $LaparoscopeSession.Secret) | Out-Null
-        }
-        if ($LaparoscopeSession.Resource) {
-            $tokenParams.Body.Add('resource', $LaparoscopeSession.Resource) | Out-Null
-        }
-
-        $tokenResponse = $null
-        $retry = 0
-        do {
-            $tokenResponse = try { Invoke-WebRequest @tokenParams }
-                             catch { $_.Exception.Response }
-            if ($tokenResponse.StatusCode -ne 200) {
-                $tokenResponse
-            }
-
-            Start-Sleep -Seconds ([Math]::Min(10, (2 * $retry)))
-            $retry++
-        }
-        while ($tokenResponse.StatusCode -ne 200 -and $retry -lt 50)
-
+        $tokenResponse = Invoke-RestMethod @tokenParams
         
         $LaparoscopeSession.AccessToken = $tokenResponse.access_token
     }
 }
+
+
+function Disconnect-LaparoscopeTenant {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+    [CmdLetBinding()]
+    param ()
+
+    begin {}
+    process {
+        throw [System.NotImplementedException]::new("Disconnect not implemented yet.")
+        ## Log out of AAD
+    }
+    end {
+        Clear-Variable -Name 'LaparoscopeSession'
+    }
+}
+
 
 function Test-Variable {
     [CmdLetBinding()]
@@ -93,31 +101,24 @@ function Test-Variable {
     $LaparoscopeSession | FT -AutoSize
 }
 
-function Disconnect-LaparoscopeTenant {
-    [CmdLetBinding()]
-    param ()
-
-    begin {}
-    process {
-    throw [System.NotImplementedException]::new("Disconnect not implemented yet.")
-    ## Log out of AAD
-    }
-    end {
-        Clear-Variable -Name 'LaparoscopeSession'
-    }
-}
-
-function Get-LapADSyncScheduler {
-    [CmdletBinding()]
-    param ()
-    Invoke-LapApi -Path '/api/Scheduler'
-}
 
 function Invoke-LapApi {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
     param (
         [ValidateSet('GET','POST')]
         $Method='GET',
-        $Path='/api/Scheduler'
+        $Path='/api',
+        [switch]
+        $Anonymous
     )
         begin {
         if (-not $LaparoscopeSession.AccessToken) {
@@ -128,14 +129,15 @@ function Invoke-LapApi {
         }
     }
     process {
+
         $requestParams = @{
             Method  = $Method
             Uri     = "$($LaparoscopeSession.Endpoint)$Path"
             Headers = @{
-                'Authorization' = "Bearer $($LaparoscopeSession.AccessToken)"
-                'Accept' = 'application/json'
+                Accept = 'application/json'
             }
         }
+        if (-not $Anonymous) { $requestParams.Headers.Add('Authorization', "Bearer $($LaparoscopeSession.AccessToken)") }
 
         Invoke-RestMethod @requestParams
     }
@@ -143,25 +145,315 @@ function Invoke-LapApi {
 
 
 function Set-LapServiceEndpoint {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
     [CmdLetBinding()]
     param ($Endpoint)
     $LaparoscopeSession.Endpoint = $Endpoint
 }
 
 function Set-LapAccessToken {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
     [CmdLetBinding()]
     param ($Token)
     $LaparoscopeSession.AccessToken = $Token
 }
 
 
+function Get-LapAccessToken {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+    [CmdletBinding()]
+    param()
+    $LaparoscopeSession.AccessToken
+}
+
+
+function Get-LapIdentity {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+    [CmdletBinding()]
+    [Alias("DONTYOUKNOWWHOIAM")]
+    param()
+    Invoke-LapApi -Path '/api/MeApi'
+}
+
+
+function Get-LapSyncScheduler {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+    [CmdletBinding()]
+    param ()
+    Invoke-LapApi -Path '/api/Scheduler'
+}
+
+
+function Get-LapAADCompanyFeature {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/AADCompanyFeature'
+}
+
+
+function Get-LapAADPasswordResetConfiguration {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/AADPasswordResetConfiguration'
+}
+
+
+function Get-LapAutoUpgrade {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/AutoUpgrade'
+}
+
+
+function Get-LapConnector {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/Connector'
+}
+
+
+function Get-LapConnectorStatistics {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/ConnectorStatistics'
+}
+
+
+function Get-LapCSObject {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/CSObject'
+}
+
+
+function Get-LapDomainReachabilityStatus {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/DomainReachabilityStatus'
+}
+
+
+function Get-LapExportDeletionThreshold {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/ExportDeletionThreshold'
+}
+
+
+function Get-LapGlobalSettings {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/GlobalSettings'
+}
+
+
+function Get-LapMVObject {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/MVObject'
+}
+
+
+function Get-LapPartitionPasswordSyncState {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/PartitionPasswordSyncState'
+}
+
+
+function Start-LapSync {
+<#
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+	[CmdletBinding()]
+	param()
+	Invoke-LapApi -Path '/api/StartSync' -Method POST
+}
+
+
 $exportedFunctions = @(
 "Connect-LaparoscopeTenant",
 "Disconnect-LaparoscopeTenant",
-"Test-Variable",
-"Get-LapADSyncScheduler",
-"Invoke-LapApi",
+#"Test-Variable", # for debug only
 "Set-LapServiceEndpoint",
-"Set-LapAccessToken"
+"Set-LapAccessToken",
+#"Invoke-LapApi",
+
+"Get-LapIdentity",
+"Get-LapAADCompanyFeature",
+"Get-LapAADPasswordResetConfiguration",
+"Get-LapAutoUpgrade",
+"Get-LapConnector",
+"Get-LapConnectorStatistics",
+"Get-LapCSObject",
+"Get-LapDomainReachabilityStatus",
+"Get-LapExportDeletionThreshold",
+"Get-LapGlobalSettings",
+"Get-LapMVObject",
+"Get-LapPartitionPasswordSyncState",
+"Start-LapSync",
+"Get-LapSyncScheduler"  #
 )
 Export-ModuleMember -Function $exportedFunctions
