@@ -34,9 +34,9 @@ namespace aadcapi
 				{
 					RequireExpirationTime = true,
 					ValidateLifetime = true,
-					RequireSignedTokens = false,
-					ValidateIssuerSigningKey = false,
-					ValidateIssuer = false,
+					RequireSignedTokens = true,
+					ValidateIssuerSigningKey = true,
+					ValidateIssuer = false,  // TODO fix this
 					ValidateAudience = false,
 					IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(kid)
 				},
