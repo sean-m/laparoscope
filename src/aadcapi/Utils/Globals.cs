@@ -35,6 +35,15 @@ namespace aadcapi.Utils
             get;
         } = ConfigurationManager.AppSettings["ida:TenantId"];
 
+        
+        /// <summary>
+        /// The AppId guid specified in the Azure AD app registration.
+        /// </summary>
+        public static string Issuer {
+            get;
+        } = ConfigurationManager.AppSettings["ida:Issuer"];
+        
+
         /// <summary>
         /// This must be in the allowed redirect uris in the app registration.
         /// </summary>
