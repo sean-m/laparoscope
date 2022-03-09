@@ -102,7 +102,56 @@ function Test-Variable {
 }
 
 
-function Invoke-LapApi {
+function Print-LapAccessToken {
+<#
+.Synopsis
+   Prints the decoded JWT access token Laparoscope is currently using.
+.DESCRIPTION
+   JWT tokens are standardized in RFC7519 (https://datatracker.ietf.org/doc/html/rfc7519)
+   and consist of a header, claims, and signature. This function takes the base64 encoded
+   access token, splits on '.', base64 decodes the header and body, then prints
+   to the console. Note: Write-Host is used so it is intended for interactive use only.
+#>
+    begin {
+        filter From-Base64 {
+            param ($b64)
+            [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
+        }
+
+        function ViewJwt {
+            param (
+                [string]
+                $encodedToken
+            )
+
+            $header, $body, $sig = $encodedToken.Split('.')
+    
+            Write-Host -ForegroundColor Yellow 'Header:'
+            From-Base64 -b64 $header | ConvertFrom-Json | ConvertTo-Json
+
+            Write-Host ""
+            Write-Host -ForegroundColor Yellow 'Body:'
+            From-Base64 -b64 $body | ConvertFrom-Json | ConvertTo-Json
+
+    
+            Write-Host ""
+            Write-Host -ForegroundColor Yellow 'Signature:'
+            $sig
+        }
+    }
+    process {
+        $token = Get-LapAccessToken
+        if ($token) {
+            ViewJwt -encodedToken $token
+        }
+        else {
+            Write-Warning "Access token not set! Run Connect-LaparoscopeTenant or Set-AccessToken first."
+        }
+    }
+}
+
+
+function Set-LapServiceEndpoint {
 <#
 .Synopsis
    Short description
@@ -113,10 +162,47 @@ function Invoke-LapApi {
 .EXAMPLE
    Another example of how to use this cmdlet
 #>
+    [CmdLetBinding()]
+    param ($Endpoint)
+    $LaparoscopeSession.Endpoint = $Endpoint
+}
+
+
+function Set-LapAccessToken {
+<#
+.Synopsis
+   Sets base64 encoded JWT access token used during API calls.
+   Note: does not validate your input (it's your foot).
+#>
+    [CmdLetBinding()]
+    param ([string]$Token)
+    $LaparoscopeSession.AccessToken = $Token
+}
+
+
+function Get-LapAccessToken {
+<#
+.Synopsis
+   Returns base64 encoded JWT access token used during API calls.
+#>
+    [CmdletBinding()]
+    param()
+    $LaparoscopeSession.AccessToken
+}
+
+
+function Invoke-LapApi {
+<#
+.Synopsis
+   Wrapper around Invoke-RestMethod that sets Accept and Authorization headers for use
+   against the REST API.
+#>
     param (
         [ValidateSet('GET','POST')]
         $Method='GET',
         $Path='/api',
+        [System.Collections.IDictionary]
+        $RequestArgs,
         [switch]
         $Anonymous
     )
@@ -138,72 +224,23 @@ function Invoke-LapApi {
             }
         }
         if (-not $Anonymous) { $requestParams.Headers.Add('Authorization', "Bearer $($LaparoscopeSession.AccessToken)") }
+        if ($RequestArgs) {
+            $requestParams.Add('Body',$RequestArgs)
+        }
+
 
         Invoke-RestMethod @requestParams
     }
 }
 
 
-function Set-LapServiceEndpoint {
-<#
-.Synopsis
-   Short description
-.DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
-#>
-    [CmdLetBinding()]
-    param ($Endpoint)
-    $LaparoscopeSession.Endpoint = $Endpoint
-}
-
-function Set-LapAccessToken {
-<#
-.Synopsis
-   Short description
-.DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
-#>
-    [CmdLetBinding()]
-    param ($Token)
-    $LaparoscopeSession.AccessToken = $Token
-}
-
-
-function Get-LapAccessToken {
-<#
-.Synopsis
-   Short description
-.DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
-#>
-    [CmdletBinding()]
-    param()
-    $LaparoscopeSession.AccessToken
-}
-
-
 function Get-LapIdentity {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/MeApi.
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   The endpoint returns the ClaimsIdentity token as the Laparoscope server
+   recons it. Helpful for debugging claims issues.
 #>
     [CmdletBinding()]
     [Alias("DONTYOUKNOWWHOIAM")]
@@ -215,13 +252,10 @@ function Get-LapIdentity {
 function Get-LapSyncScheduler {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/Scheduler.
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Analogue to Get-ADSyncScheduler. Provides information about the current
+   ADDC scheduler: staging mode, last sync time, next sync time, current status.
 #>
     [CmdletBinding()]
     param ()
@@ -232,13 +266,11 @@ function Get-LapSyncScheduler {
 function Get-LapAADCompanyFeature {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/AADCompanyFeature.
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Analogue to Get-ADSyncAADCompanyFeature. Lists currently configured tenant
+   features. Includes: PasswordHashSync, ForcePasswordChangeOnLogOn, UserWriteback,
+   DeviceWriteback, UnifiedGroupWriteback, GroupWritebackV2.
 #>
 	[CmdletBinding()]
 	param()
@@ -249,13 +281,10 @@ function Get-LapAADCompanyFeature {
 function Get-LapAADPasswordResetConfiguration {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/AADPasswordResetConfiguration.
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Analogue to Get-ADSyncAADPasswordResetConfiguration. Lists current configuration
+   and service status for AAD Password Reset, the backend for AAD SSPR. 
 #>
 	[CmdletBinding()]
 	param()
@@ -266,13 +295,13 @@ function Get-LapAADPasswordResetConfiguration {
 function Get-LapAutoUpgrade {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/AutoUpgrade.
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Analogue to Get-ADSyncAutoUpgrade. Returns status of the auto upgrade feature
+   of AADC. Note: this will be automatically suspended depending on install
+   options or current configuration. Using an external SQL server or custom sync
+   rules will disable this feature as automatic upgrade can disrupt configuration
+   or stability in these circumstances.
 #>
 	[CmdletBinding()]
 	param()
@@ -283,52 +312,99 @@ function Get-LapAutoUpgrade {
 function Get-LapConnector {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/Connector. Name parameter is optional
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Analogue to Get-ADSyncConnector. Returns information about a given AADC connector
+   if the connector Name is specified. If no name is specified, all connectors
+   you have rights to view will be returned.
 #>
 	[CmdletBinding()]
-	param()
-	Invoke-LapApi -Path '/api/Connector'
+	param(
+        [Parameter(Mandatory=$false,
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]
+        $Name
+    )
+    $params = @{
+        Path='/api/Connector'
+    }
+    if ($Name) {
+        $params.Add('RequestArgs',@{'Name'=$Name})
+    }
+
+	Invoke-LapApi @params
 }
 
 
 function Get-LapConnectorStatistics {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/ConnectorStatistics. Name parameter is required.
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Analogue to Get-ADSyncConnectorStatistics. Provides stats about pending
+   pending import, export and total connector object counts for a specified
+   sync connector.
 #>
 	[CmdletBinding()]
-	param()
-	Invoke-LapApi -Path '/api/ConnectorStatistics'
+	param(
+        [Parameter(Mandatory=$true,
+            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [string]
+        $Name
+    )
+    $params = @{
+        Path='/api/ConnectorStatistics'
+    }
+    if ($Name) {
+        $params.Add('RequestArgs',@{'Name'=$Name})
+    }
+
+	Invoke-LapApi @params
 }
 
 
 function Get-LapCSObject {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/CSObject.
 .DESCRIPTION
-   Long description
+   Analogue to Get-ADSyncCSObject. 
 .EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   $connectorName = 'test.example.com'
+   $dn = 'CN=cbackus,OU=Standard,OU=All Users,DC=test,DC=example,DC=com'
+   
+   Get-LapCSObject -ConnectorName $connectorName `
+        -DistinguishedName $dn
 #>
 	[CmdletBinding()]
-	param()
-	Invoke-LapApi -Path '/api/CSObject'
-}
+	param([Parameter(Mandatory=$true,
+            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+          [string]
+          $ConnectorName,
+          [Parameter(Mandatory=$true,
+            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=1)]
+          [string]
+          $DistinguishedName)
+process {
+    $params = @{
+        Path='/api/CSObject'
+    }
+    
+    $params.Add('RequestArgs',@{
+        'ConnectorName'=$ConnectorName;
+        'DistinguishedName'=$DistinguishedName;
+        })
+
+	Invoke-LapApi @params
+} }
 
 
 function Get-LapDomainReachabilityStatus {
@@ -439,6 +515,8 @@ $exportedFunctions = @(
 #"Test-Variable", # for debug only
 "Set-LapServiceEndpoint",
 "Set-LapAccessToken",
+"Get-LapAccessToken",
+"Print-LapAccessToken",
 #"Invoke-LapApi",
 
 "Get-LapIdentity",
