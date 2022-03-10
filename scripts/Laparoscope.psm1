@@ -102,14 +102,14 @@ function Test-Variable {
 }
 
 
-function Print-LapAccessToken {
+function Show-LapAccessToken {
 <#
 .Synopsis
    Prints the decoded JWT access token Laparoscope is currently using.
 .DESCRIPTION
    JWT tokens are standardized in RFC7519 (https://datatracker.ietf.org/doc/html/rfc7519)
    and consist of a header, claims, and signature. This function takes the base64 encoded
-   access token, splits on '.', base64 decodes the header and body, then prints
+   access token, splits on '.', base64 decodes the header and body, then writes
    to the console. Note: Write-Host is used so it is intended for interactive use only.
 #>
     begin {
@@ -301,7 +301,13 @@ function Get-LapAutoUpgrade {
    of AADC. Note: this will be automatically suspended depending on install
    options or current configuration. Using an external SQL server or custom sync
    rules will disable this feature as automatic upgrade can disrupt configuration
-   or stability in these circumstances.
+   or stability in these circumstances. The auto upgrade suspension reason can
+   be viewed with:
+   
+   (Get-LapGlobalSettings).Parameters.'Microsoft.OptionalFeature.AutoUpgradeSuspensionReason'
+
+   Note, the quotes are intentional, Microsoft.Optional... is the full property
+   name. Removing the quotes yields nothing.
 #>
 	[CmdletBinding()]
 	param()
@@ -372,7 +378,10 @@ function Get-LapCSObject {
 .Synopsis
    Invokes GET /api/CSObject.
 .DESCRIPTION
-   Analogue to Get-ADSyncCSObject. 
+   Analogue to Get-ADSyncCSObject. Can be used to check whether a given object 
+   is synchronished with AADC and what values are imported for that object.
+   Connector name and distinguished name are both required. No search or bulk
+   dump capability is exposed.
 .EXAMPLE
    $connectorName = 'test.example.com'
    $dn = 'CN=cbackus,OU=Standard,OU=All Users,DC=test,DC=example,DC=com'
@@ -410,30 +419,55 @@ process {
 function Get-LapDomainReachabilityStatus {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/DomainReachabilityStatus.
 .DESCRIPTION
-   Long description
+   Analogue to Get-ADSyncDomainReachabilityStatus cmdlet. Tests that the network
+   connectivity to the specified domain can be established. Domains are 
+   specified by connector name. If the user doesn't have access to the specified
+   connector a 403 is returned.
 .EXAMPLE
-   Example of how to use this cmdlet
+   Get-ADSyncDomainReachabilityStatus -ConnectorName 'test.example.com'
+
+   FullName               IsReachable ExceptionMessage
+   --------               ----------- ----------------
+   test.example.com              True                 
+
 .EXAMPLE
-   Another example of how to use this cmdlet
+    Get-ADSyncDomainReachabilityStatus -ConnectorName 'test2.example.com'
+
+    Invoke-RestMethod : The remote server returned an error: (403) Forbidden.
+    At C:\scripts\Laparoscope.psm1:232 char:9
+    +         Invoke-RestMethod @requestParams
+    +         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-RestMethod], WebException
+        + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand
+
 #>
 	[CmdletBinding()]
-	param()
-	Invoke-LapApi -Path '/api/DomainReachabilityStatus'
+	param([Parameter(Mandatory=$true,
+            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+          [string]
+          $ConnectorName)
+    $params = @{
+        Path='/api/DomainReachabilityStatus'
+    }
+    $params.Add('RequestArgs',@{
+        'ConnectorName'=$ConnectorName;
+        })
+
+	Invoke-LapApi @params
 }
 
 
 function Get-LapExportDeletionThreshold {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/ExportDeletionThreshold.
 .DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Analogue to Get-ADSyncExportDeletionThreshold cmdlet. If the deletion
+   threshold is currently disabled, the DeletionPrevention value will be 0.
 #>
 	[CmdletBinding()]
 	param()
@@ -444,13 +478,65 @@ function Get-LapExportDeletionThreshold {
 function Get-LapGlobalSettings {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/GlobalSettings.
 .DESCRIPTION
-   Long description
+   Analogue to Get-ADSyncGlobalSettings cmdlet. Returns settings that are specific
+   to the AADC service proper, not the AAD tenant.
 .EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   PS C:\scripts> $settings = Get-LapGlobalSettings
+   
+   
+   PS C:\scripts> $settings | FL
+   
+   
+   SqlSchemaVersion : 616
+   Parameters       : @{Microsoft.Synchronize....}
+   Version          : 22102
+   InstanceId       : ecf3f9c3-16da-4c7e-82f2-2d2ce4c105a5
+   
+   PS C:\scripts> $settings.Parameters
+   
+   
+   Microsoft.Synchronize.TimeInterval                     : 00:30:00
+   Microsoft.DeviceWriteBack.Forest                       : 
+   Microsoft.SynchronizationOption.JoinCriteria           : AlwaysProvision
+   Microsoft.OptionalFeature.GroupWriteBack               : False
+   Microsoft.AADFilter.ApplicationList                    : 
+   Microsoft.OptionalFeature.AutoUpgradeState             : Suspended
+   Microsoft.OptionalFeature.GroupFiltering               : False
+   Microsoft.DeviceWriteBack.Container                    : 
+   Microsoft.Synchronize.StagingMode                      : False
+   Microsoft.SynchronizationOption.CustomAttribute        : 
+   Microsoft.SystemInformation.MachineRole                : RoleMemberServer
+   Microsoft.OptionalFeature.ExportDeletionThreshold      : False
+   Microsoft.ConnectDirectories.WizardDirectoryMode       : ActiveDirectory
+   Microsoft.Synchronize.SynchronizationPolicy            : Delta
+   Microsoft.Synchronize.NextStartTime                    : Thu, 10 Mar 2022 18:48:01 GMT
+   Microsoft.SynchronizationOption.AnchorAttribute        : mS-DS-ConsistencyGuid
+   Microsoft.OptionalFeature.DirectoryExtension           : False
+   Microsoft.OptionalFeature.DeviceWriteUp                : True
+   Microsoft.OptionalFeature.UserWriteBack                : False
+   Microsoft.Synchronize.MaintenanceEnabled               : True
+   Microsoft.OptionalFeature.ExchangeMailPublicFolder     : False
+   Microsoft.UserSignIn.SignOnMethod                      : PasswordHashSync
+   Microsoft.AADFilter.AttributeExclusionList             : 
+   Microsoft.OptionalFeature.FilterAAD                    : False
+   Microsoft.Synchronize.SynchronizationSchedule          : True
+   Microsoft.SynchronizationOption.UPNAttribute           : userPrincipalName
+   Microsoft.UserWriteBack.Forest                         : 
+   Microsoft.Version.SynchronizationRuleImmutableTag      : V1
+   Microsoft.DirectoryExtension.SourceTargetAttributesMap : 
+   Microsoft.OptionalFeature.DeviceWriteBack              : False
+   Microsoft.Synchronize.RunHistoryPurgeInterval          : 7.00:00:00
+   Microsoft.Synchronize.SchedulerSuspended               : False
+   Microsoft.UserWriteBack.Container                      : 
+   Microsoft.OptionalFeature.DirectoryExtensionAttributes : 
+   Microsoft.OptionalFeature.ExportDeletionThresholdValue : 500
+   Microsoft.OptionalFeature.AutoUpgradeSuspensionReason  : UpgradeNotSupportedNonLocalDbInstall
+   Microsoft.Synchronize.ServerConfigurationVersion       : 2.0.25.1
+   Microsoft.OptionalFeature.HybridExchange               : False
+   Microsoft.UserSignIn.DesktopSsoEnabled                 : False
+
 #>
 	[CmdletBinding()]
 	param()
@@ -461,30 +547,109 @@ function Get-LapGlobalSettings {
 function Get-LapMVObject {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/MVObject.
 .DESCRIPTION
-   Long description
+   Returns a given metaverse object (MVObject) by its id. No search function is
+   provided by AADC so the best way to find an MVObject is by first querying
+   Get-LapCSObject with a domain object's distinguished name. When used in
+   tandem it allows following an AD domain object through the sync engine:
+   
+   AD connector -> Metaverse -> AAD.
+   
+   Particularly useful when MVbjects may be joined to two source domains; a
+   possibility when hosting Exchange in a resource domain. Secondary joins
+   are visible by inspecting the Lineage property of a specified MVObject.
+
+   Identity AD Connector -\
+                           -> Metaverse -> AAD
+   Exchange AD Connector -/
+
 .EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+
+   # Get CSObject from AD DN
+   $csObject = Get-LapCSObject -ConnectorName 'test.example.com' `
+   -DistinguishedName 'CN=hgroce,OU=Standard,OU=All Users,DC=test,DC=example,DC=com'
+
+   # Get MVObject from metaverse Id on CSObject
+   $mvObject = Get-LapMVObject -Id ($csObject.ConnectedMVObjectId)
+
+   # Get AAD connector info from metaverse object
+   $aadConnector = $mvObject.Lineage | where ConnectorName -like "*AAD"
+
+   ## AAD connector
+   Get-LapCSObject -ConnectorName ($aadConnector.ConnectorName) -DistinguishedName ($aadConnector.ConnectedCsObjectDN)
+
+   ObjectId             : 3184d2b1-2922-ec11-8d0e-f16a15e46b81
+   ConnectorId          : b891884f-051e-4a83-95af-2544101c9083
+   ConnectorName        : xample.onmicrosoft.com - AAD
+   ConnectorType        : Extensible2
+   PartitionId          : bf40f90a-841a-48c3-9807-be39a96e0bb3
+   DistinguishedName    : CN={49483470516544687930436775392F31734F4A7874513D3D}
+   AnchorValue          : VAAAAFUAcwBlAHIAXwBhAGQAOAA5ADQAZgA1ADEALQBjADMAYgAxAC0ANAAwAGYAYwAtADgANwAyADUALQA1AGEANgA3ADIAYgAxADUANgAzADUANgAAAA==
+   ObjectType           : user
+   IsTransient          : False
+   IsPlaceHolder        : False
+   IsConnector          : True
+   HasSyncError         : False
+   HasExportError       : False
+   ExportError          : 
+   SynchronizationError : 
+   ConnectedMVObjectId  : 6f84d2b1-2922-ec11-8d0e-f16a15e46b81
+   Lineage              : {@{SyncRuleInternalId=21eb63a4-ccab-4c5a-b5f3-3e5b92c5b1be; SyncRuleName=Out to AAD - User Join; Operation=Provision}, 
+                          @{SyncRuleInternalId=629db589-d446-43d3-a147-b32c3f63a83f; SyncRuleName=Out to AAD - User Identity; Operation=Join}, 
+                          @{SyncRuleInternalId=4f93fb88-0fda-4d13-a08e-552cbbf449eb; SyncRuleName=Out to AAD - User ExchangeOnline; Operation=Join}, 
+                          @{SyncRuleInternalId=eeebc75b-a465-47d3-8a66-48f243a75f07; SyncRuleName=Out to AAD - User DynamicsCRM; Operation=Join}...}
+   Attributes           : {@{Name=accountEnabled; Type=2; IsMultiValued=False; SyncRuleName=; ConnectorName=; LineageId=00000000-0000-0000-0000-000000000000; 
+                          LastModificationTime=0001-01-01T00:00:00; Values=System.Object[]}, @{Name=cloudAnchor; Type=0; IsMultiValued=False; SyncRuleName=; 
+                          ConnectorName=; LineageId=00000000-0000-0000-0000-000000000000; LastModificationTime=0001-01-01T00:00:00; Values=System.Object[]}, 
+                          @{Name=cloudMastered; Type=2; IsMultiValued=False; SyncRuleName=; ConnectorName=; LineageId=00000000-0000-0000-0000-000000000000; 
+                          LastModificationTime=0001-01-01T00:00:00; Values=System.Object[]}, @{Name=commonName; Type=0; IsMultiValued=False; SyncRuleName=; ConnectorName=; 
+                          LineageId=00000000-0000-0000-0000-000000000000; LastModificationTime=0001-01-01T00:00:00; Values=System.Object[]}...}
+   
 #>
 	[CmdletBinding()]
-	param()
-	Invoke-LapApi -Path '/api/MVObject'
-}
+	param([Parameter(Mandatory=$true,
+            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+          [string]
+          $Id)
+process {
+    $params = @{
+        Path='/api/MVObject'
+    }
+    
+    $params.Add('RequestArgs',@{
+        'Id'=$Id;
+        })
+
+	Invoke-LapApi @params
+} }
 
 
 function Get-LapPartitionPasswordSyncState {
 <#
 .Synopsis
-   Short description
+   Invokes GET /api/PartitionPasswordSyncState.
 .DESCRIPTION
-   Long description
+   Analogue to Get-ADSyncPartitionPasswordSyncState cmdlet. Used to check password
+   hash sync operation status. Cannot be filtered by specifying a connector
+   but is filtered by authorization policy server side. Records not allowed
+   by policy are filtered out.
 .EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+      
+   PS C:\scripts> Get-LapPartitionPasswordSyncState
+   
+   
+   ConnectorId                                   : fffb4a69-4ed6-444d-8b89-73bc16f373dd
+   DN                                            : DC=test,DC=example,DC=com
+   PasswordSyncLastSuccessfulCycleStartTimestamp : 2022-03-10T18:48:23.937
+   PasswordSyncLastSuccessfulCycleEndTimestamp   : 2022-03-10T18:48:24.203
+   PasswordSyncLastCycleStartTimestamp           : 2022-03-10T18:48:23.937
+   PasswordSyncLastCycleEndTimestamp             : 2022-03-10T18:48:24.203
+   PasswordSyncLastCycleStatus                   : Successful
+   
+
 #>
 	[CmdletBinding()]
 	param()
@@ -495,11 +660,18 @@ function Get-LapPartitionPasswordSyncState {
 function Start-LapSync {
 <#
 .Synopsis
-   Short description
+   Invokes POST /api/StartSync.
 .DESCRIPTION
-   Long description
+   Analogue to Start-ADSyncSyncCycle -PolicyType Delta. The local sync schedule
+   is checked and will not initate a sync during or within 10 minutes of the
+   previous sync. This is to allow time for downstream systems to reflect
+   synced changes.
 .EXAMPLE
-   Example of how to use this cmdlet
+   PS C:\scripts> Start-LapSync
+
+   Result                                                                              Started
+   ------                                                                              -------
+   Last sync was less than 10 minutes ago; 03/10/2022 18:48:13 UTC, not starting sync.   False
 .EXAMPLE
    Another example of how to use this cmdlet
 #>
@@ -516,8 +688,8 @@ $exportedFunctions = @(
 "Set-LapServiceEndpoint",
 "Set-LapAccessToken",
 "Get-LapAccessToken",
-"Print-LapAccessToken",
-#"Invoke-LapApi",
+"Show-LapAccessToken",
+"Invoke-LapApi",
 
 "Get-LapIdentity",
 "Get-LapAADCompanyFeature",
@@ -532,6 +704,6 @@ $exportedFunctions = @(
 "Get-LapMVObject",
 "Get-LapPartitionPasswordSyncState",
 "Start-LapSync",
-"Get-LapSyncScheduler"  #
+"Get-LapSyncScheduler"
 )
 Export-ModuleMember -Function $exportedFunctions
