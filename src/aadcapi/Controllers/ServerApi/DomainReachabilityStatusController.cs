@@ -24,22 +24,25 @@ namespace aadcapi.Controllers.Server
         /// this or you will receive a 403 Forbidden. Returning a 401 can result in an
         /// infinate redirect loop with Azure AD.
         /// </summary>
-        /// <param name="Name"></param>
-        public dynamic Get(string Name)
+        /// <param name="ConnectorName">Name of the AADC connector for the target domain.</param>
+        public dynamic Get(string ConnectorName)
         {
             // Construct an anonymous object as the Model for IsAuthorized so we can
             // pass in Connector as the context. This will allow the authorization engine
             // to re-use the rules for /api/Connector. If you have rights to view a given
             // connector, there is no reason you shouldn't see it's statistics.
             var roles = ((ClaimsPrincipal)RequestContext.Principal).RoleClaims();
-            if (!Filter.IsAuthorized<dynamic>(new { Name = Name, ConnectorName = Name, Identifier = Name }, "Connector", roles))
+            if (!Filter.IsAuthorized<dynamic>(new { Name = ConnectorName, 
+                                                    ConnectorName = ConnectorName, 
+                                                    Identifier = ConnectorName},
+                                              "Connector", roles))
             {
                 throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
 
             // Run PowerShell command to get AADC connector configurations
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncDomainReachabilityStatus);
-            runner.Parameters.Add("ConnectorName", Name);
+            runner.Parameters.Add("ConnectorName", ConnectorName);
             runner.Run();
 
             // Map PowerShell objects to models, C# classes with matching property names.
