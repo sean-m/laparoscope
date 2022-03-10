@@ -52,8 +52,6 @@ namespace aadcapi.Controllers.Server
                 .Where(x => x is DomainReachabilityStatus)     // Filter out results that couldn't be captured as DomainReachabilityStatus.
                 .Select(x => x as DomainReachabilityStatus);   // Take as DomainReachabilityStatus so typed call to WhereAuthorized avoids GetType() call.
 
-            resultValues = this.WhereAuthorized<DomainReachabilityStatus>(resultValues);
-
             if (resultValues != null)
             {
                 var result = Ok(resultValues);
