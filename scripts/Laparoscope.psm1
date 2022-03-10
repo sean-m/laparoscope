@@ -125,30 +125,25 @@ function Show-LapAccessToken {
    to the console. Note: Write-Host is used so it is intended for interactive use only.
 #>
     begin {
-        filter From-Base64 {
-            param ($b64)
-            [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
-        }
-
         function ViewJwt {
             param (
                 [string]
                 $encodedToken
             )
 
-            $header, $body, $sig = $encodedToken.Split('.')
+            $token = DecodeJwt -encodedToken $encodedToken
     
             Write-Host -ForegroundColor Yellow 'Header:'
-            From-Base64 -b64 $header | ConvertFrom-Json | ConvertTo-Json
+            $token.Header | ConvertTo-Json
 
             Write-Host ""
             Write-Host -ForegroundColor Yellow 'Body:'
-            From-Base64 -b64 $body | ConvertFrom-Json | ConvertTo-Json
+            $token.Body | ConvertTo-Json
 
     
             Write-Host ""
             Write-Host -ForegroundColor Yellow 'Signature:'
-            $sig
+            $token.Signature
         }
     }
     process {
@@ -202,6 +197,31 @@ function Get-LapAccessToken {
     $LaparoscopeSession.AccessToken
 }
 
+function DecodeJwt {
+    param ($encodedToken)
+    begin {
+    filter From-Base64 {
+            param ($b64)
+            [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
+        }
+    }
+    process {
+        $header, $body, $sig = $encodedToken.Split('.')
+        [pscustomobject]@{
+            Header    = From-Base64 -b64 $header | ConvertFrom-Json
+            Body      = From-Base64 -b64 $body | ConvertFrom-Json
+            Signature = $sig
+        }
+    }
+}
+
+function TestAccessTokenExpiration {
+
+    $epoch = $([int]([DateTime]::UtcNow-[DateTime]::new(1970, 1, 1)).TotalSeconds)
+    $token = DecodeJwt (Get-LapAccessToken)
+    $exp = [int]($token.Body.exp)
+    if ($exp -lt $epoch) { throw "Token expired! Call Connect-LaparoscopeTenant to refresh." }
+}
 
 function Invoke-LapApi {
 <#
@@ -225,6 +245,7 @@ function Invoke-LapApi {
         if (-not $LaparoscopeSession.Endpoint) {
             throw "No service endpoint set! Must call Connect-LaparoscopeTenant to set the service endpoint first."
         }
+        TestAccessTokenExpiration
     }
     process {
 
