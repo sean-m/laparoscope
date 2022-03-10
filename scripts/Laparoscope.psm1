@@ -15,13 +15,35 @@ New-Variable -Scope Script -Name LaparoscopeSession -Value $LaparoscopeSession -
 function Connect-LaparoscopeTenant {
 <#
 .Synopsis
-   Short description
+   Authenticate to Azure AD with the client credentials grant and store the
+   access token.
 .DESCRIPTION
-   Long description
+   After "connecting", all communication with the Laparoscope service is
+   authenticated with bearer token auth (https://datatracker.ietf.org/doc/html/rfc6750).
+   The access token encodes some lifetime data that is NOT taken into account
+   when making API calls. Parsing expiration time and calling
+   Connect-LaparoscopeTenant is an exercise for the user (right now).
+
+   Alternative authentication methods are possible without using this command.
+   Server endpoint and access token are the only two peices of info validated
+   before making API calls so utilizing certificate auth or a different
+   grant type can be handled outside this module then passed in through
+   Set-LapAccessToken. Setting the endpoint is similarly handled with
+   Set-LapServiceEndpoint.
 .EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   
+   $tenantId = '63157f30-8e13-4d09-bee7-a847b2dbb0a5'
+   $clientId = 'd814639a-66c4-4fc6-9141-1784115ee15b'
+   $clientSecret = 'my super secret secret'
+   $serviceEndpoint = 'https://localhost:44359/'
+   $scope = 'api://285eb67f-706c-45f4-9063-e150c012d12e/.default'
+   
+   Connect-LaparoscopeTenant `
+       -TenantId $tenantId `
+       -ClientId $clientId `
+       -ClientSecret $clientSecret `
+       -Scope $scope `
+       -ServiceEndpoint $serviceEndpoint
 #>
     [CmdLetBinding()]
     param (
@@ -33,8 +55,6 @@ function Connect-LaparoscopeTenant {
         [Parameter(Mandatory=$true)]
         $ServiceEndpoint,
         [Parameter(Mandatory=$true)]
-        $Resource,
-        [Parameter(Mandatory=$true)]
         $ClientSecret,
         $Scope,
         [switch]
@@ -43,8 +63,6 @@ function Connect-LaparoscopeTenant {
     begin {
         $LaparoscopeSession.TenantId = $TenantId
         $LaparoscopeSession.ClientId = $ClientId
-        $LaparoscopeSession.AppId    = $AppIdUri
-        $LaparoscopeSession.Resource = $Resource
         $LaparoscopeSession.Endpoint = $ServiceEndpoint
         $LaparoscopeSession.Secret   = $ClientSecret
         $LaparoscopeSession.Scope    = $Scope
@@ -73,13 +91,7 @@ function Connect-LaparoscopeTenant {
 function Disconnect-LaparoscopeTenant {
 <#
 .Synopsis
-   Short description
-.DESCRIPTION
-   Long description
-.EXAMPLE
-   Example of how to use this cmdlet
-.EXAMPLE
-   Another example of how to use this cmdlet
+   Clears private information stored during the connect process.
 #>
     [CmdLetBinding()]
     param ()
