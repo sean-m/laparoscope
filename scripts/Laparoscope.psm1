@@ -215,9 +215,12 @@ function DecodeJwt {
     }
 }
 
-function TestAccessTokenExpiration {
 
-    $epoch = $([int]([DateTime]::UtcNow-[DateTime]::new(1970, 1, 1)).TotalSeconds)
+function Epoch { ([DateTimeOffset]([DateTime]::UtcNow)).ToUnixTimeSeconds() }
+
+
+function TestAccessTokenExpiration {
+    $epoch = Epoch
     $token = DecodeJwt (Get-LapAccessToken)
     $exp = [int]($token.Body.exp)
     if ($exp -lt $epoch) { throw "Token expired! Call Connect-LaparoscopeTenant to refresh." }
