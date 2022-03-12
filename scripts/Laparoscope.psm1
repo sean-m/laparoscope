@@ -1,5 +1,8 @@
 ﻿#Requires -Version 5
 
+################################################################################
+##                                Private State                               ##
+################################################################################
 
 $LaparoscopeSession = [ordered]@{
     TenantId    = $null
@@ -11,6 +14,111 @@ $LaparoscopeSession = [ordered]@{
     Scope       = $null
 }
 New-Variable -Scope Script -Name LaparoscopeSession -Value $LaparoscopeSession -Force
+
+
+################################################################################
+##                              Helper Functions                              ##
+################################################################################
+
+function Jwt-CreateToken {
+<#
+PowerShell to create JWT using RS256.
+http://blog.d-apps.com/2013/08/powershell-and-json-web-token-handler.html
+
+Workaround when using System.IdentityModel.Tokens.Jwt 1.0 with certificates smaller than 2048 bits.
+Exception calling "WriteToken" with "1" argument(s): "Jwt10530: The 'System.IdentityModel.Tokens.X509AsymmetricSecurityKey' for signing cannot be smaller than '2048' bits. Parameter name: key.KeySize Actual value was 1024."
+
+In 2013, Google's API console would generate P12 keys that was 1024-bits. In 2020, the key size is now 2048-bits.
+
+Instead of using the proof of concept code below, check out libraries listed at https://jwt.io
+
+Tested using:
+    Windows 10.0.18362.628
+    PowerShell 7.0.0
+    Windows PowerShell 5.1.18362.628
+#>
+    Param(
+        [String] $Issuer,
+        [String] $Audience,
+        [string] $Certificate,
+        [string] $CertificatePassword,
+        [System.Collections.Generic.List[System.Security.Claims.Claim]] $Claims = $null,
+        [SecureString] $SigningCertificatePassword,
+        [DateTime] $NotBefore,
+        [DateTime] $Expires
+    )
+
+    function ConvertTo-Base64Url {
+        Param(
+            $InputObject
+        )
+
+        $inputObjectBytes = [System.Convert]::ToBase64String($InputObject)
+        return $inputObjectBytes.Split('=')[0].Replace('+', '-').Replace('/', '_')
+    }
+
+    if ($null -eq $NotBefore) {
+        $NotBefore = Get-Date
+    }
+
+    if ($null -eq $Expires) {
+        $Expires = $NotBefore.AddHours(1)
+    }
+
+    $internalHeader = @{
+        alg = 'RS256'
+        typ = 'JWT'
+    }
+
+    $internalClaims = @{
+        iss   = $Issuer
+        aud   = $Audience
+        exp   = ([System.DateTimeOffset]$Expires).ToUnixTimeSeconds()
+        iat   = ([System.DateTimeOffset]$NotBefore).ToUnixTimeSeconds()
+        nbf   = ([System.DateTimeOffset]$NotBefore).ToUnixTimeSeconds()
+    }
+
+    # Merge user provided payload claims with internal payload claims.
+    if ($null -ne $Claims) {
+        $claims | ForEach-Object -Process {
+            $internalClaims.Add($_.Type, $_.Value)
+        }
+    }
+
+    $b64Header = ConvertTo-Base64Url -InputObject ([System.Text.Encoding]::UTF8.GetBytes(($internalHeader | ConvertTo-Json -Compress)))
+    $b64Claims = ConvertTo-Base64Url -InputObject ([System.Text.Encoding]::UTF8.GetBytes(($internalClaims | ConvertTo-Json -Compress)))
+
+    $baseSignature = $b64Header + '.' + $b64Claims
+    $bytesSignature = [System.Text.Encoding]::UTF8.GetBytes($baseSignature)
+
+    if ((Test-Path -Path $Certificate)) {
+        # Use P12 or PFX certificate if it exists.
+        if ($PSBoundParameters.ContainsKey('SigningCertificatePassword')) {
+            $signingCertificateCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'notinuse', $SigningCertificatePassword
+            $plaintextSigningCertificatePassword = $signingCertificateCredential.GetNetworkCredential().Password
+        } else {
+            $plaintextSigningCertificatePassword = $CertificatePassword
+        }
+
+        $signingX509Certificate = New-Object -TypeName System.Security.Cryptography.X509Certificates.X509Certificate2($Certificate, $plaintextSigningCertificatePassword, 'Export')
+    } else {
+        # Find certificate by thumbprint ID.
+        $signingX509Certificate = Get-ChildItem -Path "cert:\$Certificate" -Recurse | Where-Object { $_.HasPrivateKey -eq $true } | Select-Object -First 1
+    }
+
+    $bytesSignedSignature = $signingX509Certificate.PrivateKey.SignData($bytesSignature, [System.Security.Cryptography.HashAlgorithmName]::SHA256, [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
+    $signedB64Signature = ConvertTo-Base64Url -InputObject $bytesSignedSignature
+
+    return $baseSignature + '.' + $signedB64Signature
+}
+
+
+function Epoch { ([DateTimeOffset]([DateTime]::UtcNow)).ToUnixTimeSeconds() }
+
+
+################################################################################
+##                              Module Functions                              ##
+################################################################################
 
 function Connect-LaparoscopeTenant {
 <#
@@ -214,9 +322,6 @@ function DecodeJwt {
         }
     }
 }
-
-
-function Epoch { ([DateTimeOffset]([DateTime]::UtcNow)).ToUnixTimeSeconds() }
 
 
 function TestAccessTokenExpiration {
