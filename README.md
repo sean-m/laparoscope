@@ -21,6 +21,7 @@
 - [x] Admin API for configuration change at runtime.
 - [ ] ~~Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.~~ Azure APIM can do this and suits my use case. Leaving this out but may revisit later.
 - [ ] Embed scripts with Fody.
+- [x] Reference PowerShell module implementation for interfacing with the API.
 
 ### Priority Commands
 - [x] Get-ADSyncScheduler
