@@ -1,20 +1,5 @@
 ﻿#Requires -Version 5
 
-################################################################################
-##                                Private State                               ##
-################################################################################
-
-$LaparoscopeSession = [ordered]@{
-    TenantId    = $null
-    ClientId    = $null
-    Secret      = $null
-    Resource    = $null
-    Endpoint    = $null
-    AccessToken = $null
-    Scope       = $null
-}
-New-Variable -Scope Script -Name LaparoscopeSession -Value $LaparoscopeSession -Force
-
 
 ################################################################################
 ##                              Helper Functions                              ##
@@ -41,8 +26,9 @@ Tested using:
         [String] $Issuer,
         [String] $Audience,
         [string] $Certificate,
+        [string] $CertificateThumbprint,
         [string] $CertificatePassword,
-        [System.Collections.Generic.List[System.Security.Claims.Claim]] $Claims = $null,
+        [System.Security.Claims.Claim[]] $Claims = $null,
         [SecureString] $SigningCertificatePassword,
         [DateTime] $NotBefore,
         [DateTime] $Expires
@@ -54,7 +40,7 @@ Tested using:
         )
 
         $inputObjectBytes = [System.Convert]::ToBase64String($InputObject)
-        return $inputObjectBytes.Split('=')[0].Replace('+', '-').Replace('/', '_')
+        return $inputObjectBytes.Replace('=','').Replace('+', '-').Replace('/', '_')
     }
 
     if ($null -eq $NotBefore) {
@@ -85,13 +71,12 @@ Tested using:
         }
     }
 
-    $b64Header = ConvertTo-Base64Url -InputObject ([System.Text.Encoding]::UTF8.GetBytes(($internalHeader | ConvertTo-Json -Compress)))
-    $b64Claims = ConvertTo-Base64Url -InputObject ([System.Text.Encoding]::UTF8.GetBytes(($internalClaims | ConvertTo-Json -Compress)))
-
-    $baseSignature = $b64Header + '.' + $b64Claims
-    $bytesSignature = [System.Text.Encoding]::UTF8.GetBytes($baseSignature)
-
-    if ((Test-Path -Path $Certificate)) {
+    if ($CertificateThumbprint) {
+        $signingX509Certificate = Get-ChildItem -Path "cert:\" -Recurse `
+            | Where-Object { $_.Thumbprint -like $CertificateThumbprint } `
+            | Where-Object { $_.HasPrivateKey -eq $true } `
+            | Select-Object -First 1
+    } elseif ((Test-Path -Path $Certificate)) {
         # Use P12 or PFX certificate if it exists.
         if ($PSBoundParameters.ContainsKey('SigningCertificatePassword')) {
             $signingCertificateCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'notinuse', $SigningCertificatePassword
@@ -106,7 +91,21 @@ Tested using:
         $signingX509Certificate = Get-ChildItem -Path "cert:\$Certificate" -Recurse | Where-Object { $_.HasPrivateKey -eq $true } | Select-Object -First 1
     }
 
-    $bytesSignedSignature = $signingX509Certificate.PrivateKey.SignData($bytesSignature, [System.Security.Cryptography.HashAlgorithmName]::SHA256, [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
+    ## Set signing cert hash header
+    $x5t = ConvertTo-Base64Url ($signingX509Certificate.GetCertHash())
+    $internalHeader.Add('x5t', $x5t)
+    
+    ## Encode JWT
+    $b64Header = ConvertTo-Base64Url -InputObject ([System.Text.Encoding]::UTF8.GetBytes(($internalHeader | ConvertTo-Json -Compress)))
+    $b64Claims = ConvertTo-Base64Url -InputObject ([System.Text.Encoding]::UTF8.GetBytes(($internalClaims | ConvertTo-Json -Compress)))
+
+    $baseSignature = $b64Header + '.' + $b64Claims
+    $bytesSignature = [System.Text.Encoding]::UTF8.GetBytes($baseSignature)
+
+    ## Sign token
+    $bytesSignedSignature = $signingX509Certificate.PrivateKey.SignData($bytesSignature, 
+            [System.Security.Cryptography.HashAlgorithmName]::SHA256,
+            [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
     $signedB64Signature = ConvertTo-Base64Url -InputObject $bytesSignedSignature
 
     return $baseSignature + '.' + $signedB64Signature
@@ -114,6 +113,64 @@ Tested using:
 
 
 function Epoch { ([DateTimeOffset]([DateTime]::UtcNow)).ToUnixTimeSeconds() }
+
+function ViewJwt {
+    param (
+        [string]
+        $encodedToken
+    )
+
+    $token = DecodeJwt -encodedToken $encodedToken
+    
+    Write-Host -ForegroundColor Yellow 'Header:'
+    $token.Header | ConvertTo-Json
+
+    Write-Host ""
+    Write-Host -ForegroundColor Yellow 'Body:'
+    $token.Body | ConvertTo-Json
+
+    
+    Write-Host ""
+    Write-Host -ForegroundColor Yellow 'Signature:'
+    $token.Signature
+}
+
+
+function DecodeJwt {
+    param ($encodedToken)
+    begin {
+    filter From-Base64 {
+            param ($b64)
+            [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64 + ("=" * ($b64.Length % 2))))
+        }
+    }
+    process {
+        $header, $body, $sig = $encodedToken.Split('.')
+        [pscustomobject]@{
+            Header    = From-Base64 -b64 $header | ConvertFrom-Json
+            Body      = From-Base64 -b64 $body| ConvertFrom-Json
+            Signature = $sig
+        }
+    }
+}
+
+################################################################################
+##                                Private State                               ##
+################################################################################
+
+$LaparoscopeSession = [ordered]@{
+    TenantId    = $null
+    ClientId    = $null
+    Secret      = $null
+    Resource    = $null
+    Endpoint    = $null
+    AccessToken = $null
+    Scope       = $null
+    Jwt         = $null
+    Jti         = $null
+    CertThumb   = $null
+}
+New-Variable -Scope Script -Name LaparoscopeSession -Value $LaparoscopeSession -Force
 
 
 ################################################################################
@@ -139,17 +196,32 @@ function Connect-LaparoscopeTenant {
    Set-LapAccessToken. Setting the endpoint is similarly handled with
    Set-LapServiceEndpoint.
 .EXAMPLE
-   
-   $tenantId = '63157f30-8e13-4d09-bee7-a847b2dbb0a5'
-   $clientId = 'd814639a-66c4-4fc6-9141-1784115ee15b'
-   $clientSecret = 'my super secret secret'
+   # Client secret auth
+   $tenantId        = '63157f30-8e13-4d09-bee7-a847b2dbb0a5'
+   $clientId        = 'd814639a-66c4-4fc6-9141-1784115ee15b'
+   $clientSecret    = 'my super secret secret'
    $serviceEndpoint = 'https://localhost:44359/'
-   $scope = 'api://285eb67f-706c-45f4-9063-e150c012d12e/.default'
+   $scope           = 'api://285eb67f-706c-45f4-9063-e150c012d12e/.default'
    
    Connect-LaparoscopeTenant `
        -TenantId $tenantId `
        -ClientId $clientId `
        -ClientSecret $clientSecret `
+       -Scope $scope `
+       -ServiceEndpoint $serviceEndpoint
+
+.EXAMPLE
+   # Certificate based auth
+   $tenantId        = '63157f30-8e13-4d09-bee7-a847b2dbb0a5'
+   $clientId        = 'd814639a-66c4-4fc6-9141-1784115ee15b'
+   $certThumb       = 'C40A668B2EBEE8E2C387DC823919345F7882E7CE'
+   $serviceEndpoint = 'https://localhost:44359/'
+   $scope           = 'api://285eb67f-706c-45f4-9063-e150c012d12e/.default'
+   
+   Connect-LaparoscopeTenant `
+       -TenantId $tenantId `
+       -ClientId $clientId `
+       -CertificateThumbprint $certThumb `
        -Scope $scope `
        -ServiceEndpoint $serviceEndpoint
 #>
@@ -162,36 +234,104 @@ function Connect-LaparoscopeTenant {
         $ClientId,
         [Parameter(Mandatory=$true)]
         $ServiceEndpoint,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         $ClientSecret,
+        [Parameter(Mandatory=$false)]
+        $CertificateThumbprint,
         $Scope,
         [switch]
         $NoBrowserLaunch
     )
     begin {
-        $LaparoscopeSession.TenantId = $TenantId
-        $LaparoscopeSession.ClientId = $ClientId
-        $LaparoscopeSession.Endpoint = $ServiceEndpoint
-        $LaparoscopeSession.Secret   = $ClientSecret
-        $LaparoscopeSession.Scope    = $Scope
+        # Clear potentially stale values from a previous connection attempt
+        $LaparoscopeSession.AccessToken = $null
+        $LaparoscopeSession.CertThumb   = $null
+        $LaparoscopeSession.Secret      = $null
+        $LaparoscopeSession.Jwt         = $null
+        
+        # Set private state for use during the session
+        $LaparoscopeSession.CertThumb = $CertificateThumbprint
+        $LaparoscopeSession.TenantId  = $TenantId
+        $LaparoscopeSession.ClientId  = $ClientId
+        $LaparoscopeSession.Endpoint  = $ServiceEndpoint
+        $LaparoscopeSession.Secret    = $ClientSecret
+        $LaparoscopeSession.Scope     = $Scope
+
+        if ($CertificateThumbprint -and $ClientSecret) {
+            throw "Certificate based and client secret based auth are mutually exclusive. Pass CertificateThumbprint or ClientSecret, not both."
+        }
+        if (-not $CertificateThumbprint -and -not $ClientSecret) {
+            throw "Must pass CertificateThumbprint or ClientSecret to retrieve an Azure AD access key."
+        }
+        
     }
     process {
         
-        $tokenParams = @{
-            Uri = "https://login.microsoftonline.com/$($LaparoscopeSession.TenantId)/oauth2/v2.0/token"            
-            Method = 'POST'
-            Body= @{
-                client_id = $LaparoscopeSession.ClientId
-                tenant = $LaparoscopeSession.TenantId
-                scope = "$($LaparoscopeSession.Scope)"
-                client_secret = $LaparoscopeSession.Secret
-                grant_type = 'client_credentials'
-            }
-        }
+        if ($CertificateThumbprint) {
+            
+            $aud = "https://login.microsoftonline.com/$($LaparoscopeSession.TenantId)/oauth2/v2.0/token"
+            $expire = (Get-Date).AddMinutes(60)
+            $notBefore = (Get-Date)
 
-        $tokenResponse = Invoke-RestMethod @tokenParams
+            $jti = [Guid]::NewGuid().ToString()
+            $LaparoscopeSession.Jti = $jti
+
+            $claims = @(
+                [System.Security.Claims.Claim]::new("jti",$jti)
+                [System.Security.Claims.Claim]::new("sub",$LaparoscopeSession.ClientId)
+            )
+
+            $jwt = Jwt-CreateToken -Issuer $clientId -Audience $aud `
+                    -CertificateThumbprint $certThumb `
+                    -NotBefore $notBefore `
+                    -Expires $expire `
+                    -Claims $claims
+            
+            if (-not $jwt) {
+                throw "Failed to create JWT. Cannot get access token from Azure AD."
+            }
+            
+            $LaparoscopeSession.Jwt = $jwt
+
+            $tokenParams = @{
+                Uri = "https://login.microsoftonline.com/$($LaparoscopeSession.TenantId)/oauth2/v2.0/token"            
+                Method = 'POST'
+                Body= @{
+                    client_assertion_type = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer'                    
+                    client_assertion      = $LaparoscopeSession.Jwt
+                    grant_type            = 'client_credentials'                 
+                    client_id             = $LaparoscopeSession.ClientId
+                    tenant                = $LaparoscopeSession.TenantId
+                    scope                 = "$($LaparoscopeSession.Scope)"
+                }
+            }
+            
+
+            $tokenResponse = Invoke-RestMethod @tokenParams
         
-        $LaparoscopeSession.AccessToken = $tokenResponse.access_token
+            $LaparoscopeSession.AccessToken = $tokenResponse.access_token
+        }
+        elseif ($ClientSecret) {
+            
+            $tokenParams = @{
+                Uri = "https://login.microsoftonline.com/$($LaparoscopeSession.TenantId)/oauth2/v2.0/token"            
+                Method = 'POST'
+                Body= @{
+                    client_secret = $LaparoscopeSession.Secret
+                    grant_type    = 'client_credentials'
+                    client_id     = $LaparoscopeSession.ClientId
+                    tenant        = $LaparoscopeSession.TenantId
+                    scope         = "$($LaparoscopeSession.Scope)"
+                }
+            }
+
+            $tokenResponse = Invoke-RestMethod @tokenParams
+        
+            $LaparoscopeSession.AccessToken = $tokenResponse.access_token
+        }
+        else {
+            throw "This shouldn't happen! Pass ClientSecret or CertificateThumbprint."
+        }
     }
 }
 
@@ -233,26 +373,7 @@ function Show-LapAccessToken {
    to the console. Note: Write-Host is used so it is intended for interactive use only.
 #>
     begin {
-        function ViewJwt {
-            param (
-                [string]
-                $encodedToken
-            )
-
-            $token = DecodeJwt -encodedToken $encodedToken
-    
-            Write-Host -ForegroundColor Yellow 'Header:'
-            $token.Header | ConvertTo-Json
-
-            Write-Host ""
-            Write-Host -ForegroundColor Yellow 'Body:'
-            $token.Body | ConvertTo-Json
-
-    
-            Write-Host ""
-            Write-Host -ForegroundColor Yellow 'Signature:'
-            $token.Signature
-        }
+        
     }
     process {
         $token = Get-LapAccessToken
@@ -265,6 +386,29 @@ function Show-LapAccessToken {
     }
 }
 
+function Show-LapJwt {
+<#
+.Synopsis
+   Prints the decoded JWT client assertion used to authenticate against Azure AD.
+.DESCRIPTION
+   JWT tokens are standardized in RFC7519 (https://datatracker.ietf.org/doc/html/rfc7519)
+   and consist of a header, claims, and signature. This function takes the base64 encoded
+   access token, splits on '.', base64 decodes the header and body, then writes
+   to the console. Note: Write-Host is used so it is intended for interactive use only.
+#>
+    begin {
+        
+    }
+    process {
+        $token = $LaparoscopeSession.Jwt
+        if ($token) {
+            ViewJwt -encodedToken $token
+        }
+        else {
+            Write-Warning "Access token not set! Run Connect-LaparoscopeTenant or Set-AccessToken first."
+        }
+    }
+}
 
 function Set-LapServiceEndpoint {
 <#
@@ -303,24 +447,6 @@ function Get-LapAccessToken {
     [CmdletBinding()]
     param()
     $LaparoscopeSession.AccessToken
-}
-
-function DecodeJwt {
-    param ($encodedToken)
-    begin {
-    filter From-Base64 {
-            param ($b64)
-            [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
-        }
-    }
-    process {
-        $header, $body, $sig = $encodedToken.Split('.')
-        [pscustomobject]@{
-            Header    = From-Base64 -b64 $header | ConvertFrom-Json
-            Body      = From-Base64 -b64 $body | ConvertFrom-Json
-            Signature = $sig
-        }
-    }
 }
 
 
@@ -830,6 +956,7 @@ $exportedFunctions = @(
 "Set-LapAccessToken",
 "Get-LapAccessToken",
 "Show-LapAccessToken",
+"Show-LapJwt",
 "Invoke-LapApi",
 
 "Get-LapIdentity",
