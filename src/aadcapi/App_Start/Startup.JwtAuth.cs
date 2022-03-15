@@ -21,6 +21,7 @@ namespace aadcapi
 			string clientId = Globals.ClientId;
 			string secret = Globals.ClientSecret;
 			string audience = Globals.RedirectUri;
+			string issuer = Globals.Issuer;
 
 			var signingKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(secret));
 
@@ -36,7 +37,8 @@ namespace aadcapi
 					ValidateLifetime = true,
 					RequireSignedTokens = true,
 					ValidateIssuerSigningKey = true,
-					ValidateIssuer = false,  // TODO fix this
+					ValidateIssuer = true,
+					ValidIssuer = issuer,
 					ValidateAudience = false,
 					IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(kid)
 				},

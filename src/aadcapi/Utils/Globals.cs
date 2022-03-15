@@ -35,13 +35,13 @@ namespace aadcapi.Utils
             get;
         } = ConfigurationManager.AppSettings["ida:TenantId"];
 
-        
+
         /// <summary>
         /// The AppId guid specified in the Azure AD app registration.
         /// </summary>
         public static string Issuer {
             get;
-        } = ConfigurationManager.AppSettings["ida:Issuer"];
+        } = $"https://sts.windows.net/{TenantId}/";
         
 
         /// <summary>
