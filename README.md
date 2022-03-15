@@ -143,3 +143,23 @@ When following a user account from a connector space, it can be queried by the d
 The 'Lineage attribute indicates which connector spaces this metaverse record is connected to and it's id in that connector space, the connector space record on the far side then yields an id that can be used to query the record from the connected directory (ldap, sql, AD, AAD, AWS).
 
 The ergonomics for following those breadcrumbs are terrible but is fit for automation. That would allow tracing a user account through every connected sync engine (AADC, MIM, ADSS) and all directories its provisioned into if only given a single source directory and identifier.
+
+**Update:** this gets easier when using PowerShell and the REST API. Here's some example code to do just that taken from my lab environment. Uses the reference Laparoscope PowerShell module abstraction.
+```powershell
+
+$connectorName = 'garage.mcardletech.com'
+
+# Get CSObject from AD DN
+$csObject = Get-LapCSObject -ConnectorName 'garage.mcardletech.com' `
+-DistinguishedName 'CN=hgroce,OU=Standard,OU=All Users,DC=garage,DC=mcardletech,DC=com'
+
+# Get MVObject from metaverse Id on CSObject
+$mvObject = Get-LapMVObject -Id ($csObject.ConnectedMVObjectId)
+
+# Get AAD connector info from metaverse object
+$aadConnector = $mvObject.Lineage | where ConnectorName -like "*AAD"
+
+## AAD connector
+Get-LapCSObject -ConnectorName ($aadConnector.ConnectorName) -DistinguishedName ($aadConnector.ConnectedCsObjectDN)
+
+```
