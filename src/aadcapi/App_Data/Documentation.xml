@@ -1,0 +1,1333 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>aadcapi</name>
+    </assembly>
+    <members>
+        <member name="M:aadcapi.Areas.HelpPage.ApiDescriptionExtensions.GetFriendlyId(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Generates an URI-friendly ID for the <see cref="T:System.Web.Http.Description.ApiDescription"/>. E.g. "Get-Values-id_name" instead of "GetValues/{id}?name={name}"
+            </summary>
+            <param name="description">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The ID as a string.</returns>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.HelpPageConfig">
+            <summary>
+            Use this class to customize the Help Page.
+            For example you can set a custom <see cref="T:System.Web.Http.Description.IDocumentationProvider"/> to supply the documentation
+            or you can provide the samples for the requests/responses.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.Controllers.HelpController">
+            <summary>
+            The controller that will handle requests for the help page.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetDocumentationProvider(System.Web.Http.HttpConfiguration,System.Web.Http.Description.IDocumentationProvider)">
+            <summary>
+            Sets the documentation provider for help page.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="documentationProvider">The documentation provider.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleObjects(System.Web.Http.HttpConfiguration,System.Collections.Generic.IDictionary{System.Type,System.Object})">
+            <summary>
+            Sets the objects that will be used by the formatters to produce sample requests/responses.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sampleObjects">The sample objects.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleRequest(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String)">
+            <summary>
+            Sets the sample request directly for the specified media type and action.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample request.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleRequest(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String,System.String[])">
+            <summary>
+            Sets the sample request directly for the specified media type and action with parameters.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample request.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleResponse(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String)">
+            <summary>
+            Sets the sample request directly for the specified media type of the action.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample response.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleResponse(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String,System.String[])">
+            <summary>
+            Sets the sample response directly for the specified media type of the action with specific parameters.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample response.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleForMediaType(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Sets the sample directly for all actions with the specified media type.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample.</param>
+            <param name="mediaType">The media type.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleForType(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.Type)">
+            <summary>
+            Sets the sample directly for all actions with the specified type and media type.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="type">The parameter type or return type of an action.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualRequestType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String)">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate request samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualRequestType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String,System.String[])">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate request samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualResponseType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String)">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> returned as part of the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate response samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualResponseType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String,System.String[])">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> returned as part of the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate response samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.GetHelpPageSampleGenerator(System.Web.Http.HttpConfiguration)">
+            <summary>
+            Gets the help page sample generator.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <returns>The help page sample generator.</returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.SetHelpPageSampleGenerator(System.Web.Http.HttpConfiguration,aadcapi.Areas.HelpPage.HelpPageSampleGenerator)">
+            <summary>
+            Sets the help page sample generator.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sampleGenerator">The help page sample generator.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.GetModelDescriptionGenerator(System.Web.Http.HttpConfiguration)">
+            <summary>
+            Gets the model description generator.
+            </summary>
+            <param name="config">The configuration.</param>
+            <returns>The <see cref="T:aadcapi.Areas.HelpPage.ModelDescriptions.ModelDescriptionGenerator"/></returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageConfigurationExtensions.GetHelpPageApiModel(System.Web.Http.HttpConfiguration,System.String)">
+            <summary>
+            Gets the model that represents an API displayed on the help page. The model is initialized on the first call and cached for subsequent calls.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="apiDescriptionId">The <see cref="T:System.Web.Http.Description.ApiDescription"/> ID.</param>
+            <returns>
+            An <see cref="T:aadcapi.Areas.HelpPage.Models.HelpPageApiModel"/>
+            </returns>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.ModelDescriptions.ModelDescription">
+            <summary>
+            Describes a type model.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.ModelDescriptions.ModelDescriptionGenerator">
+            <summary>
+            Generates model descriptions for given types.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.ModelDescriptions.ModelNameAttribute">
+            <summary>
+            Use this attribute to change the name of the <see cref="T:aadcapi.Areas.HelpPage.ModelDescriptions.ModelDescription"/> generated for a type.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.Models.HelpPageApiModel">
+            <summary>
+            The model that represents an API displayed on the help page.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Areas.HelpPage.Models.HelpPageApiModel"/> class.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.ApiDescription">
+            <summary>
+            Gets or sets the <see cref="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.ApiDescription"/> that describes the API.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.UriParameters">
+            <summary>
+            Gets or sets the <see cref="T:aadcapi.Areas.HelpPage.ModelDescriptions.ParameterDescription"/> collection that describes the URI parameters for the API.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.RequestDocumentation">
+            <summary>
+            Gets or sets the documentation for the request.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.RequestModelDescription">
+            <summary>
+            Gets or sets the <see cref="T:aadcapi.Areas.HelpPage.ModelDescriptions.ModelDescription"/> that describes the request body.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.RequestBodyParameters">
+            <summary>
+            Gets the request body parameter descriptions.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.ResourceDescription">
+            <summary>
+            Gets or sets the <see cref="T:aadcapi.Areas.HelpPage.ModelDescriptions.ModelDescription"/> that describes the resource.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.ResourceProperties">
+            <summary>
+            Gets the resource property descriptions.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.SampleRequests">
+            <summary>
+            Gets the sample requests associated with the API.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.SampleResponses">
+            <summary>
+            Gets the sample responses associated with the API.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.Models.HelpPageApiModel.ErrorMessages">
+            <summary>
+            Gets the error messages associated with this model.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.HelpPageSampleGenerator">
+            <summary>
+            This class will generate the samples for the help page.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Areas.HelpPage.HelpPageSampleGenerator"/> class.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.ActualHttpMessageTypes">
+            <summary>
+            Gets CLR types that are used as the content of <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/>.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples">
+            <summary>
+            Gets the objects that are used directly as samples for certain actions.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects">
+            <summary>
+            Gets the objects that are serialized as samples by the supported formatters.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.SampleObjectFactories">
+            <summary>
+            Gets factories for the objects that the supported formatters will serialize as samples. Processed in order,
+            stopping when the factory successfully returns a non-<see langref="null"/> object.
+            </summary>
+            <remarks>
+            Collection includes just <see cref="M:aadcapi.Areas.HelpPage.ObjectGenerator.GenerateObject(System.Type)"/> initially. Use
+            <code>SampleObjectFactories.Insert(0, func)</code> to provide an override and
+            <code>SampleObjectFactories.Add(func)</code> to provide a fallback.</remarks>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.GetSampleRequests(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Gets the request body samples for a given <see cref="T:System.Web.Http.Description.ApiDescription"/>.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.GetSampleResponses(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Gets the response body samples for a given <see cref="T:System.Web.Http.Description.ApiDescription"/>.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.GetSample(System.Web.Http.Description.ApiDescription,aadcapi.Areas.HelpPage.SampleDirection)">
+            <summary>
+            Gets the request or response body samples.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.GetActionSample(System.String,System.String,System.Collections.Generic.IEnumerable{System.String},System.Type,System.Net.Http.Formatting.MediaTypeFormatter,System.Net.Http.Headers.MediaTypeHeaderValue,aadcapi.Areas.HelpPage.SampleDirection)">
+            <summary>
+            Search for samples that are provided directly through <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples"/>.
+            </summary>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+            <param name="type">The CLR type.</param>
+            <param name="formatter">The formatter.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
+            <returns>The sample that matches the parameters.</returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.GetSampleObject(System.Type)">
+            <summary>
+            Gets the sample object that will be serialized by the formatters. 
+            First, it will look at the <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects"/>. If no sample object is found, it will try to create
+            one using <see cref="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.DefaultSampleObjectFactory(aadcapi.Areas.HelpPage.HelpPageSampleGenerator,System.Type)"/> (which wraps an <see cref="T:aadcapi.Areas.HelpPage.ObjectGenerator"/>) and other
+            factories in <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.SampleObjectFactories"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>The sample object.</returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.ResolveHttpRequestMessageType(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Resolves the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The type.</returns>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.ResolveType(System.Web.Http.Description.ApiDescription,System.String,System.String,System.Collections.Generic.IEnumerable{System.String},aadcapi.Areas.HelpPage.SampleDirection,System.Collections.ObjectModel.Collection{System.Net.Http.Formatting.MediaTypeFormatter}@)">
+            <summary>
+            Resolves the type of the action parameter or return value when <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/> is used.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or a response.</param>
+            <param name="formatters">The formatters.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleGenerator.WriteSampleObjectUsingFormatter(System.Net.Http.Formatting.MediaTypeFormatter,System.Object,System.Type,System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Writes the sample object using formatter.
+            </summary>
+            <param name="formatter">The formatter.</param>
+            <param name="value">The value.</param>
+            <param name="type">The type.</param>
+            <param name="mediaType">Type of the media.</param>
+            <returns></returns>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.HelpPageSampleKey">
+            <summary>
+            This is used to identify the place where the sample should be applied.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Creates a new <see cref="T:aadcapi.Areas.HelpPage.HelpPageSampleKey"/> based on media type.
+            </summary>
+            <param name="mediaType">The media type.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue,System.Type)">
+            <summary>
+            Creates a new <see cref="T:aadcapi.Areas.HelpPage.HelpPageSampleKey"/> based on media type and CLR type.
+            </summary>
+            <param name="mediaType">The media type.</param>
+            <param name="type">The CLR type.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleKey.#ctor(aadcapi.Areas.HelpPage.SampleDirection,System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Creates a new <see cref="T:aadcapi.Areas.HelpPage.HelpPageSampleKey"/> based on <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>, controller name, action name and parameter names.
+            </summary>
+            <param name="sampleDirection">The <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue,aadcapi.Areas.HelpPage.SampleDirection,System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Creates a new <see cref="T:aadcapi.Areas.HelpPage.HelpPageSampleKey"/> based on media type, <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>, controller name, action name and parameter names.
+            </summary>
+            <param name="mediaType">The media type.</param>
+            <param name="sampleDirection">The <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.ControllerName">
+            <summary>
+            Gets the name of the controller.
+            </summary>
+            <value>
+            The name of the controller.
+            </value>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.ActionName">
+            <summary>
+            Gets the name of the action.
+            </summary>
+            <value>
+            The name of the action.
+            </value>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.MediaType">
+            <summary>
+            Gets the media type.
+            </summary>
+            <value>
+            The media type.
+            </value>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.ParameterNames">
+            <summary>
+            Gets the parameter names.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.SampleDirection">
+            <summary>
+            Gets the <see cref="P:aadcapi.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.ImageSample">
+            <summary>
+            This represents an image sample on the help page. There's a display template named ImageSample associated with this class.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.ImageSample.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Areas.HelpPage.ImageSample"/> class.
+            </summary>
+            <param name="src">The URL of an image.</param>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.InvalidSample">
+            <summary>
+            This represents an invalid sample on the help page. There's a display template named InvalidSample associated with this class.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.ObjectGenerator">
+            <summary>
+            This class will create an object of a given type and populate it with sample data.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.ObjectGenerator.GenerateObject(System.Type)">
+            <summary>
+            Generates an object for a given type. The type needs to be public, have a public default constructor and settable public properties/fields. Currently it supports the following types:
+            Simple types: <see cref="T:System.Int32"/>, <see cref="T:System.String"/>, <see cref="T:System.Enum"/>, <see cref="T:System.DateTime"/>, <see cref="T:System.Uri"/>, etc.
+            Complex types: POCO types.
+            Nullables: <see cref="T:System.Nullable`1"/>.
+            Arrays: arrays of simple types or complex types.
+            Key value pairs: <see cref="T:System.Collections.Generic.KeyValuePair`2"/>
+            Tuples: <see cref="T:System.Tuple`1"/>, <see cref="T:System.Tuple`2"/>, etc
+            Dictionaries: <see cref="T:System.Collections.Generic.IDictionary`2"/> or anything deriving from <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+            Collections: <see cref="T:System.Collections.Generic.IList`1"/>, <see cref="T:System.Collections.Generic.IEnumerable`1"/>, <see cref="T:System.Collections.Generic.ICollection`1"/>, <see cref="T:System.Collections.IList"/>, <see cref="T:System.Collections.IEnumerable"/>, <see cref="T:System.Collections.ICollection"/> or anything deriving from <see cref="T:System.Collections.Generic.ICollection`1"/> or <see cref="T:System.Collections.IList"/>.
+            Queryables: <see cref="T:System.Linq.IQueryable"/>, <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>An object of the given type.</returns>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.SampleDirection">
+            <summary>
+            Indicates whether the sample is used for request or response
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.TextSample">
+            <summary>
+            This represents a preformatted text sample on the help page. There's a display template named TextSample associated with this class.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Areas.HelpPage.XmlDocumentationProvider">
+            <summary>
+            A custom <see cref="T:System.Web.Http.Description.IDocumentationProvider"/> that reads the API documentation from an XML documentation file.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Areas.HelpPage.XmlDocumentationProvider.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Areas.HelpPage.XmlDocumentationProvider"/> class.
+            </summary>
+            <param name="documentPath">The physical path to XML document.</param>
+        </member>
+        <member name="M:aadcapi.Controllers.AccountController.EndSession">
+            <summary>
+            Called by Azure AD. Here we end the user's session, but don't redirect to AAD for sign out.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Controllers.ConfigController.Get(System.String)">
+            <summary>
+            Endpoint for querying runtime application settings. Settings can be specified by
+            the Setting query parameter as a single setting name or comma separated list of names.
+            Wildcards are supported. If no Setting is specified, an empty set is returned. You can
+            return a single setting name by route /api/Config/[Setting]. If both are specified,
+            query string wins.
+            </summary>
+            <param name="Setting">Single or comma separated list of setting names.</param>
+            <returns>Array of 0 or more values: [ { Setting:name, Value:value } ].</returns>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.MeController.Get">
+            <summary>
+            Returns the ClaimsIdentity used by the server for authorization.
+            Provided for debugging purposes.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.AADCompanyFeatureController.Get">
+            <summary>
+            Maps to Get-ADSyncAADCompanyFeature cmdlet. This returns enabled status for
+            features that are global to the AADC install/tenat. These include: 
+            PasswordHashSync, ForcePasswordChangeOnLogOn, UserWriteback, DeviceWriteback, UnifiedGroupWriteback, GroupWritebackV2.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.AADPasswordResetConfigurationController.Get">
+            <summary>
+            Maps to Get-ADSyncAADPasswordResetConfiguration cmdlet. Shows the status of 
+            the tenant wide feature. Only applies to the AAD connector so that is automatically
+            resolved. If more than one AAD connector is found an exception is thrown as this is
+            not a supported configuration.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.AADPasswordSyncController.Get(System.String)">
+            <summary>
+            Maps to the Get-ADSyncAADPasswordSync cmdlet. This takes the source connector by name and
+            returns whether the feature is enabled and the name of the AAD target connector.
+            </summary>
+            <param name="SourceConnector">Connector name.</param>
+            <returns>
+            Yields: SourceConnector name, TargetConnector name, Enabled password sync status.
+            </returns>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.AutoUpgradeController.Get">
+            <summary>
+            Maps to Get-ADSyncAutoUpgrade. This feature is only available when using LocalDB
+            in a supported configuration. If status is not "Enabled" detail is given as to why.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.ConnectorStatisticsController.Get(System.String)">
+            <summary>
+            Maps to Get-ADSyncConnectorStatistics cmdlet. This returns the current
+            number of connectors and pending import and export operations for a given
+            connector. Use case: if synchronization is taking much longer than usual, perhaps
+            there are many more connectors (objects) to synchronize. Monitoring these
+            results for change over time can give an indication of that.
+            
+            Note: you must be authenticated with valid role claims before calling into
+            this or you will receive a 403 Forbidden. Returning a 401 can result in an
+            infinate redirect loop with Azure AD.
+            </summary>
+            <param name="Name">Name of a valid AADC connector.</param>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.CSObjectController.Get(System.String,System.String)">
+            <summary>
+            Controller for the Get-ADSyncCSObject command. This is used to retreive a single record
+            from a named connector space. Records are queried by DN only and must specify a valid connector
+            name. The returned record contains a ConnectedMVObjectId property that can be used to inspect
+            the corresponding metaverse record.
+            
+            Note: records filtered on import may not resolve or may only exist in the connector space and
+            will not have a ConnectedMVObjectId property.
+            </summary>
+            <param name="ConnectorName">
+            Name of the connector space to query. Can be retreived from /api/Connector.
+            </param>
+            <param name="DistinguishedName">
+            The full distinguished name for the desired connector space record. If querying an
+            Active Directory connector it may look like this: CN=Super Great Person,CN=Cool Stuff,DC=my,DC=garage.
+            </param>
+            <returns>
+            https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsynccsobject
+            </returns>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.DomainReachabilityStatusController.Get(System.String)">
+             <summary>
+             Maps to Get-ADSyncDomainReachabilityStatus cmdlet. This can be used for troubleshooting
+             connectivity related no-start-ma sync status messages.
+            
+             Note: you must be authenticated with valid role claims before calling into
+             this or you will receive a 403 Forbidden. Returning a 401 can result in an
+             infinate redirect loop with Azure AD.
+             </summary>
+             <param name="ConnectorName">Name of the AADC connector for the target domain.</param>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.ExportDeletionThresholdController.Get">
+            <summary>
+            Maps to Get-ADSyncExportDeletionThreshold cmdlet. This gives enabled/disabled (1/0)
+            status and the numeric value of the current threshold.
+            </summary>
+        </member>
+        <member name="T:aadcapi.Controllers.Server.GlobalSettingsController">
+            <summary>
+            Maps to the Get-ADSyncGlobalSettings command without the schema data.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.GlobalSettingsController.Get">
+            <summary>
+            Provides a subset of the Get-ADSyncGlobalSettings cmdlet output. The Parameters property has been filtered
+            to promote Name, Value to Key=Value. Other properties on the Parameters values aren't admin tunable
+            and have not varied for the last several AADC versions.
+            </summary>
+            <returns>
+            Returns the: Version, InstanceId, SqlSchemaVersion, Parameters properties from Get-ADSyncGlobalSettings.
+            Metavserse schema settings aren't very actionable without direct access to AADC so have been omitted.
+            </returns>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.MVObjectController.Get(System.String)">
+            <summary>
+            Controller for the Get-ADSyncMVObject command. Records are only retrieved by ObjectID
+            which can only be discovered from an unbounded metaverse search (not allowed by this
+            api) or by cross walking from the connector space.
+            
+            Note: if validating a merged
+            identity (one that exists in multiple source connector spaces), inspect the 'Lineage'
+            property for all connectors joined to the metaverse record.
+            </summary>
+            <param name="Id">Guid identifying a single metaverse record.</param>
+            <returns>
+            https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsyncmvobject
+            </returns>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.PartitionPasswordSyncStateController.Get">
+            <summary>
+            Maps to the Get-ADSyncPartitionPasswordSyncState cmdlet. The cmdlet takes no
+            parameters. Results are filtered by authorization rule, if it yields no results
+            verify that hash sync is enabled and that there is a rule authorizing you to see 
+            the status for your connector. 
+            
+            This can be used to indicate issues with the password hash sync service on a per
+            connector basis.
+            </summary>
+            <returns>
+            Yields these properties: ConnectorId, DN, PasswordSyncLastSuccessfulCycleStartTimestamp, PasswordSyncLastSuccessfulCycleEndTimestamp, PasswordSyncLastCycleStartTimestamp, PasswordSyncLastCycleEndTimestamp, PasswordSyncLastCycleStatus.
+            </returns>
+        </member>
+        <member name="T:aadcapi.Controllers.Server.StartSyncController">
+            <summary>
+            Enables starting of Delta sync cycles no sooner than every 10 minutes.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.StartSyncController.Post">
+            <summary>
+            Executes Start-ADSyncSyncCycle -PolicyType Delta if it is not
+            currently running and has not ran within the last 10 minutes.
+            </summary>
+            <returns>
+            Results are returned as JSON. If a sync cycle was started the .Started
+            property is true.
+            
+            {
+              "Result": "Last sync was less than 10 minutes ago, 08/26/2021 19:13:47 UTC, not starting sync.",
+              "Started": false
+            }
+            </returns>
+        </member>
+        <member name="T:aadcapi.Controllers.Server.ConnectorController">
+            <summary>
+            Unqualified GET returns a subset of information for connectors. With multiple connectors
+            the result can be 100MB+ so some properties are left out.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.ConnectorController.Get(System.String)">
+            <summary>
+            Executes Get-ADSyncConnector and returns a subset of the properties. This will help
+            to map a connector name to identifier for other cmdlets that only take identifier.
+            </summary>
+            <param name="Name">Name of a specific connector to return.</param>
+            <returns></returns>
+        </member>
+        <member name="T:aadcapi.Controllers.Server.SchedulerController">
+            <summary>
+            Maps to cmdlets for the AADC Scheduler. Unqualified GET returns the result of Get-ADSyncScheduler.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Controllers.Server.SchedulerController.Get">
+            <summary>
+            Executes Get-ADSyncScheduler and returns the result as a list of hashtables.
+            </summary>
+            <returns>List&lt; Dictionary &lt; string, object &gt; &gt;</returns>
+        </member>
+        <member name="T:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions">
+            <summary>
+            Methods to assist in processing authorization rules from within a controller.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions.ControllerName(System.Web.Http.ApiController)">
+            <summary>
+            Helper for returning the name of a given controller. Helpful when calling
+            an authorization routine that loads rules based on controller name.
+            </summary>
+            <param name="conn"></param>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions.RoleClaims(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Yields a collection of role values for a given ClaimsPrincipal.
+            </summary>
+            <param name="Principal"></param>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions.WhereAuthorized``1(System.Web.Http.ApiController,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Given a controller, filter a collection of objects that the principal can access in that context.
+            Simply a helper function so filtering a collection from within a controller can be simplified.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="Controller"></param>
+            <param name="Collection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions.IsAuthorized``1(System.Web.Http.ApiController,``0)">
+            <summary>
+            IsAuthorized extension method for evaluating rules against a single object
+            from within a controller method.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="Controller"></param>
+            <param name="Model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions.WhereAuthorized(System.Web.Http.ApiController,System.Collections.Generic.IEnumerable{System.Collections.Generic.Dictionary{System.String,System.Object}})">
+            <summary>
+            Given a controller, filter a collection of objects that the principal can access in that context.
+            Simply a helper function so filtering a collection from within a controller can be simplified.
+            </summary>
+            <param name="Controller"></param>
+            <param name="Collection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions.IsAuthorized(System.Web.Http.ApiController,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            IsAuthorized extension method for evaluating rules against a single object
+            from within a controller method.
+            </summary>
+            <param name="Controller"></param>
+            <param name="Model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.ClaimsPrincipalExtension.GetMsalAccountId(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Get the Account identifier for an MSAL.NET account from a ClaimsPrincipal
+            </summary>
+            <param name="claimsPrincipal">Claims principal</param>
+            <returns>A string corresponding to an account identifier as defined in <see cref="P:Microsoft.Identity.Client.AccountId.Identifier"/></returns>
+        </member>
+        <member name="M:aadcapi.Utils.ClaimsPrincipalExtension.GetObjectId(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Get the unique object ID associated with the claimsPrincipal
+            </summary>
+            <param name="claimsPrincipal">Claims principal from which to retrieve the unique object id</param>
+            <returns>Unique object ID of the identity, or <c>null</c> if it cannot be found</returns>
+        </member>
+        <member name="M:aadcapi.Utils.ClaimsPrincipalExtension.GetTenantId(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Tenant ID of the identity
+            </summary>
+            <param name="claimsPrincipal">Claims principal from which to retrieve the tenant id</param>
+            <returns>Tenant ID of the identity, or <c>null</c> if it cannot be found</returns>
+        </member>
+        <member name="M:aadcapi.Utils.ClaimsPrincipalExtension.ToClaimsPrincipal(Microsoft.Identity.Client.IAccount)">
+            <summary>
+            Builds a ClaimsPrincipal from an IAccount
+            </summary>
+            <param name="account">The IAccount instance.</param>
+            <returns>A ClaimsPrincipal built from IAccount</returns>
+        </member>
+        <member name="T:aadcapi.Utils.ClaimConstants">
+            <summary>
+            claim keys constants
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.ClientId">
+            <summary>
+            The Client ID is used by the application to uniquely identify itself to Azure AD.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.ClientSecret">
+            <summary>
+            The ClientSecret is a credential used to authenticate the application to Azure AD.  Azure AD supports password and certificate credentials.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.PostLogoutRedirectUri">
+            <summary>
+            The Post Logout Redirect Uri is the URL where the user will be redirected after they sign out.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.TenantId">
+            <summary>
+            The TenantId is the DirectoryId of the Azure AD tenant being used in the sample
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.Issuer">
+            <summary>
+            The AppId guid specified in the Azure AD app registration.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.RedirectUri">
+            <summary>
+            This must be in the allowed redirect uris in the app registration.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.AppName">
+            <summary>
+            This is exposed at the bottom of the global layout view.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.Authority">
+            <summary>
+            This is shows as the login endpoint when configuring authentication in the Azure AD Portal.
+            For a multi-tenant configured app, populate the Authority attribte in the web.config.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.AuthorizedConfigRole">
+            <summary>
+            Users in this specified role will be able to query and manage application settings at runtime via the api.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MsalAppBuilder.BuildConfidentialClientApplication">
+            <summary>
+            Shared method to create an IConfidentialClientApplication from configuration and attach the application's token cache implementation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.MsalAppBuilder.BuildConfidentialClientApplication(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Shared method to create an IConfidentialClientApplication from configuration and attach the application's token cache implementation
+            </summary>
+            <param name="currentUser">The current ClaimsPrincipal</param>
+            <returns></returns>
+        </member>
+        <member name="M:aadcapi.Utils.MsalAppBuilder.ClearUserTokenCache">
+            <summary>
+            Common method to remove the cached tokens for the currently signed in user
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:aadcapi.Utils.MSALAppMemoryTokenCache">
+            <summary>
+            An implementation of token cache for Confidential clients backed by MemoryCache.
+            MemoryCache is useful in Api scenarios where there is no HttpContext to cache data.
+            </summary>
+            <seealso cref="!:https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/token-cache-serialization"/>
+        </member>
+        <member name="F:aadcapi.Utils.MSALAppMemoryTokenCache.AppCacheId">
+            <summary>
+            The application cache key
+            </summary>
+        </member>
+        <member name="F:aadcapi.Utils.MSALAppMemoryTokenCache.memoryCache">
+            <summary>
+            The backing MemoryCache instance
+            </summary>
+        </member>
+        <member name="F:aadcapi.Utils.MSALAppMemoryTokenCache.cacheDuration">
+            <summary>
+            The duration till the tokens are kept in memory cache. In production, a higher value , upto 90 days is recommended.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppMemoryTokenCache.#ctor(Microsoft.Identity.Client.ITokenCache,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Utils.MSALAppMemoryTokenCache"/> class.
+            </summary>
+            <param name="tokenCache">The client's instance of the token cache.</param>
+            <param name="clientId">The application's id (Client ID).</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppMemoryTokenCache.AppTokenCacheBeforeWriteNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            if you want to ensure that no concurrent write take place, use this notification to place a lock on the entry
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppMemoryTokenCache.LoadAppTokenCacheFromMemory(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Loads the application's token from memory cache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppMemoryTokenCache.PersistAppTokenCache(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Persists the application's token to the cache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppMemoryTokenCache.AppTokenCacheBeforeAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right before MSAL needs to access the cache. Reload the cache from the persistence store in case it changed since the last access.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppMemoryTokenCache.AppTokenCacheAfterAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right after MSAL accessed the cache.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="T:aadcapi.Utils.MSALAppSessionTokenCache">
+            <summary>
+            An implementation of token cache for Confidential clients backed by Http session.
+            </summary>
+            <seealso cref="!:https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/token-cache-serialization"/>
+        </member>
+        <member name="F:aadcapi.Utils.MSALAppSessionTokenCache.AppCacheId">
+            <summary>
+            The application cache key
+            </summary>
+        </member>
+        <member name="F:aadcapi.Utils.MSALAppSessionTokenCache.HttpContextInstance">
+            <summary>
+            The HTTP context being used by this app
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppSessionTokenCache.#ctor(Microsoft.Identity.Client.ITokenCache,System.String,System.Web.HttpContextBase)">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Utils.MSALAppSessionTokenCache"/> class.
+            </summary>
+            <param name="tokenCache">The client's instance of the token cache.</param>
+            <param name="clientId">The application's id (Client ID).</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppSessionTokenCache.AppTokenCacheBeforeWriteNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            if you want to ensure that no concurrent write take place, use this notification to place a lock on the entry
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppSessionTokenCache.LoadAppTokenCacheFromSession(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Loads the application's tokens from session cache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppSessionTokenCache.PersistAppTokenCache(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Persists the application token's to session cache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppSessionTokenCache.Clear">
+            <summary>
+            Clears the TokenCache's copy of this user's cache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppSessionTokenCache.AppTokenCacheBeforeAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right before MSAL needs to access the cache. Reload the cache from the persistence store in case it changed since the last access.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALAppSessionTokenCache.AppTokenCacheAfterAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right after MSAL accessed the cache.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="T:aadcapi.Utils.MSALPerUserMemoryTokenCache">
+            <summary>
+            An implementation of token cache for both Confidential and Public clients backed by MemoryCache.
+            MemoryCache is useful in Api scenarios where there is no HttpContext to cache data.
+            </summary>
+            <seealso cref="!:https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/token-cache-serialization"/>
+        </member>
+        <member name="F:aadcapi.Utils.MSALPerUserMemoryTokenCache.memoryCache">
+            <summary>
+            The backing MemoryCache instance
+            </summary>
+        </member>
+        <member name="F:aadcapi.Utils.MSALPerUserMemoryTokenCache.cacheDuration">
+            <summary>
+            The duration till the tokens are kept in memory cache. In production, a higher value, upto 90 days is recommended.
+            </summary>
+        </member>
+        <member name="F:aadcapi.Utils.MSALPerUserMemoryTokenCache.SignedInUser">
+            <summary>
+            Once the user signes in, this will not be null and can be obtained via a call to Thread.CurrentPrincipal
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.#ctor(Microsoft.Identity.Client.ITokenCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Utils.MSALPerUserMemoryTokenCache"/> class.
+            </summary>
+            <param name="tokenCache">The client's instance of the token cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.#ctor(Microsoft.Identity.Client.ITokenCache,System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Initializes a new instance of the <see cref="T:aadcapi.Utils.MSALPerUserMemoryTokenCache"/> class.
+            </summary>
+            <param name="tokenCache">The client's instance of the token cache.</param>
+            <param name="user">The signed-in user for whom the cache needs to be established.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.Initialize(Microsoft.Identity.Client.ITokenCache,System.Security.Claims.ClaimsPrincipal)">
+            <summary>Initializes the cache instance</summary>
+            <param name="tokenCache">The ITokenCache passed through the constructor</param>
+            <param name="user">The signed-in user for whom the cache needs to be established..</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.GetMsalAccountId">
+            <summary>
+            Explores the Claims of a signed-in user (if available) to populate the unique Id of this cache's instance.
+            </summary>
+            <returns>The signed in user's object.tenant Id , if available in the ClaimsPrincipal.Current instance</returns>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.LoadUserTokenCacheFromMemory(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Loads the user token cache from memory.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.PersistUserTokenCache(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Persists the user token blob to the memoryCache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.Clear">
+            <summary>
+            Clears the TokenCache's copy of this user's cache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.UserTokenCacheAfterAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right after MSAL accessed the cache.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.UserTokenCacheBeforeAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right before MSAL needs to access the cache. Reload the cache from the persistence store in case it changed since the last access.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.UserTokenCacheBeforeWriteNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            if you want to ensure that no concurrent write take place, use this notification to place a lock on the entry
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserMemoryTokenCache.SetSignedInUserFromNotificationArgs(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            To keep the cache, ClaimsPrincipal and Sql in sync, we ensure that the user's object Id we obtained by MSAL after
+            successful sign-in is set as the key for the cache.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="T:aadcapi.Utils.MSALPerUserSessionTokenCache">
+            <summary>
+            This is a MSAL's TokenCache implementation for one user. It uses Sql server as a backend store and uses the Entity Framework to read and write to that database.
+            </summary>
+            <seealso cref="!:https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/token-cache-serialization"/>
+        </member>
+        <member name="F:aadcapi.Utils.MSALPerUserSessionTokenCache.SignedInUser">
+            <summary>
+            Once the user signes in, this will not be null and can be ontained via a call to ClaimsPrincipal.Current
+            </summary>
+        </member>
+        <member name="F:aadcapi.Utils.MSALPerUserSessionTokenCache.HttpContext">
+            <summary>
+            The HTTP context being used by this app
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.#ctor(Microsoft.Identity.Client.ITokenCache,System.Web.HttpContextBase)">
+            <summary>Initializes a new instance of the <see cref="T:aadcapi.Utils.MSALPerUserSessionTokenCache"/> class.</summary>
+            <param name="tokenCache">The token cache.</param>
+            <param name="httpcontext">The current HttpContext.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.Initialize(Microsoft.Identity.Client.ITokenCache,System.Web.HttpContextBase,System.Security.Claims.ClaimsPrincipal)">
+            <summary>Initializes the cache instance</summary>
+            <param name="tokenCache">The ITokenCache passed through the constructor</param>
+            <param name="httpcontext">The current HttpContext</param>
+            <param name="user">The signed in user's ClaimPrincipal, could be null.
+            If the calling app has it available, then it should pass it themselves.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.LoadUserTokenCacheFromSession(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Loads the user token cache from http session.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.PersistUserTokenCache(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Persists the user token blob to the Http session.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.Clear">
+            <summary>
+            Clears the TokenCache's copy of this user's cache.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.UserTokenCacheBeforeWriteNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            if you want to ensure that no concurrent write take place, use this notification to place a lock on the entry
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.UserTokenCacheAfterAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right after MSAL accessed the cache.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.UserTokenCacheBeforeAccessNotification(Microsoft.Identity.Client.TokenCacheNotificationArgs)">
+            <summary>
+            Triggered right before MSAL needs to access the cache. Reload the cache from the persistence store in case it changed since the last access.
+            </summary>
+            <param name="args">Contains parameters used by the MSAL call accessing the cache.</param>
+        </member>
+        <member name="M:aadcapi.Utils.MSALPerUserSessionTokenCache.GetSignedInUsersUniqueId">
+            <summary>
+            Explores the Claims of a signed-in user (if available) to populate the unique Id of this cache's instance.
+            </summary>
+            <returns>The signed in user's object.tenant Id , if available in the ClaimsPrincipal.Current instance</returns>
+        </member>
+        <member name="T:aadcapi.Utils.SameSiteCookieManager">
+            <summary>
+            Handles SameSite cookie issue according to the docs: https://docs.microsoft.com/en-us/aspnet/samesite/owin-samesite
+            The default list of user-agents that disallow SameSite None, was taken from https://devblogs.microsoft.com/aspnet/upcoming-samesite-cookie-changes-in-asp-net-and-asp-net-core/
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:aadcapi.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncAADPasswordResetConfiguration">
+             <summary>
+               Looks up a localized string similar to $connector = @(Get-ADSyncConnector | ? Type -like &quot;Extensible2&quot; | ? Subtype -like &quot;Windows Azure Active Directory*&quot;)
+            
+            if ($connector.Count -gt 1) {
+                throw &quot;Unsupported AADC configuration. More than one AAD connector is not supported.&quot;
+            }
+            
+            Get-ADSyncAADPasswordResetConfiguration -Connector ($connector.Name).
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncAADPasswordSyncConfiguration">
+             <summary>
+               Looks up a localized string similar to param($SourceConnector)
+            
+            Get-ADSyncAADPasswordSyncConfiguration -SourceConnector $SourceConnector.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncAutoUpgrade">
+             <summary>
+               Looks up a localized string similar to $state  = Get-ADSyncAutoUpgrade -Detail
+            $props  = $state | GM | ? MemberType -like &quot;Property&quot;
+            $result = New-Object PSObject
+            $props | foreach {
+                $val = $state.($_.Name)
+                $result | Add-Member -MemberType NoteProperty -Name ($_.Name) -Value ([string]$val)
+            }
+            $result.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncConnectorsBasic">
+             <summary>
+               Looks up a localized string similar to param ($Name)
+            
+            Import-Module ADSync;
+            $param = @{}
+            if ($Name) { $param.Add(&apos;Name&apos;, $Name) }
+            $fmt_connectivity_params = @{
+                Name=&quot;ConnectivityParameters&quot;
+                Expression={
+                    $val = New-Object PSObject
+                    $_.ConnectivityParameters | foreach {
+                        $p = $_
+                        $val | Add-Member -MemberType NoteProperty -Name $p.Name -Value $p.Value
+                    }
+                    $val
+                }
+            }
+            $fmt_partition_params = @{
+                Name=&quot;Partitions&quot;
+                Expression={
+                    $fmt_params = @{
+                         [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncCSObjectStrict">
+             <summary>
+               Looks up a localized string similar to param (
+                [Parameter(Mandatory=$true)]
+                $ConnectorName,
+                [Parameter(Mandatory=$true)]
+                $DistinguishedName)
+            
+            Import-Module ADSync
+            
+            $attributes = @(
+            &quot;ObjectId&quot;,
+            &quot;ConnectorId&quot;,
+            &quot;ConnectorName&quot;,
+            &quot;ConnectorType&quot;,
+            &quot;PartitionId&quot;,
+            &quot;DistinguishedName&quot;,
+            &quot;AnchorValue&quot;,
+            &quot;ObjectType&quot;,
+            &quot;IsTransient&quot;,
+            &quot;IsPlaceHolder&quot;,
+            &quot;IsConnector&quot;,
+            &quot;HasSyncError&quot;,
+            &quot;HasExportError&quot;,
+            &quot;ExportError&quot;,
+            &quot;SynchronizationError&quot;,
+            &quot;ConnectedMVObjectId&quot;,
+            &quot;Lineage&quot;,
+            &quot;Attributes&quot;
+            )
+            
+            Get-ADSyncCSObject -Connector [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncDomainReachabilityStatus">
+             <summary>
+               Looks up a localized string similar to param ($ConnectorName)
+            
+            Get-ADSyncDomainReachabilityStatus -ConnectorName $ConnectorName.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_AdSyncGlobalSettingsStrict">
+             <summary>
+               Looks up a localized string similar to $global_config = Get-ADSyncGlobalSettings
+            $parameters = @{}
+            $global_config.Parameters | foreach {
+                $parameters.Add($_.Name, $_.Value)
+            }
+            
+            New-Object PSObject -Property @{
+                Version = $global_config.Version
+                InstanceId = $global_config.InstanceId
+                SqlSchemaVersion = $global_config.SqlSchemaVersion
+                Parameters = $parameters
+            }.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncMVObjectStrict">
+             <summary>
+               Looks up a localized string similar to param (
+                [Parameter(Mandatory=$true)]
+                $Identifier
+                )
+            
+            Import-Module ADSync
+            
+            $attributes = @(
+            &quot;ObjectId&quot;,
+            &quot;Lineage&quot;,
+            &quot;Attributes&quot;
+            )
+            
+            Get-ADSyncMVObject -Identifier $Identifier | select $attributes.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Start_ADSyncDelta">
+             <summary>
+               Looks up a localized string similar to Import-Module ADSync
+            
+            &lt;#
+            Don&apos;t dispatch a sync if the last run was less than 10 minutes ago.
+            #&gt;
+            
+            $lastRun = $null
+            $lastRun = Get-ADSyncRunProfileResult | select -First 1
+            $schedule = Get-ADSyncScheduler
+            $threshold = 10
+            
+            $mostReccent = if ($lastRun.StartDate -gt $lastRun.EndDate) { $lastRun.StartDate } else { $lastRun.EndDate }
+            
+            $return = New-Object PSObject -Property @{
+                Result=&apos;&apos;
+                Started=$false
+            }
+            
+            if (($schedule.SyncCycleEnabled) -and (-not $schedule.SyncCycleInProgress) -and ((-not [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+        <member name="M:SMM.Helper.Extensions.Like(System.String,System.String)">
+            <summary>
+            VisualBasic's string comparison with wildcard support.
+            </summary>
+            <param name="Base">The value to check.</param>
+            <param name="Pattern">The pattern compared to 'Base'. Supports wildcards
+            and other niceties. More info: https://docs.microsoft.com/en-us/office/vba/Language/Reference/User-Interface-Help/wildcard-characters-used-in-string-comparisons.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:SMM.Helper.Extensions.ToDict(System.Management.Automation.PSObject)">
+            <summary>
+            Naivly unboxes a single PSObject into a Dictionary(string, object).
+            If the PSObject is a string, it is stored as "Output": value.
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SMM.Helper.Extensions.ToDict(System.Management.Automation.PSDataCollection{System.Management.Automation.PSObject})">
+            <summary>
+            Unboxes a collection of PSObjects, returning as a List(Dictionary(string, object)).
+            The resulting value is not very ergonomic but serializes to JSON well.
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SMM.Helper.Extensions.CapturePSResult``1(System.Management.Automation.PSObject)">
+            <summary>
+            Attempts to map properties from the PSObject to properties from the
+            desired result type using a case insensitive property name match.
+            If successful, the dynamic result will be of the desired type.
+            </summary>
+            <typeparam name="T">The type to map to.</typeparam>
+            <param name="input">The PSObject we're mapping values from.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SMM.Helper.Extensions.CapturePSResult``1(System.Management.Automation.PSDataCollection{System.Management.Automation.PSObject})">
+            <summary>
+            Loop through the collection and capture the PSObjects as the desired type T.
+            If the mapping fails, results are returned as a Dictionary(string, object) so
+            though the return type is dynamic, it should be checked with the as operator
+            or GetType().
+            </summary>
+            <typeparam name="T">Desired result type.</typeparam>
+            <param name="input">PSObject collection to capture values from.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SMM.Automation.SimpleScriptRunner.#ctor(System.String)">
+            <summary>
+            Constructs a script runner that can be used for execution of simple PowerShell fragements.
+            </summary>
+            <param name="ScriptSource"></param>
+        </member>
+    </members>
+</doc>
