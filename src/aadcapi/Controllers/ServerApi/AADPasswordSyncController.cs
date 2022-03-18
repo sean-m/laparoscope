@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -21,6 +22,7 @@ namespace aadcapi.Controllers.Server
         /// <returns>
         /// Yields: SourceConnector name, TargetConnector name, Enabled password sync status.
         /// </returns>
+        [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get(string SourceConnector)
         {
             if (String.IsNullOrEmpty(SourceConnector))

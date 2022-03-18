@@ -3,6 +3,7 @@ using SMM.Automation;
 using SMM.Helper;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -26,6 +27,7 @@ namespace aadcapi.Controllers.Server
         ///   "Started": false
         /// }
         /// </returns>
+        [ResponseType(typeof(SyncResult))]
         public dynamic Post()
         {   
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Start_ADSyncDelta);

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -16,6 +17,7 @@ namespace aadcapi.Controllers.Server
         /// Maps to Get-ADSyncExportDeletionThreshold cmdlet. This gives enabled/disabled (1/0)
         /// status and the numeric value of the current threshold.
         /// </summary>
+        [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         {
             var runner = new SimpleScriptRunner("Get-ADSyncExportDeletionThreshold");

@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Linq;
 using System.Security.Claims;
 using aadcapi.Utils.Authorization;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -24,6 +25,7 @@ namespace aadcapi.Controllers.Server
         /// </summary>
         /// <param name="Name">Name of a specific connector to return.</param>
         /// <returns></returns>
+        [ResponseType(typeof(IEnumerable<AadcConnector>))]
         public dynamic Get(string Name=null)
         {   
             // Run PowerShell command to get AADC connector configurations

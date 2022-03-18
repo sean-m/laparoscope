@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -25,6 +26,7 @@ namespace aadcapi.Controllers.Server
         /// Returns the: Version, InstanceId, SqlSchemaVersion, Parameters properties from Get-ADSyncGlobalSettings.
         /// Metavserse schema settings aren't very actionable without direct access to AADC so have been omitted.
         /// </returns>
+        [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         {
             // Test for authorization rules for this context with ModelProperty: Authorized,  ModelValue: true

@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -27,6 +28,7 @@ namespace aadcapi.Controllers.Server
         /// infinate redirect loop with Azure AD.
         /// </summary>
         /// <param name="Name">Name of a valid AADC connector.</param>
+        [ResponseType(typeof(Dictionary<string,object>))]
         public dynamic Get(string Name)
         {
             if (String.IsNullOrEmpty(Name))

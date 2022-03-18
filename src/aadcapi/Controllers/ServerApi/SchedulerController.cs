@@ -1,8 +1,10 @@
 ﻿using SMM.Automation;
 using SMM.Helper;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -17,6 +19,7 @@ namespace aadcapi.Controllers.Server
         /// Executes Get-ADSyncScheduler and returns the result as a list of hashtables.
         /// </summary>
         /// <returns>List&lt; Dictionary &lt; string, object &gt; &gt;</returns>
+        [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         {
             var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncScheduler");

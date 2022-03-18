@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -26,6 +27,7 @@ namespace aadcapi.Controllers.Server
         /// <returns>
         /// Yields these properties: ConnectorId, DN, PasswordSyncLastSuccessfulCycleStartTimestamp, PasswordSyncLastSuccessfulCycleEndTimestamp, PasswordSyncLastCycleStartTimestamp, PasswordSyncLastCycleEndTimestamp, PasswordSyncLastCycleStatus.
         /// </returns>
+        [ResponseType(typeof(IEnumerable<PasswordSyncState>))]
         public dynamic Get()
         {
             // Filter out the 'default' connector before yielding any results.

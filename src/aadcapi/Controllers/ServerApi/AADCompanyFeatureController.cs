@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -18,6 +19,7 @@ namespace aadcapi.Controllers.Server
         /// features that are global to the AADC install/tenat. These include: 
         /// PasswordHashSync, ForcePasswordChangeOnLogOn, UserWriteback, DeviceWriteback, UnifiedGroupWriteback, GroupWritebackV2.
         /// </summary>
+        [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         { 
             var runner = new SimpleScriptRunner("Get-ADSyncAADCompanyFeature");

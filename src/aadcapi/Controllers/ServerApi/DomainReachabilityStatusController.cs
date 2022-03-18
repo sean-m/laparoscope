@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -25,6 +26,7 @@ namespace aadcapi.Controllers.Server
         /// infinate redirect loop with Azure AD.
         /// </summary>
         /// <param name="ConnectorName">Name of the AADC connector for the target domain.</param>
+        [ResponseType(typeof(DomainReachabilityStatus))]
         public dynamic Get(string ConnectorName)
         {
             // Construct an anonymous object as the Model for IsAuthorized so we can

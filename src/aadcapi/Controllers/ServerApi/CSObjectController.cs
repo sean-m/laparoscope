@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -32,6 +33,7 @@ namespace aadcapi.Controllers.Server
         /// <returns>
         /// https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsynccsobject
         /// </returns>
+        [ResponseType(typeof(IEnumerable<AadcCSObject>))]
         public dynamic Get(string ConnectorName, string DistinguishedName)
         {
             var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncCSObjectStrict);

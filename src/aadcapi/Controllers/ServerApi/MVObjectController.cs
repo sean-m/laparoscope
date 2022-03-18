@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -25,6 +26,7 @@ namespace aadcapi.Controllers.Server
         /// https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsyncmvobject
         /// </returns>
         // GET api/<controller>
+        [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get(string Id)
         {
             // TODO require an MVObject role

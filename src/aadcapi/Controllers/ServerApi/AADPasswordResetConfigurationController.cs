@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace aadcapi.Controllers.Server
 {
@@ -18,6 +19,7 @@ namespace aadcapi.Controllers.Server
         /// resolved. If more than one AAD connector is found an exception is thrown as this is
         /// not a supported configuration.
         /// </summary>
+        [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         {
             var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAADPasswordResetConfiguration);
