@@ -1,5 +1,5 @@
 ﻿using Auth0.Owin;
-using Microsoft.Owin;
+using Owin;
 using System;
 
 namespace Owin
