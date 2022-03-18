@@ -17,9 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "McAuthorization", "McAuthor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "McAuthorization.Bench", "McAuthorization.Bench\McAuthorization.Bench.csproj", "{BCF62DE1-B819-46E9-9235-08A9F1CF816C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth0.Owin", "..\lib\auth0-aspnet-owin\src\Auth0.Owin\Auth0.Owin.csproj", "{49650EA7-69AE-4EA6-A308-810C4738D663}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth0.Owin", "Auth0.Owin\Auth0.Owin.csproj", "{49650EA7-69AE-4EA6-A308-810C4738D663}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth0.Owin.OpenIdConnectSigningKeyResolver", "..\lib\auth0-aspnet-owin\src\Auth0.Owin.OpenIdConnectSigningKeyResolver\Auth0.Owin.OpenIdConnectSigningKeyResolver.csproj", "{982C7FA6-C798-40C0-AAB0-FDB1E075C7EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth0.Owin.OpenIdConnectSigningKeyResolver", "Auth0.Owin.OpenIdConnectSigningKeyResolver\Auth0.Owin.OpenIdConnectSigningKeyResolver.csproj", "{982C7FA6-C798-40C0-AAB0-FDB1E075C7EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

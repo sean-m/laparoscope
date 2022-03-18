@@ -806,9 +806,13 @@
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\auth0-aspnet-owin\src\Auth0.Owin.OpenIdConnectSigningKeyResolver\Auth0.Owin.OpenIdConnectSigningKeyResolver.csproj">
-      <Project>{982C7FA6-C798-40C0-AAB0-FDB1E075C7EA}</Project>
+    <ProjectReference Include="..\Auth0.Owin.OpenIdConnectSigningKeyResolver\Auth0.Owin.OpenIdConnectSigningKeyResolver.csproj">
+      <Project>{982c7fa6-c798-40c0-aab0-fdb1e075c7ea}</Project>
       <Name>Auth0.Owin.OpenIdConnectSigningKeyResolver</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Auth0.Owin\Auth0.Owin.csproj">
+      <Project>{49650ea7-69ae-4ea6-a308-810c4738d663}</Project>
+      <Name>Auth0.Owin</Name>
     </ProjectReference>
     <ProjectReference Include="..\McAuthorization\McAuthorization.csproj">
       <Project>{bed7d5fe-f260-4541-a680-e59ed9e090dc}</Project>
