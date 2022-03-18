@@ -39,7 +39,7 @@ namespace aadcapi
 					ValidateIssuerSigningKey = true,
 					ValidateIssuer = true,
 					ValidIssuer = issuer,
-					ValidateAudience = false,
+					ValidateAudience = true,
 					IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(kid)
 				},
 			};
