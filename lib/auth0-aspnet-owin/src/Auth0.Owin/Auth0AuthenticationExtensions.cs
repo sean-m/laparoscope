@@ -1,4 +1,5 @@
 ﻿using Auth0.Owin;
+using Microsoft.Owin;
 using Owin;
 using System;
 
@@ -15,7 +16,7 @@ namespace Owin
         /// <param name="app">The <see cref="IAppBuilder"/> passed to the configuration method</param>
         /// <param name="options">Middleware configuration options</param>
         /// <returns>The updated <see cref="IAppBuilder"/></returns>
-        public static IAppBuilder UseAuth0Authentication(this IAppBuilder app, Auth0AuthenticationOptions options)
+        public static Owin.IAppBuilder UseAuth0Authentication(this IAppBuilder app, Auth0AuthenticationOptions options)
         {
             if (app == null)
             {
@@ -44,7 +45,7 @@ namespace Owin
         /// <param name="scopes"></param>
         /// <param name="provider"></param>
         /// <returns>The updated <see cref="IAppBuilder"/></returns>
-        public static IAppBuilder UseAuth0Authentication(
+        public static Owin.IAppBuilder UseAuth0Authentication(
             this IAppBuilder app,
             string clientId,
             string clientSecret,
