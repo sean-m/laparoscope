@@ -18,17 +18,4 @@ namespace aadcapi.Controllers
             return View();
         }
     }
-
-    [System.Web.Http.Authorize]
-    public class MeApiController : System.Web.Http.ApiController
-    {
-        public dynamic Get()
-        {
-            var json = JsonConvert.SerializeObject(
-                (ClaimsIdentity)RequestContext.Principal.Identity,
-                new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }
-                );
-            return Ok( JsonConvert.DeserializeObject<Dictionary<string, object>>(json));
-        }
-    }
 }
