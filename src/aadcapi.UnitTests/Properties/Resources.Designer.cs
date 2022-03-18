@@ -61,14 +61,18 @@ namespace aadcapi.UnitTests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function TestingParameterValidation {
+        ///   Looks up a localized string similar to param ($FromOutside)
+        ///
+        ///function TestingParameterValidation {
         ///    param ( 
         ///        [ValidateScript({$_ -in $validationList})]
         ///        $TestInput
         ///    )
         ///
         ///    $TestInput
-        ///}.
+        ///}
+        ///
+        ///TestingParameterValidation -TestInput $FromOutside.
         /// </summary>
         internal static string PoshValidateParameterScript {
             get {
