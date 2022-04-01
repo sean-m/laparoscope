@@ -512,7 +512,7 @@ function Get-LapIdentity {
     [CmdletBinding()]
     [Alias("DONTYOUKNOWWHOIAM")]
     param()
-    Invoke-LapApi -Path '/api/MeApi'
+    Invoke-LapApi -Path '/api/Me'
 }
 
 
