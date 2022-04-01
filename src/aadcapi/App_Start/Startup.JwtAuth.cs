@@ -20,7 +20,7 @@ namespace aadcapi
 			string authority = Globals.Authority;
 			string clientId = Globals.ClientId;
 			string secret = Globals.ClientSecret;
-			string audience = Globals.RedirectUri;
+			string[] audiences = new string[] { Globals.RedirectUri, Globals.ApiUri };
 			string issuer = Globals.Issuer;
 
 			var signingKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(secret));
@@ -30,16 +30,20 @@ namespace aadcapi
 			var options = new JwtBearerAuthenticationOptions
 			{
 				AuthenticationMode = AuthenticationMode.Active,
-				AllowedAudiences = new string[] { audience },
+				AllowedAudiences = audiences,
 				TokenValidationParameters = new TokenValidationParameters
 				{
 					RequireExpirationTime = true,
 					ValidateLifetime = true,
 					RequireSignedTokens = true,
-					ValidateIssuerSigningKey = true,
-					ValidateIssuer = true,
+
 					ValidIssuer = issuer,
+					ValidateIssuer = true,
+					ValidateIssuerSigningKey = true,
+
+					ValidAudiences = audiences,
 					ValidateAudience = true,
+					
 					IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(kid)
 				},
 			};

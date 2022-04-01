@@ -51,6 +51,10 @@ namespace aadcapi.Utils
             get; 
         } = ConfigurationManager.AppSettings["ida:RedirectUri"];
 
+        public static string ApiUri {
+            get;
+        } = ConfigurationManager.AppSettings["ida:ApiUri"];
+
         /// <summary>
         /// This is exposed at the bottom of the global layout view.
         /// </summary>
