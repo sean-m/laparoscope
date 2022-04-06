@@ -66,6 +66,15 @@
 - [ ] Get-ADSyncServerConfiguration
 - [ ] Start-ADSyncPurgeRunHistory
 
+## TODO v2
+- [ ] Refactor PowerShell commands into .net framework Windows service sidecar.
+- [ ] Port Owin MVC app to Asp.Net Core LTS.
+- [ ] Move authorization processing to Asp.Net Core [resource based authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-6.0).
+- [ ] Create worker service to make batch based information available to query:
+  + [ ] Per-connector sync errors
+  + [ ] Run history summary
+  + [ ] Run profile details
+
 # Practical Use Case
 ## Crosswalking AD -> AADC -> AAD
 Cross-walking from connector space to metaverse with objects is working, as well as lineage tracking for a metaverse object. So if we are syncing between many directories where an identity may be provisioned, we can verify that they are in-fact connected to the destination directories. 
