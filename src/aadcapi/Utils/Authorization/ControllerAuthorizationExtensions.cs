@@ -92,7 +92,7 @@ namespace aadcapi.Utils.Authorization
                 // TODO LOGME (Sean) log null role set
             }
 
-            return Collection.Where(x => Filter.IsAuthorized(x, context, roles));
+            return Collection?.Where(x => Filter.IsAuthorized(x, context, roles));
         }
 
         /// <summary>

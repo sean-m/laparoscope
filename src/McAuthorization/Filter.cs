@@ -132,7 +132,7 @@ namespace McAuthorization
         {
             var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByContext(Context);
 
-            return (bool)rules.Where(
+            var didMatch = (bool)rules.Where(
                     rule => {
                         bool result = (bool)Roles?.Any(
                             role => {
@@ -151,7 +151,7 @@ namespace McAuthorization
                     })?.Any(rule => {
                         object testValue = default(object);
 
-                        var testKeys = Model.Keys.Where(x => x.Like(rule.ModelProperty)).Closest(rule.ClaimProperty); 
+                        var testKeys = Model.Keys.Where(x => x.Like(rule.ModelProperty)).Closest(rule.ModelProperty); 
                         
                         var gotValue = Model.TryGetValue(rule.ModelProperty, out testValue);
 
@@ -170,6 +170,8 @@ namespace McAuthorization
                             return (bool) testValue?.ToString().Like(pattern);
                         }
                     });
+
+            return didMatch;
         }
 
         /// <summary>
