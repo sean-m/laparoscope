@@ -117,8 +117,6 @@ namespace McAuthorization
                     return wildcards.ToArray();
                 }
             }
-
-            return null;
         }
     }
 }
