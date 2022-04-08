@@ -91,12 +91,32 @@ namespace aadcapi.UnitTests.Properties {
         ///		&quot;ModelProperty&quot;: &quot;Foo&quot;,
         ///		&quot;ModelValue&quot;: &quot;Bar&quot;,
         ///		&quot;ModelValues&quot;: null
+        ///	},
+        ///	{
+        ///		&quot;Id&quot;: &quot;2356095b-9462-465b-af8b-1edaeeb47455&quot;,
+        ///		&quot;Role&quot;: &quot;Garage.Api&quot;,
+        ///		&quot;Context&quot;: &quot;RunProfileResult&quot;,
+        ///		&quot;ClaimProperty&quot;: null,
+        ///		&quot;ClaimValue&quot;: null,
+        ///		&quot;ModelProperty&quot;: &quot;ConnectorName&quot;,
+        ///		&quot;ModelValue&quot;: &quot;garage.mcardletech.com&quot;,
+        ///		&quot;ModelValues&quot;: null
         ///	}
         ///].
         /// </summary>
         internal static string TestRules {
             get {
                 return ResourceManager.GetString("TestRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TestRunHistory {
+            get {
+                object obj = ResourceManager.GetObject("TestRunHistory", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

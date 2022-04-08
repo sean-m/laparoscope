@@ -8,5 +8,15 @@
 		"ModelProperty": "Foo",
 		"ModelValue": "Bar",
 		"ModelValues": null
+	},
+	{
+		"Id": "2356095b-9462-465b-af8b-1edaeeb47455",
+		"Role": "Admin:Garage",
+		"Context": "RunProfileResult",
+		"ClaimProperty": null,
+		"ClaimValue": null,
+		"ModelProperty": "ConnectorName",
+		"ModelValue": "garage.mcardletech.com",
+		"ModelValues": null
 	}
 ]

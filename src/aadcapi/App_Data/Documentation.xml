@@ -1253,6 +1253,36 @@
             Get-ADSyncMVObject -Identifier $Identifier | select $attributes.
              </summary>
         </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncRunProfileLastHour">
+             <summary>
+               Looks up a localized string similar to param (
+                [Guid]
+                $Id,
+            
+                [Guid]
+                $ConnectorId, 
+                
+                [int]
+                $NumberRequested,
+                 
+                [bool]
+                $RunStepDetails=$false
+            )
+            
+            
+            $params = @{
+            }
+            
+            if ($Id) { $params.Add(&apos;Id&apos;, $Id) }
+            if ($ConnectorId) { $params.Add(&apos;ConnectorId&apos;, $ConnectorId) }
+            if ($NumberRequested) { $params.Add(&apos;NumberRequested&apos;, $NumberRequested) }
+            
+            $lastHour = [DateTime]::UtcNow.AddHours(-1)
+            
+            Get-ADSyncRunProfileResult -RunStepDetails:$RunStepDetails @params | where { 
+                $_.StartDate -gt $lastHou [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
         <member name="P:aadcapi.Properties.Resources.Start_ADSyncDelta">
              <summary>
                Looks up a localized string similar to Import-Module ADSync

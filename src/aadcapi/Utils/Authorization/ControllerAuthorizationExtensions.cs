@@ -86,13 +86,14 @@ namespace aadcapi.Utils.Authorization
         public static IEnumerable<Dictionary<string, object>> WhereAuthorized(this ApiController Controller, IEnumerable<Dictionary<string, object>> Collection)
         {
             var context = Controller.ControllerName();
-            var roles = ((ClaimsPrincipal)Controller?.RequestContext?.Principal)?.RoleClaims();
+            var roles = ((ClaimsPrincipal)Controller?.RequestContext?.Principal)?.RoleClaims()?.Distinct();
             if (roles != null)
             {
                 // TODO LOGME (Sean) log null role set
             }
 
-            return Collection?.Where(x => Filter.IsAuthorized(x, context, roles));
+            return Collection?.Where(x => 
+                Filter.IsAuthorized(x, context, roles));
         }
 
         /// <summary>

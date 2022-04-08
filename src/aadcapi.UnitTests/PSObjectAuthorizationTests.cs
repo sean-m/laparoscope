@@ -44,5 +44,22 @@ namespace aadcapi.UnitTests
             var match = Filter.IsAuthorized(result, "Connector", testRoles);
             Assert.AreNotEqual(match.Count(), result.Count());
         }
+
+        [Test]
+        public void TestFilteringHashtableList()
+        {
+            // Load some json as an anologue to a .ToDict() result capture
+            var testModelText = Encoding.ASCII.GetString(Resources.TestRunHistory);
+            var testModels = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(testModelText);
+
+            Assert.NotZero(testModels.Count);
+
+            // The test rule should filter out two of the records
+            var matches = testModels.Where(x => Filter.IsAuthorized(x, "RunProfileResult", testRoles))?.ToList();
+
+            Assert.NotNull(matches);
+            Assert.NotZero(matches.Count);
+            Assert.AreNotEqual(testModels.Count, matches.Count);
+        }
     }
 }

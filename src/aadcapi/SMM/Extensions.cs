@@ -75,6 +75,8 @@ namespace SMM.Helper
         /// <returns></returns>
         public static List<Dictionary<string, object>> ToDict(this PSDataCollection<PSObject> input)
         {
+            if (input == null) return null;
+
             var result = new List<Dictionary<string, object>>();
             foreach (var i in input)
             {

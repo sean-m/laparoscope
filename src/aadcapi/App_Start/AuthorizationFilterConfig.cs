@@ -20,10 +20,10 @@ namespace aadcapi
     {
         private void ConfigureAuthorizationFilters(IAppBuilder app)
         {
-            var adminRoleConnectorAuth = "{\"Role\":\"Admin\",\"Context\":\"*\",\"ClaimProperty\":\"\",\"ClaimValue\":\"\",\"ModelProperty\":\"*id*\",\"ModelValue\":\"*\",\"ModelValues\":[]}";
-            RoleFilterModel deserialized = JsonConvert.DeserializeObject<RoleFilterModel>(adminRoleConnectorAuth);
+            var adminRoleBuiltinAuthz = @"[{'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]},{'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]}]";
+            var rules = JsonConvert.DeserializeObject<List<RoleFilterModel>>(adminRoleBuiltinAuthz);
 
-            RegisteredRoleControllerRules.RegisterRoleControllerModel(deserialized);
+            foreach (var rule in rules) RegisteredRoleControllerRules.RegisterRoleControllerModel(rule);
 
             //Microsoft.Configuration.ConfigurationBuilders.AzureAppConfigurationBuilder()
             foreach (string k in ConfigurationManager.AppSettings.Keys)
@@ -33,8 +33,8 @@ namespace aadcapi
                 try
                 {
                     var rule = ConfigurationManager.AppSettings[k];
-                    deserialized = JsonConvert.DeserializeObject<RoleFilterModel>(rule);
-                    RegisteredRoleControllerRules.RegisterRoleControllerModel(deserialized);
+                    var rule_model = JsonConvert.DeserializeObject<RoleFilterModel>(rule);
+                    RegisteredRoleControllerRules.RegisterRoleControllerModel(rule_model);
                 }
                 catch (Exception e)
                 {

@@ -223,6 +223,40 @@ namespace aadcapi.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to param (
+        ///    [Guid]
+        ///    $Id,
+        ///
+        ///    [Guid]
+        ///    $ConnectorId, 
+        ///    
+        ///    [int]
+        ///    $NumberRequested,
+        ///     
+        ///    [bool]
+        ///    $RunStepDetails=$false
+        ///)
+        ///
+        ///
+        ///$params = @{
+        ///}
+        ///
+        ///if ($Id) { $params.Add(&apos;Id&apos;, $Id) }
+        ///if ($ConnectorId) { $params.Add(&apos;ConnectorId&apos;, $ConnectorId) }
+        ///if ($NumberRequested) { $params.Add(&apos;NumberRequested&apos;, $NumberRequested) }
+        ///
+        ///$lastHour = [DateTime]::UtcNow.AddHours(-1)
+        ///
+        ///Get-ADSyncRunProfileResult -RunStepDetails:$RunStepDetails @params | where { 
+        ///    $_.StartDate -gt $lastHou [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Get_ADSyncRunProfileLastHour {
+            get {
+                return ResourceManager.GetString("Get-ADSyncRunProfileLastHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import-Module ADSync
         ///
         ///&lt;#
