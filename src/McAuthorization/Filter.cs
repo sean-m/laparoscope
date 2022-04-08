@@ -150,6 +150,8 @@ namespace McAuthorization
                         return result;
                     })?.Any(rule => {
                         object testValue = default(object);
+                        
+                        if (String.IsNullOrEmpty(rule.ModelProperty)) return false;
 
                         var testKeys = Model.Keys.Where(x => x.Like(rule.ModelProperty)).Closest(rule.ModelProperty); 
                         
