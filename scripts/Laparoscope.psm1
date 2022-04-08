@@ -924,6 +924,89 @@ function Get-LapPartitionPasswordSyncState {
 }
 
 
+function Get-LapRunProfileResult {
+<#
+.Synopsis
+   Invokes GET /api/RunProfileResult.
+.DESCRIPTION
+   Analogue to Get-ADSyncRunProfileResult cmdlet with a couple exceptions:
+   only sync history for the last hour is returned to reduce server side load.
+   On systems managing many connected directories, retreiving sync history
+   can be a non-trivial operation.
+.EXAMPLE
+
+    PS C:\scripts> Get-LapRunProfileResult -NumberRequested 1 -RunStepDetails
+
+    RunHistoryId      : 8a654dc1-cf23-40ed-86f4-b745bd553c22
+    ConnectorId       : fffb4a69-4ed6-444d-8b89-73bc16f373dd
+    ConnectorName     : garage.mcardletech.com
+    RunProfileId      : e73df090-c632-4a61-961a-87ae047570c8
+    RunProfileName    : Export
+    RunNumber         : 26285
+    Username          : NT SERVICE\ADSync
+    IsRunComplete     : True
+    Result            : no-start-connection
+    CurrentStepNumber : 1
+    TotalSteps        : 1
+    StartDate         : 2022-04-08T20:13:31.163
+    EndDate           : 2022-04-08T20:13:52.187
+    RunStepResults    : {@{RunHistoryId=8a654dc1-cf23-40ed-86f4-b745bd553c22; StepHistoryId=f0efe315-baf3-4e46-9ebc-92b06213d4ca; 
+                        StepNumber=1; StepResult=no-start-connection; StartDate=2022-04-08T20:13:31.17; 
+                        EndDate=2022-04-08T20:13:52.183; StageNoChange=0; StageAdd=0; StageUpdate=0; StageRename=0; StageDelete=0; 
+                        StageDeleteAdd=0; StageFailure=0; DisconnectorFiltered=0; DisconnectorJoinedNoFlow=0; 
+                        DisconnectorJoinedFlow=0; DisconnectorJoinedRemoveMv=0; DisconnectorProjectedNoFlow=0; 
+                        DisconnectorProjectedFlow=0; DisconnectorProjectedRemoveMv=0; DisconnectorRemains=0; 
+                        ConnectorFilteredRemoveMv=0; ConnectorFilteredLeaveMv=0; ConnectorFlow=0; ConnectorFlowRemoveMv=0; 
+                        ConnectorNoFlow=0; ConnectorDeleteRemoveMv=0; ConnectorDeleteLeaveMv=0; ConnectorDeleteAddProcessed=0; 
+                        FlowFailure=0; ExportAdd=0; ExportUpdate=0; ExportRename=0; ExportDelete=0; ExportDeleteAdd=0; 
+                        ExportFailure=0; CurrentExportBatchNumber=0; LastSuccessfulExportBatchNumber=0; StepFileName=; ConnectorCon
+                        nectionInformationXml=<connection-result>failed-connection</connection-result><server>10.2.3.4:389</server>
+                        <connection-log><incident><connection-result>failed-connection</connection-result><date>2022-04-08 
+                        20:13:52.177</date><server>10.2.3.4:389</server><cd-error><error-code>0x51</error-code>
+                        <error-literal>Server Down</error-literal>
+                        </cd-error></incident></connection-log>; ConnectorDiscoveryErrors=; ConnectorCountersXml=; SyncErrors=; 
+                        StepXml=<step-type type="export">
+                        </step-type>
+                        <partition>DC=garage,DC=mcardletech,DC=com</partition>
+                        <custom-data>
+                     
+                                          <adma-step-data>
+                                             <batch-size>30</batch-size>
+                                             <page-size>500</page-size>
+                                             <time-limit>120</time-limit>
+                                          </adma-step-data>
+                                   
+                        </custom-data>
+                        ; MvRetryErrors=; FlowCountersXml=}}
+#>
+    [CmdletBinding()]
+    param(
+        [Guid]
+        $RunHistoryId,
+        [Guid]
+        $ConnectorId,
+        [ValidateRange(0, [int]::MaxValue)]
+        [int]
+        $NumberRequested=0,
+        [switch]
+        $RunStepDetails
+    )
+
+    $requestArgs=@{}
+    $params = @{
+        Path='/api/RunProfileResult'
+    }
+
+    if ($RunHistoryId) { $requestArgs.Add('RunHistoryId', $RunHistoryId) }
+    if ($ConnectorId) { $requestArgs.Add('ConnectorId', $ConnectorId) }
+    if ($NumberRequested -ne 0) { $requestArgs.Add('NumberRequested', $NumberRequested) }
+    if ($RunStepDetails) { $requestArgs.Add('RunStepDetails', $true) }
+    if ($requestArgs.Count -gt 0) { $params.Add('RequestArgs', $requestArgs) }
+
+    Invoke-LapApi @params 
+}
+
+
 function Start-LapSync {
 <#
 .Synopsis
@@ -973,5 +1056,6 @@ $exportedFunctions = @(
 "Get-LapPartitionPasswordSyncState",
 "Start-LapSync",
 "Get-LapSyncScheduler"
+"Get-LapRunProfileResult"
 )
 Export-ModuleMember -Function $exportedFunctions

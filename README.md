@@ -59,7 +59,7 @@
 - [x] Get-ADSyncPartitionPasswordSyncState
 - [ ] Get-ADSyncRule
 - [ ] Get-ADSyncRuleAudit
-- [ ] Get-ADSyncRunProfileResult
+- [x] Get-ADSyncRunProfileResult
 - [ ] Get-ADSyncRunStepResult
 - [ ] Get-ADSyncSchedulerConnectorOverride
 - [ ] Get-ADSyncSchema
