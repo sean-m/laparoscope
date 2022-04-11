@@ -16,61 +16,61 @@ namespace aadcapi.Utils
         /// <summary>
         /// The Client ID is used by the application to uniquely identify itself to Azure AD.
         /// </summary>
-        public static string ClientId { get; } = ConfigurationManager.AppSettings["ida:ClientId"];
+        public static string ClientId { get => ConfigurationManager.AppSettings["ida:ClientId"]; }
 
         /// <summary>
         /// The ClientSecret is a credential used to authenticate the application to Azure AD.  Azure AD supports password and certificate credentials.
         /// </summary>
-        public static string ClientSecret { get; } = ConfigurationManager.AppSettings["ida:ClientSecret"];
+        public static string ClientSecret { get => ConfigurationManager.AppSettings["ida:ClientSecret"]; }
 
         /// <summary>
         /// The Post Logout Redirect Uri is the URL where the user will be redirected after they sign out.
         /// </summary>
-        public static string PostLogoutRedirectUri { get; } = ConfigurationManager.AppSettings["ida:PostLogoutRedirectUri"];
+        public static string PostLogoutRedirectUri { get => ConfigurationManager.AppSettings["ida:PostLogoutRedirectUri"]; }
 
         /// <summary>
         /// The TenantId is the DirectoryId of the Azure AD tenant being used in the sample
         /// </summary>
         public static string TenantId {
-            get;
-        } = ConfigurationManager.AppSettings["ida:TenantId"];
+            get => ConfigurationManager.AppSettings["ida:TenantId"];
+        }
 
 
         /// <summary>
         /// The AppId guid specified in the Azure AD app registration.
         /// </summary>
         public static string Issuer {
-            get;
-        } = $"https://sts.windows.net/{TenantId}/";
+            get => $"https://sts.windows.net/{TenantId}/";
+        }
         
 
         /// <summary>
         /// This must be in the allowed redirect uris in the app registration.
         /// </summary>
-        public static string RedirectUri { 
-            get; 
-        } = ConfigurationManager.AppSettings["ida:RedirectUri"];
+        public static string RedirectUri {
+            get => ConfigurationManager.AppSettings["ida:RedirectUri"];
+        }
 
         public static string ApiUri {
-            get;
-        } = ConfigurationManager.AppSettings["ida:ApiUri"];
+            get => ConfigurationManager.AppSettings["ida:ApiUri"];
+        }
 
         /// <summary>
         /// This is exposed at the bottom of the global layout view.
         /// </summary>
         public static string AppName {
-            get;
-        } = ConfigurationManager.AppSettings["AppName"] ?? "Didn't fill out your AppName did you?";
+            get => ConfigurationManager.AppSettings["AppName"] ?? "Didn't fill out your AppName did you?";
+        }
 
         /// <summary>
         /// This is shows as the login endpoint when configuring authentication in the Azure AD Portal.
         /// For a multi-tenant configured app, populate the Authority attribte in the web.config.
         /// </summary>
-        public static string Authority { get; } = ConfigurationManager.AppSettings["ida:Authority"] ??  $"https://login.microsoftonline.com/{TenantId}/";
+        public static string Authority { get => ConfigurationManager.AppSettings["ida:Authority"] ?? $"https://login.microsoftonline.com/{TenantId}/"; }
 
         /// <summary>
         /// Users in this specified role will be able to query and manage application settings at runtime via the api.
         /// </summary>
-        public static string AuthorizedConfigRole { get; } = ConfigurationManager.AppSettings["ops:ConfigManagerRole"] ?? "Admin";
+        public static string AuthorizedConfigRole { get => ConfigurationManager.AppSettings["ops:ConfigManagerRole"] ?? "Admin"; }
     }
 }
