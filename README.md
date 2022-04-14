@@ -20,7 +20,7 @@
 - [x] Admin view for managing roles.
 - [x] Admin API for configuration change at runtime.
 - [ ] ~~Rate limiting for queries. Globally tunable. Need performance testing to establish baseline.~~ Azure APIM can do this and suits my use case. Leaving this out but may revisit later.
-- [ ] Embed scripts with Fody.
+- [ ] ~~Embed scripts with Fody.~~ This turns out to be a terrible idea. Fody will also bundle dll dependencies that IIS can then not resolve during start-up. There may be a way to fix this but not using Fody is the easiest.
 - [x] Reference PowerShell module implementation for interfacing with the API.
 
 ### Priority Commands
