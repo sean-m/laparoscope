@@ -141,7 +141,7 @@ function DecodeJwt {
     begin {
     filter From-Base64 {
             param ($b64)
-            [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64 + ("=" * ($b64.Length % 2))))
+            [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64 + ("=" * ($b64.Length % 4))))
         }
     }
     process {
