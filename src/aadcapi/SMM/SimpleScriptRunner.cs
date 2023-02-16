@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace SMM.Automation
 {
-    public class SimpleScriptRunner
+    public class SimpleScriptRunner : IDisposable
     {
         #region fields
 
@@ -45,12 +45,15 @@ namespace SMM.Automation
             // Dispose the PowerShell object and set currentPowerShell to null.
             // It is locked because currentPowerShell may be accessed by the
             // ctrl-C handler.
-            lock (instanceLock)
-            {
-                currentPowerShell.Runspace?.Dispose();
-                currentPowerShell?.Dispose();
-                currentPowerShell = null;
-            }
+            this.Dispose();
+        }
+
+        public void Dispose()
+        {
+            currentPowerShell?.Stop();
+            currentPowerShell?.Runspace?.Dispose();
+            currentPowerShell?.Dispose();
+            currentPowerShell = null;
         }
 
         #endregion  // constructor
