@@ -24,8 +24,8 @@ namespace aadcapi.Controllers.ServerApi
         /// </summary>
         /// <param name="RunHistoryId">For retreiving a specific run profile instance.</param>
         /// <param name="ConnectorId">The guid of a specific container. Can be retreived from: /api/Connector.</param>
-        /// <param name="NumberRequested">Positive integer limiting the results. Note this limites results
-        /// going through authorization filtering. The returned set may be less than you specify if your query
+        /// <param name="NumberRequested">Positive integer limiting the results. Note this limits results
+        /// before authorization filtering. The returned set may be less than you specify if your query
         /// was not scoped to a connector you have rights to. Default: 0, no limit.</param>
         /// <param name="RunStepDetails">Indicates whether you'd like detailed error information included. Default: false.</param>
         /// <returns>
