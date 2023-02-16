@@ -27,28 +27,30 @@ namespace aadcapi.Controllers.Server
         /// <returns></returns>
         [ResponseType(typeof(IEnumerable<AadcConnector>))]
         public dynamic Get(string Name=null)
-        {   
+        {
             // Run PowerShell command to get AADC connector configurations
-            var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncConnectorsBasic);
-            runner.Parameters.Add( "Name", Name );
-            runner.Run();
-
-            // Map PowerShell objects to models, C# classes with matching property names.
-            // All results should be AadcConnector but CapturePSResult can return as
-            // type: dynamic if the PowerShell object doesn't successfully map to the
-            // desired model type. For those that are the correct model, we pass them
-            // to the IsAuthorized method which loads and runs any rules for this connector
-            // who match the requestors roles.
-            var resultValues = runner.Results.CapturePSResult<AadcConnector>()
-                .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as AadcConnector.
-                .Select(x => x as AadcConnector);   // Take as AadcConnector so typed call to WhereAuthorized avoids GetType() call.
-
-            resultValues = this.WhereAuthorized<AadcConnector>(resultValues);
-            
-            if (resultValues != null)
+            using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncConnectorsBasic))
             {
-                var result = Ok(resultValues);
-                return result;
+                runner.Parameters.Add("Name", Name);
+                runner.Run();
+
+                // Map PowerShell objects to models, C# classes with matching property names.
+                // All results should be AadcConnector but CapturePSResult can return as
+                // type: dynamic if the PowerShell object doesn't successfully map to the
+                // desired model type. For those that are the correct model, we pass them
+                // to the IsAuthorized method which loads and runs any rules for this connector
+                // who match the requestors roles.
+                var resultValues = runner.Results.CapturePSResult<AadcConnector>()
+                    .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as AadcConnector.
+                    .Select(x => x as AadcConnector);   // Take as AadcConnector so typed call to WhereAuthorized avoids GetType() call.
+
+                resultValues = this.WhereAuthorized<AadcConnector>(resultValues);
+
+                if (resultValues != null)
+                {
+                    var result = Ok(resultValues);
+                    return result;
+                }
             }
 
             return Ok();

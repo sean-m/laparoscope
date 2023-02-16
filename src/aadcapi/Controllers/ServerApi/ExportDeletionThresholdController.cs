@@ -20,17 +20,18 @@ namespace aadcapi.Controllers.Server
         [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         {
-            var runner = new SimpleScriptRunner("Get-ADSyncExportDeletionThreshold");
-            runner.Run();
+            using (var runner = new SimpleScriptRunner("Get-ADSyncExportDeletionThreshold")) { 
+                runner.Run();
 
-            if (runner.HadErrors)
-            {
-                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                return InternalServerError(err);
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return InternalServerError(err);
+                }
+
+                var result = Ok(runner.Results.ToDict().FirstOrDefault());
+                return result;
             }
-
-            var result = Ok(runner.Results.ToDict().FirstOrDefault());
-            return result;
         }
     }
 }

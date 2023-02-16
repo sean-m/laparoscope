@@ -39,18 +39,20 @@ namespace aadcapi.Controllers.Server
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
 
-            var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncAADPasswordSyncConfiguration);
-            runner.Parameters.Add("SourceConnector", SourceConnector.Trim());
-            runner.Run();
-
-            if (runner.HadErrors)
+            using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncAADPasswordSyncConfiguration))
             {
-                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                return InternalServerError(err);
-            }
+                runner.Parameters.Add("SourceConnector", SourceConnector.Trim());
+                runner.Run();
 
-            var result = Ok(runner.Results.ToDict().FirstOrDefault());
-            return result;
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return InternalServerError(err);
+                }
+
+                var result = Ok(runner.Results.ToDict().FirstOrDefault());
+                return result;
+            }
         }
     }
 }

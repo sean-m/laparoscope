@@ -31,28 +31,28 @@ namespace aadcapi.Controllers.Server
         public dynamic Get()
         {
             // Filter out the 'default' connector before yielding any results.
-            var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncPartitionPasswordSyncState | ? DN -notlike 'default'");
-            runner.Run();
+            using (var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncPartitionPasswordSyncState | ? DN -notlike 'default'")) {
+                runner.Run();
 
-            if (runner.HadErrors)
-            {
-                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                return InternalServerError(err);
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return InternalServerError(err);
+                }
+
+                // See the ConnectorController for more details on how the filtering is suppsoed to work.
+                var resultValues = runner.Results.CapturePSResult<PasswordSyncState>()
+                    .Where(x => x is PasswordSyncState)
+                    .Select(x => x as PasswordSyncState);
+
+                resultValues = this.WhereAuthorized<PasswordSyncState>(resultValues);
+
+                // Without this, the enum value is stored as an integer. It's a hack
+                // but still worth the flexibility of using dynamic types on the model.
+                foreach (var r in resultValues)
+                    r.PasswordSyncLastCycleStatus = r.PasswordSyncLastCycleStatus?.ToString() ?? "Unknown";
+                return Ok(resultValues);
             }
-
-            // See the ConnectorController for more details on how the filtering is suppsoed to work.
-            var resultValues = runner.Results.CapturePSResult<PasswordSyncState>()
-                .Where(x => x is PasswordSyncState)
-                .Select(x => x as PasswordSyncState);
-
-            resultValues = this.WhereAuthorized<PasswordSyncState>(resultValues);
-
-            // Without this, the enum value is stored as an integer. It's a hack
-            // but still worth the flexibility of using dynamic types on the model.
-            foreach (var r in resultValues)
-                r.PasswordSyncLastCycleStatus = r.PasswordSyncLastCycleStatus?.ToString() ?? "Unknown";
-
-            return Ok(resultValues);
         }
     }
 }

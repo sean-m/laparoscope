@@ -43,26 +43,27 @@ namespace aadcapi.Controllers.Server
             }
 
             // Run PowerShell command to get AADC connector configurations
-            var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncDomainReachabilityStatus);
-            runner.Parameters.Add("ConnectorName", ConnectorName);
-            runner.Run();
-
-            // Map PowerShell objects to models, C# classes with matching property names.
-            // All results should be DomainReachabilityStatus but CapturePSResult can return as
-            // type: dynamic if the PowerShell object doesn't successfully map to the
-            // desired model type. For those that are the correct model, we pass them
-            // to the IsAuthorized method which loads and runs any rules for this connector
-            // who match the requestors roles.
-            var resultValues = runner.Results.CapturePSResult<DomainReachabilityStatus>()
-                .Where(x => x is DomainReachabilityStatus)     // Filter out results that couldn't be captured as DomainReachabilityStatus.
-                .Select(x => x as DomainReachabilityStatus);   // Take as DomainReachabilityStatus so typed call to WhereAuthorized avoids GetType() call.
-
-            if (resultValues != null)
+            using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncDomainReachabilityStatus))
             {
-                var result = Ok(resultValues);
-                return result;
-            }
+                runner.Parameters.Add("ConnectorName", ConnectorName);
+                runner.Run();
 
+                // Map PowerShell objects to models, C# classes with matching property names.
+                // All results should be DomainReachabilityStatus but CapturePSResult can return as
+                // type: dynamic if the PowerShell object doesn't successfully map to the
+                // desired model type. For those that are the correct model, we pass them
+                // to the IsAuthorized method which loads and runs any rules for this connector
+                // who match the requestors roles.
+                var resultValues = runner.Results.CapturePSResult<DomainReachabilityStatus>()
+                    .Where(x => x is DomainReachabilityStatus)     // Filter out results that couldn't be captured as DomainReachabilityStatus.
+                    .Select(x => x as DomainReachabilityStatus);   // Take as DomainReachabilityStatus so typed call to WhereAuthorized avoids GetType() call.
+
+                if (resultValues != null)
+                {
+                    var result = Ok(resultValues);
+                    return result;
+                }
+            }
             return Ok();
         }
     }

@@ -29,11 +29,12 @@ namespace aadcapi.Controllers.Server
         /// </returns>
         [ResponseType(typeof(SyncResult))]
         public dynamic Post()
-        {   
-            var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Start_ADSyncDelta);
-            runner.Run();
-            var result = runner.Results.CapturePSResult<SyncResult>().FirstOrDefault();
-            return Ok(result);
+        {
+            using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Start_ADSyncDelta)) {
+                runner.Run();
+                var result = runner.Results.CapturePSResult<SyncResult>().FirstOrDefault();
+                return Ok(result);
+            }
         }
     }
 }

@@ -46,18 +46,20 @@ namespace aadcapi.Controllers.Server
             }
 
             // Run PowerShell command to get AADC connector configurations
-            var runner = new SimpleScriptRunner("param($ConnectorName) Get-ADSyncConnectorStatistics -ConnectorName $ConnectorName");
-            runner.Parameters.Add("ConnectorName", Name);
-            runner.Run();
-
-            if (runner.HadErrors)
+            using (var runner = new SimpleScriptRunner("param($ConnectorName) Get-ADSyncConnectorStatistics -ConnectorName $ConnectorName"))
             {
-                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                return InternalServerError(err);
-            }
+                runner.Parameters.Add("ConnectorName", Name);
+                runner.Run();
 
-            var result = Ok(runner.Results.ToDict().FirstOrDefault());
-            return result;
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return InternalServerError(err);
+                }
+
+                var result = Ok(runner.Results.ToDict().FirstOrDefault());
+                return result;
+            }
         }
     }
 }

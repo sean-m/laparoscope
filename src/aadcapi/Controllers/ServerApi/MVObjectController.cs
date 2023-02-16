@@ -30,19 +30,21 @@ namespace aadcapi.Controllers.Server
         public dynamic Get(string Id)
         {
             // TODO require an MVObject role
-            var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncMVObjectStrict);
-            runner.Parameters.Add("Identifier", Id);
-            runner.Run();
-
-            if (runner.HadErrors)
+            using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncMVObjectStrict))
             {
-                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                return InternalServerError(err);
+                runner.Parameters.Add("Identifier", Id);
+                runner.Run();
+
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return InternalServerError(err);
+                }
+
+                var resultValues = runner.Results.ToDict();
+
+                return Ok(resultValues);
             }
-
-            var resultValues = runner.Results.ToDict();
-
-            return Ok(resultValues);
         }
     }
 }

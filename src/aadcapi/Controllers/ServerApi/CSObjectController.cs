@@ -36,24 +36,26 @@ namespace aadcapi.Controllers.Server
         [ResponseType(typeof(IEnumerable<AadcCSObject>))]
         public dynamic Get(string ConnectorName, string DistinguishedName)
         {
-            var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncCSObjectStrict);
-            runner.Parameters.Add("ConnectorName", ConnectorName);
-            runner.Parameters.Add("DistinguishedName", DistinguishedName);
-            runner.Run();
-
-            if (runner.HadErrors)
+            using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncCSObjectStrict))
             {
-                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                return InternalServerError(err);
+                runner.Parameters.Add("ConnectorName", ConnectorName);
+                runner.Parameters.Add("DistinguishedName", DistinguishedName);
+                runner.Run();
+
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return InternalServerError(err);
+                }
+
+                var resultValues = runner.Results.CapturePSResult<AadcCSObject>()
+                    .Where(x => x is AadcCSObject)
+                    .Select(x => x as AadcCSObject);
+
+                resultValues = this.WhereAuthorized<AadcCSObject>(resultValues);
+
+                return Ok(resultValues);
             }
-
-            var resultValues = runner.Results.CapturePSResult<AadcCSObject>()
-                .Where(x => x is AadcCSObject)
-                .Select(x => x as AadcCSObject);
-
-            resultValues = this.WhereAuthorized<AadcCSObject>(resultValues);
-
-            return Ok(resultValues);
         }
     }
 }

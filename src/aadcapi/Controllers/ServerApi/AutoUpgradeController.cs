@@ -21,17 +21,19 @@ namespace aadcapi.Controllers.Server
         [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         {
-            var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAutoUpgrade);
-            runner.Run();
-
-            if (runner.HadErrors)
+            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAutoUpgrade))
             {
-                var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                return InternalServerError(err);
-            }
+                runner.Run();
 
-            var result = Ok(runner.Results.ToDict().FirstOrDefault());
-            return result;
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return InternalServerError(err);
+                }
+
+                var result = Ok(runner.Results.ToDict().FirstOrDefault());
+                return result;
+            }
         }
     }
 }
