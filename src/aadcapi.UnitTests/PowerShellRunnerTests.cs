@@ -98,5 +98,28 @@ namespace aadcapi.UnitTests
                 Assert.IsTrue(runner.Results.Count == 1);
             }
         }
+
+
+        [Test]
+        public void DisposeDoesntMessUpResults()
+        {
+            // This should all work, if it didn't .net would have much larger problems.
+            // That said, I just want to be sure the results of a PowerShell session do
+            // properly outlive a script runner with a bounded lifetime.
+            var resultList = new List<dynamic>();
+            using (var runner = new SimpleScriptRunner("1..5 | foreach { Write-Output \"$_\" }"))
+            {
+                runner.Run();
+                resultList.AddRange(runner.Results.CapturePSResult<string>().Select(x => x["Output"]));
+                Assert.IsTrue(runner.Results.Count == 5);
+            }
+            System.Threading.Thread.Sleep(500);
+            Assert.IsTrue(resultList.Count == 5);
+            Assert.IsFalse(resultList.Any(x => x == null));
+            for (var i = 1; i <= resultList.Count; i++)
+            {
+                Assert.IsTrue(String.Equals(resultList[i-1].ToString(), i.ToString(), StringComparison.CurrentCultureIgnoreCase));
+            }
+        }
     }
 }
