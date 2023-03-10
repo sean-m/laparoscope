@@ -556,6 +556,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HealthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MeController.cs" />
     <Compile Include="Controllers\ServerApi\MeController.cs" />

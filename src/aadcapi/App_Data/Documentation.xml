@@ -497,6 +497,19 @@
             <param name="Setting">Single or comma separated list of setting names.</param>
             <returns>Array of 0 or more values: [ { Setting:name, Value:value } ].</returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:aadcapi.Controllers.HealthController.Get" -->
+        <member name="M:aadcapi.Controllers.HealthController.Post">
+            <summary>
+            Posting to this endpoint from localhost will refresh the staging mode status.
+            Requests from non-local endpoints are denied as computing resources are spent 
+            when refreshing that value. On the topic of freshness, a scheduled
+            task running at some interval should post to this endpoint. Spinning a long lived
+            background thread in an iis hosted app is fraught with nightmares whereas Task
+            Scheduler is a sysadmin's best friend (maybe not best friend but they're at least
+            aquanted and on reasonable terms).
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:aadcapi.Controllers.Server.MeController.Get">
             <summary>
             Returns the ClaimsIdentity used by the server for authorization.
@@ -847,6 +860,29 @@
         <member name="P:aadcapi.Utils.Globals.AuthorizedConfigRole">
             <summary>
             Users in this specified role will be able to query and manage application settings at runtime via the api.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.Staging">
+            <summary>
+            Indicate AADC staging status. This variable is updated by a POST action to the /api/health controller.
+            </summary>
+        </member>
+        <member name="M:aadcapi.Utils.Globals.GetStagingMode">
+            <summary>
+            This goes with the Staging property above. ^^ That one.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.LinkerTimeUtc">
+            <summary>
+            Time the running binary was linked. This is exposed via the /api/health controller 
+            so operators can monitor the values across multiple servers to ensure the same application
+            version is deployed across the fleet.
+            </summary>
+        </member>
+        <member name="P:aadcapi.Utils.Globals.AssemblyVersion">
+            <summary>
+            Assmbly version also exposed via /api/health for the same reasons as LinkerTimeUtc.
             </summary>
         </member>
         <member name="M:aadcapi.Utils.MsalAppBuilder.BuildConfidentialClientApplication">

@@ -1,4 +1,12 @@
-﻿using System.Configuration;
+﻿using SMM.Automation;
+using SMM.Helper;
+using System;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Management.Automation.Language;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace aadcapi.Utils
 {
@@ -42,7 +50,7 @@ namespace aadcapi.Utils
         public static string Issuer {
             get => $"https://sts.windows.net/{TenantId}/";
         }
-        
+
 
         /// <summary>
         /// This must be in the allowed redirect uris in the app registration.
@@ -72,5 +80,73 @@ namespace aadcapi.Utils
         /// Users in this specified role will be able to query and manage application settings at runtime via the api.
         /// </summary>
         public static string AuthorizedConfigRole { get => ConfigurationManager.AppSettings["ops:ConfigManagerRole"] ?? "Admin"; }
+
+
+        /// <summary>
+        /// Indicate AADC staging status. This variable is updated by a POST action to the /api/health controller.
+        /// </summary>
+        public static string Staging { get; set; } = GetStagingMode();
+
+        /// <summary>
+        /// This goes with the Staging property above. ^^ That one.
+        /// </summary>
+        /// <returns></returns>
+        internal static string GetStagingMode()
+        {
+            using (var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncScheduler"))
+            {
+                runner.Run();
+
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    return string.Empty;
+                }
+
+                var result = runner.Results.ToDict().FirstOrDefault();
+                if (result.ContainsKey("StagingModeEnabled"))
+                {
+                    return result["StagingModeEnabled"].ToString();
+                }
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Time the running binary was linked. This is exposed via the /api/health controller 
+        /// so operators can monitor the values across multiple servers to ensure the same application
+        /// version is deployed across the fleet.
+        /// </summary>
+        public static string LinkerTimeUtc { get; private set; } = GetLinkerTime(Assembly.GetExecutingAssembly(), TimeZoneInfo.Utc).ToString("o");
+
+        // Sourced from the comments of a lovely Jeff Atwood article: https://blog.codinghorror.com/determining-build-date-the-hard-way/
+        // Jeff's example is in VB.net, C# port is by Joe Spivey. Thank them if you get a chance.
+        private static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
+        {
+            var filePath = assembly.Location;
+            const int c_PeHeaderOffset = 60;
+            const int c_LinkerTimestampOffset = 8;
+
+            var buffer = new byte[1024];
+
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                stream.Read(buffer, 0, 1024);
+
+            var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+
+            var tz = target ?? TimeZoneInfo.Local;
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
+
+            return localTime;
+        }
+
+        /// <summary>
+        /// Assmbly version also exposed via /api/health for the same reasons as LinkerTimeUtc.
+        /// </summary>
+        public static string AssemblyVersion { get; private set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
     }
 }
