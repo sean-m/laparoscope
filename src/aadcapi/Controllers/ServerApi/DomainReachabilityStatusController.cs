@@ -32,7 +32,7 @@ namespace aadcapi.Controllers.Server
             // Construct an anonymous object as the Model for IsAuthorized so we can
             // pass in Connector as the context. This will allow the authorization engine
             // to re-use the rules for /api/Connector. If you have rights to view a given
-            // connector, there is no reason you shouldn't see it's statistics.
+            // connector, there is no reason you shouldn't see it's reachability status.
             var roles = ((ClaimsPrincipal)RequestContext.Principal).RoleClaims();
             if (!Filter.IsAuthorized<dynamic>(new { Name = ConnectorName, 
                                                     ConnectorName = ConnectorName, 
