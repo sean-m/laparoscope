@@ -289,6 +289,30 @@ Get-ADSyncRunProfileResult -RunStepDetails:$RunStepDetails @params | where {
     $_.StartDate -gt $lastHour -or $_.EndDate -gt $lastHour
 }</value>
   </data>
+  <data name="Get-ADSyncSchedulerConnectorOverride" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    [string]
+    $ConnectorName
+)
+
+Get-ADSyncSchedulerConnectorOverride @PSBoundParameters</value>
+  </data>
+  <data name="Set-ADSyncSchedulerConnectorOverride" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    [string]
+    $ConnectorName,
+    [Parameter(Mandatory=$true)]
+    [bool]
+    $FullImportRequired=$false,
+    [Parameter(Mandatory=$true)]
+    [bool]
+    $FullSyncRequired=$false
+)
+
+Set-ADSyncSchedulerConnectorOverride @PSBoundParameters</value>
+  </data>
   <data name="Start-ADSyncDelta" xml:space="preserve">
     <value>Import-Module ADSync
 

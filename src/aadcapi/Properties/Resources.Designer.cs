@@ -19,7 +19,7 @@ namespace aadcapi.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -253,6 +253,42 @@ namespace aadcapi.Properties {
         internal static string Get_ADSyncRunProfileLastHour {
             get {
                 return ResourceManager.GetString("Get-ADSyncRunProfileLastHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to param (
+        ///    [Parameter(Mandatory=$true)]
+        ///    [string]
+        ///    $ConnectorName
+        ///)
+        ///
+        ///Get-ADSyncSchedulerConnectorOverride @PSBoundParameters.
+        /// </summary>
+        internal static string Get_ADSyncSchedulerConnectorOverride {
+            get {
+                return ResourceManager.GetString("Get-ADSyncSchedulerConnectorOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to param (
+        ///    [Parameter(Mandatory=$true)]
+        ///    [string]
+        ///    $ConnectorName,
+        ///    [Parameter(Mandatory=$true)]
+        ///    [bool]
+        ///    $FullImportRequired=$false,
+        ///    [Parameter(Mandatory=$true)]
+        ///    [bool]
+        ///    $FullSyncRequired=$false
+        ///)
+        ///
+        ///Set-ADSyncSchedulerConnectorOverride @PSBoundParameters.
+        /// </summary>
+        internal static string Set_ADSyncSchedulerConnectorOverride {
+            get {
+                return ResourceManager.GetString("Set-ADSyncSchedulerConnectorOverride", resourceCulture);
             }
         }
         

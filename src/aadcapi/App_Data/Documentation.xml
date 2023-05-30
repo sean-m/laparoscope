@@ -725,6 +725,38 @@
               RunStepResults    : 
             </returns>
         </member>
+        <member name="M:aadcapi.Controllers.ServerApi.SchedulerConnectorOverrideController.Get(System.String)">
+            <summary>
+            Get the sync scheduler override status for a given connector. This indicates whether the 
+            next scheduled sync cycle deviates from the standard scheduled delta sync policy. For
+            standard delta sync policy, a delta import and delta sync operation are performed. Under
+            certain circumstances, full import and full sync operations are required to clear errors
+            these can be requested with a POST action to this endpoint.
+            
+            The desired connector is specified with the ConnectorName query parameter. If none is
+            specified, the result is an empty SchedulerOverride object payload which can be updated
+            and sent back as the body of a POST method.
+            
+            The requestor must be authorized to access the specified connector. Shares rules with
+            the /api/Connector context.
+            </summary>
+            <param name="ConnectorName"></param>
+            <returns>SchedulerOverride or SchedulerOverrideResult</returns>
+            <exception cref="T:System.Web.Http.HttpResponseException"></exception>
+        </member>
+        <member name="M:aadcapi.Controllers.ServerApi.SchedulerConnectorOverrideController.Post(aadcapi.Models.SchedulerOverride)">
+            <summary>
+            Allows specifying full import and/or full sync to be performed on a given connector
+            as part of the next scheduled sync operation. Desired configuraiton is specified
+            by sending a SchedulerOverride object as the request body. Object prototype can be
+            requested with GET to this endpoint that does not specify a ConnectorName.
+            
+            The requestor must be authorized to access the specified connector. Shares rules with
+            the /api/Connector context.
+            </summary>
+            <param name="OverrideConfig"></param>
+            <exception cref="T:System.Web.Http.HttpResponseException"></exception>
+        </member>
         <member name="T:aadcapi.Utils.Authorization.ControllerAuthorizationExtensions">
             <summary>
             Methods to assist in processing authorization rules from within a controller.
@@ -1351,6 +1383,34 @@
             
             Get-ADSyncRunProfileResult -RunStepDetails:$RunStepDetails @params | where { 
                 $_.StartDate -gt $lastHou [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Get_ADSyncSchedulerConnectorOverride">
+             <summary>
+               Looks up a localized string similar to param (
+                [Parameter(Mandatory=$true)]
+                [string]
+                $ConnectorName
+            )
+            
+            Get-ADSyncSchedulerConnectorOverride @PSBoundParameters.
+             </summary>
+        </member>
+        <member name="P:aadcapi.Properties.Resources.Set_ADSyncSchedulerConnectorOverride">
+             <summary>
+               Looks up a localized string similar to param (
+                [Parameter(Mandatory=$true)]
+                [string]
+                $ConnectorName,
+                [Parameter(Mandatory=$true)]
+                [bool]
+                $FullImportRequired=$false,
+                [Parameter(Mandatory=$true)]
+                [bool]
+                $FullSyncRequired=$false
+            )
+            
+            Set-ADSyncSchedulerConnectorOverride @PSBoundParameters.
              </summary>
         </member>
         <member name="P:aadcapi.Properties.Resources.Start_ADSyncDelta">

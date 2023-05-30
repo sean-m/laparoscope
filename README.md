@@ -65,6 +65,8 @@
 - [ ] Get-ADSyncSchema
 - [ ] Get-ADSyncServerConfiguration
 - [ ] Start-ADSyncPurgeRunHistory
+- [x] Set-ADSyncSchedulerConnectorOverride
+- [x] Get-ADSyncSchedulerConnectorOverride
 
 ## TODO v2
 - [ ] Refactor PowerShell commands into .net framework Windows service sidecar.

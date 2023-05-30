@@ -561,6 +561,7 @@
     <Compile Include="Controllers\MeController.cs" />
     <Compile Include="Controllers\ServerApi\MeController.cs" />
     <Compile Include="Controllers\ServerApi\RunProfileResultController.cs" />
+    <Compile Include="Controllers\ServerApi\SchedulerConnectorOverrideController.cs" />
     <Compile Include="Controllers\ServerController.cs" />
     <Compile Include="Controllers\ServerApi\AADCompanyFeatureController.cs" />
     <Compile Include="Controllers\ServerApi\AADPasswordResetConfigurationController.cs" />
@@ -583,6 +584,7 @@
     <Compile Include="Models\AadcCSObject.cs" />
     <Compile Include="Models\DomainReachabilityStatus.cs" />
     <Compile Include="Models\PasswordSyncState.cs" />
+    <Compile Include="Models\SchedulerOverride.cs" />
     <Compile Include="Utils\Authorization\ControllerAuthorizationExtensions.cs" />
     <Compile Include="Models\SyncResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
