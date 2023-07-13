@@ -15,6 +15,11 @@ namespace aadcapi.Controllers
         public ActionResult Index()
         {
             ViewBag.UserId = (ClaimsIdentity) HttpContext.User.Identity;
+            ViewBag.IdentityJson = JsonConvert.SerializeObject(HttpContext.User.Identity, 
+                Formatting.Indented, 
+                new JsonSerializerSettings {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
             return View();
         }
     }
