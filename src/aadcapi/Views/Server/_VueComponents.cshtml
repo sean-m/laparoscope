@@ -54,8 +54,8 @@
                     </a>
                 </li>
 
-                <!-- CSObject Lookup - Only shown for AD connectors -->
-                <li class="nav-item" v-if="connector.Type == 'AD'">
+                <!-- CSObject Lookup -->
+                <li class="nav-item">
                     <a class="nav-link" :id="'tab-conn-csobject-lookup-' + connector.Identifier" data-toggle="tab"
                        :href="'#csObjectLookup' + connector.Identifier" role="tab"
                        aria-controls="C S Object Lookup" aria-selected="true">
@@ -145,7 +145,7 @@
             </div>
 
             <!-- CSObject Lookup Content -->
-            <div :id="'csObjectLookup' + connector.Identifier" class="tab-pane flex-fill" v-if="connector.Type == 'AD'">
+            <div :id="'csObjectLookup' + connector.Identifier" class="tab-pane flex-fill">
                 <csobject-lookup :thisConnector="connector"></csobject-lookup>
             </div>
 
