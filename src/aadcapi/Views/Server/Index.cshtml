@@ -28,7 +28,8 @@
 
                 <!-- Sync Connector Nav Tabs -->
                 <li class="nav-item" v-for="(c) in connectors">
-                    <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{c.Name}}</a>
+                    <!-- For AD connectors whos name does not indicate an organizational affiliation, joining it with the connector description can help. -->
+                    <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ [c.Name, c.Description].filter(x => x).join(' | ') }}</a>
                 </li>
             </ul>
         </div>
@@ -60,8 +61,13 @@
                     </ul>
                 </div>
 
-                <!-- Sync Connector Tabs : will show 1 or more depending on your role -->
-                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors" role="tabpanel">
+                <!-- Sync Connector Tabs : AAD -->
+                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type != 'AD')" role="tabpanel">
+                    <server-connector :connector="c" :hashsync="hashSync"></server-connector>
+                </div>
+
+                <!-- Sync Connector Tabs : AD -->
+                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type === 'AD')" role="tabpanel">
                     <server-connector :connector="c" :hashsync="hashSync"></server-connector>
                 </div>
             </div>
@@ -79,7 +85,6 @@
 
 <!-------------------  Main Vue App -------------------->
 <script type="text/javascript">
-
     const apiScheduler = "/api/Scheduler/";
     const apiStartSync = "/api/StartSync/";
     const apiConnector = "/api/Connector/";
@@ -144,7 +149,7 @@
             // List all connectors you have rights to.
             fetchConnectors() {
                 $.getJSON(apiConnector, json => {
-                    this.connectors = json;
+                    this.connectors = json.sort((a, b) => { a.Name > b.Name ? 1 : -1; });
                     this.progLoad += 25;
                 });
             },
