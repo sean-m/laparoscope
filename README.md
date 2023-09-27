@@ -174,3 +174,50 @@ $aadConnector = $mvObject.Lineage | where ConnectorName -like "*AAD"
 Get-LapCSObject -ConnectorName ($aadConnector.ConnectorName) -DistinguishedName ($aadConnector.ConnectedCsObjectDN)
 
 ```
+
+# Deployment Notes - Configuration Options
+There's a block of config options in the default web.config file that need to be set. It's up to you if you define them directly in the produciton web.config, if you've got CI/CD set up to do that sort of thing, more power to you. If not, these options can be set by environment variable or Azure App Config.
+
+web.config block:
+```xml
+    <add key="ida:AzConnectionString" value="will be replaced with an environment variable" />
+    <!-- Uncomment the next line if app is registered as a multi-tenant application -->
+    <!-- <add key="ida:Authority" value="https://login.microsoftonline.com/common/v2.0/" /> -->
+    <add key="ida:ClientId" value="change this" />
+    <add key="ida:ClientSecret" value="change this" />
+    <add key="ida:PostLogoutRedirectUri" value="change this" />
+    <add key="ida:TenantId" value="change this" />
+    <add key="ida:RedirectUri" value="change this" />
+    <add key="ida:ApiUri" value="change this" />
+    <add key="ida:Issuer" value="change this" />
+    <add key="ops:ConfigManagerRole" value="change this" />
+```
+### ida:AzConnectionString
+_Note:_ This option must be configured by environment variable as the Azure App Configuration config builder connection string is defined to use this from an environment variable. The connectionString property can be of course be defined in the web.config file directly, but making that work is an exercise for you.
+
+### ida:Authority
+The token issuing authority, used during token validation. If this option is not defined, the application defaults to https://login.microsoftonline.com/{TenantId}/ as the issuing authority, Azure AD is the assumed identity provider. See implementation in aadcapi/Utils/Globals.cs.
+
+### ida:ClientId
+Client id (app id) for app registraiton or relying party trust.
+
+### ida:ClientSecret
+Client secret for app registraiton or relying party trust.
+
+### ida:PostLogoutRedirectUri
+Where the user is redirected on logout, /Account/SignOut by default.
+
+### ida:TenantId
+If using Azure AD (Entra), this is the guid identifying the tenant in which your app registration resides.
+
+### ida:RedirectUri
+This must be present in the list of valid redirect URIs for your app registration or relying party trust. It will direct where the user lands after successful login.
+
+### ida:ApiUri
+Registered URI for the application. It may be different than the URI of the web interface or API itself, this is mostly used by service principals for bearer token auth as the SP uses this as the subject when requesting an access token from your IdP.
+
+### ida:Issuer
+The expected issuer of the access token. Used in token validation. By default: https://sts.windows.net/{TenantId}/
+
+### ops:ConfigManagerRole
+Role claim required for updating app configuration live. There's an API endpoint for modifying app configuration settings but it validates tokens explicitly rather than via role-based resource filter policies.
