@@ -384,14 +384,14 @@
 @*// ------------- CSObject Lookup Component ------------- //*@
 <script type="text/x-template" id="csobject-lookup-template">
     <div class="flex-column">
-        <br>
-
+        <br />
         <input class="flex-row col-md-8"
                type="text"
                pattern="^((CN=([^,]*)),)?((((?:CN|OU)=[^,]+,?)+),)?((DC=[^,]+,?)+)$"
                placeholder="DN of your record"
+               v-on:keyup.enter="resolveCsObjectToMv"
                v-model="dn" />
-
+        <br />
         <button type="button"
                 class="btn btn-outline-primary flex-row"
                 v-on:click="resolveCsObjectToMv">
