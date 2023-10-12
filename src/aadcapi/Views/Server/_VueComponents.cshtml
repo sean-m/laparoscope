@@ -348,7 +348,7 @@
 
                                 <div :id="'collapse' + key + seed" class="collapse" :aria-labelledby="'heading' + key" :data-parent="'#accordion' + key + seed">
                                     <div class="card-body">
-                                        <wide-object-table v-if="(mvobject)" :record="value" :header="['Name','Values', 'ConnectorName']"></wide-object-table>
+                                        <wide-object-table v-if="(mvobject)" :record="value" :header="['Name','ConnectorName','Values']"></wide-object-table>
                                         <wide-object-table v-else :record="value" :header="['Name','Values']"></wide-object-table>
                                     </div>
                                 </div>
