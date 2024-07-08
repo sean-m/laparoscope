@@ -57,7 +57,7 @@
 - [x] Get-ADSyncGlobalSettings
 - ~~Get-ADSyncGlobalSettingsParameter~~ Covered by Get-ADSyncGlobalSettings
 - [x] Get-ADSyncPartitionPasswordSyncState
-- [ ] Get-ADSyncRule
+- [x] Get-ADSyncRule
 - [ ] Get-ADSyncRuleAudit
 - [x] Get-ADSyncRunProfileResult
 - [ ] Get-ADSyncRunStepResult

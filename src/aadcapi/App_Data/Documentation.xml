@@ -510,6 +510,16 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:aadcapi.Controllers.Server.SyncRuleController.Get(System.String)">
+            <summary>
+            Executes Get-ADSyncRule and returns sync rules the requestor is authorized to see.
+            Can optionally take the identifier of a specific sync rule. Note: if an identifier 
+            is specified and no matching authorization rule exists this does not result in a 403
+            as authorization rules act as filters. The result is an empty set.
+            </summary>
+            <param name="Identifier">Guid identifier of a specific sync rule.</param>
+            <returns></returns>
+        </member>
         <member name="M:aadcapi.Controllers.Server.MeController.Get">
             <summary>
             Returns the ClaimsIdentity used by the server for authorization.
