@@ -46,4 +46,5 @@ $fmt_partition_params = @{
 }
 
 $conn = Get-ADSyncConnector @param | select Name, Identifier, Description, CreationTime, LastModificationTime, $fmt_partition_params, $fmt_connectivity_params, ObjectInclusionList, AttributeInclusionList, AnchorConstructionSettings, CompanyName, Type, Subtype
-Get-ADSyncConnector @param | select Name, Identifier, Description, CreationTime, LastModificationTime, $fmt_partition_params, $fmt_connectivity_params, ObjectInclusionList, AttributeInclusionList, AnchorConstructionSettings, CompanyName, Type, Subtype
+$aad, $other = $conn.Where({$_.Subtype -like 'Windows Azure Active Directory (Microsoft)'},'Split')
+@($aad, ($other | Sort Name))
