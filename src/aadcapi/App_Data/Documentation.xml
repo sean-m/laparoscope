@@ -701,6 +701,34 @@
             </summary>
             <returns>List&lt; Dictionary &lt; string, object &gt; &gt;</returns>
         </member>
+        <member name="M:aadcapi.Controllers.Server.SchedulerController.Post(aadcapi.Controllers.Server.SchedulerController.SyncCycleSettings)">
+            <summary>
+            Executes Set-ADSyncScheduler with the specified settings.
+            The following settings are supported:
+                SyncCycleEnabled : boolean
+                SchedulerSuspended : boolean
+                MaintenanceEnabled : boolean
+                NextSyncCyclePolicyType : string, valid options: Unspecified | Delta | Initial
+            
+            Settings must be passed as the body of the request. Permission to interact with individual settings
+            must be granted by authorization policy. 
+            
+            Example policy:
+            {
+              "Id": "f447d93b-03ee-46af-a4ff-8ca37a310e63",
+              "Role": "Garage.Api",
+              "Context": "Scheduler",
+              "ClaimProperty": null,
+              "ClaimValue": null,
+              "ModelProperty": "Setting",
+              "ModelValue": "SchedulerSuspended",
+              "ModelValues": null
+            }
+            </summary>
+            <param name="settings"></param>
+            <returns></returns>
+            <exception cref="T:System.Web.Http.HttpResponseException"></exception>
+        </member>
         <member name="T:aadcapi.Controllers.ServerApi.RunProfileResultController">
             <summary>
             Unqualified GET returns sync history for the last hour. Results are filtered

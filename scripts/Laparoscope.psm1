@@ -108,7 +108,11 @@ Tested using:
             [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
     $signedB64Signature = ConvertTo-Base64Url -InputObject $bytesSignedSignature
 
-    return $baseSignature + '.' + $signedB64Signature
+    
+    $payload = $baseSignature + '.' + $signedB64Signature
+    do { $payload += '=' } while ((($payload.Length * 6) % 8) -ne 0)
+
+    return ($payload)
 }
 
 
@@ -496,7 +500,7 @@ function Invoke-LapApi {
         }
 
 
-        Invoke-RestMethod @requestParams
+        Invoke-RestMethod @requestParams -UseBasicParsing
     }
 }
 
@@ -527,6 +531,26 @@ function Get-LapSyncScheduler {
     [CmdletBinding()]
     param ()
     Invoke-LapApi -Path '/api/Scheduler'
+}
+
+
+function Set-LapSyncScheduler {
+<#
+.Synopsis
+   Invokes GET /api/Scheduler.
+.DESCRIPTION
+   Analogue to Get-ADSyncScheduler. Provides information about the current
+   ADDC scheduler: staging mode, last sync time, next sync time, current status.
+#>
+    [CmdletBinding()]
+    param(
+        [bool]$SyncCycleEnabled,
+        [bool]$SchedulerSuspended,
+        [bool]$MaintenanceEnabled,
+        [ValidateSet("Unspecified","Delta","Initial")]
+        [string]$NextSyncCyclePolicyType
+    )
+    Invoke-LapApi -Path '/api/Scheduler' -Method POST -RequestArgs $PSBoundParameters
 }
 
 
@@ -1055,7 +1079,8 @@ $exportedFunctions = @(
 "Get-LapMVObject",
 "Get-LapPartitionPasswordSyncState",
 "Start-LapSync",
-"Get-LapSyncScheduler"
+"Get-LapSyncScheduler",
+"Set-LapSyncScheduler"
 "Get-LapRunProfileResult"
 )
 Export-ModuleMember -Function $exportedFunctions

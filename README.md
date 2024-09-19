@@ -63,6 +63,7 @@
 - [ ] Get-ADSyncRunStepResult
 - [ ] Get-ADSyncSchedulerConnectorOverride
 - [ ] Get-ADSyncSchema
+- [x] Get-ADSyncScheduler
 - [ ] Get-ADSyncServerConfiguration
 - [ ] Start-ADSyncPurgeRunHistory
 - [x] Set-ADSyncSchedulerConnectorOverride
