@@ -30,7 +30,6 @@ namespace aadcapi.Controllers.Server
         public dynamic Get()
         {
             // Test for authorization rules for this context with ModelProperty: Authorized,  ModelValue: true
-            // TODO README (Sean) Document this.
             if (!this.IsAuthorized(new { Authorized = true }))
             {
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);

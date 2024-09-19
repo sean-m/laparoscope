@@ -221,3 +221,134 @@ The expected issuer of the access token. Used in token validation. By default: h
 
 ### ops:ConfigManagerRole
 Role claim required for updating app configuration live. There's an API endpoint for modifying app configuration settings but it validates tokens explicitly rather than via role-based resource filter policies.
+
+
+# Authorization Rules
+This application uses Linq filters for making authorization decisions. These filters are provided as json documents like the following built-in admin policy:
+```json
+[
+    {'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]},
+    {'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]}
+]
+```
+This policy is converted to a `List<RoleFilterModel>`. Rules are associated to a given request based on roles present on the ClaimsPrincipal of the request and the controller name of the request context. These rules only match for a principal with the role of `Admin` in any (`*`) context. If there's a desire to check fo values of principal claims, the claim and intended value are indicated with the `ClaimProperty` and `ClaimValue` respectively. Models, objects returned in response to a request, are inspected with the `ModelProperty` and `ModelValue` or `ModelValues` for specifying multiple eligible values. All matching supports wildcard filters with the '*' and are performed case-insensitive. Yes, this does open the posibility of overlapping or overly permisive policies, **be careful**.
+
+Rules are evaluated inclusively. Let's say a user has the assigned roles of: Admin and Operator.Identity. The built-in rules and the following rule would all match and be considered for the context of 'Scheduler' (the SchedulerController in SchedulerController.cs). However the first rule to match wins. If no claim or model criteria match, rule evaluation fails. 
+
+```json
+    {'Role':'Operator.*','Context':'Scheduler','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]}
+```
+
+## Examples
+## Authorizing a request implicitly
+Implicit use of controller names for authorization is the norm. This example comes from GlobalSettingsController.cs:
+```json
+{
+  "Role": "Admin",
+  "Context": "GlobalSettings",
+  "ClaimProperty": null,
+  "ClaimValue": null,
+  "ModelProperty": "Authorized",
+  "ModelValue": "true",
+  "ModelValues": null
+}
+```
+> This rule allows the `Admin` role to access the GlobalSettings controller.
+```csharp
+public dynamic Get()
+{
+  // Test for authorization rules for this context with ModelProperty: Authorized,  ModelValue: true
+  if (!this.IsAuthorized(new { Authorized = true }))
+  {
+      throw new HttpResponseException(HttpStatusCode.Unauthorized);
+  }
+```
+Once again, since this use evaluates the request rather than response, we have to synthesize an object to be inspected. Note how the anonymous object passed to `IsAuthorized` has a single property `Authorized` which matches the rule. Roles and the given context are resolved implicitly. The implementation can be found in ControllerAuthorizationExtensions.cs.
+
+### Authorizing a request explicitly
+That depends on how the rules are used, there's a couple ways. First, rules may be used to test if a user is authorized to even make a given request. Taking an examle from ConnectorStatisticsController.cs and Filter.cs with a rule from my lab:
+```json
+{
+  "Role": "Garage.Api",
+  "Context": "Connector",
+  "ClaimProperty": null,
+  "ClaimValue": null,
+  "ModelProperty": "Name",
+  "ModelValue": "garage.mcardletech.com",
+  "ModelValues": null
+}
+```
+> This rule would allow the role `Garage.Api` to query for info on the connector named garage.mcardletech.com. Pretty straight forwared.
+
+```csharp
+// ConnectorStatisticsController.cs
+
+public dynamic Get(string Name)
+{
+  ...
+  // Construct an anonymous object as the Model for IsAuthorized so we can
+  // pass in Connector as the context. This will allow the authorization engine
+  // to re-use the rules for /api/Connector. If you have rights to view a given
+  // connector, there is no reason you shouldn't see it's statistics.
+  var roles = ((ClaimsPrincipal)RequestContext.Principal).RoleClaims();
+  if (!Filter.IsAuthorized<dynamic>(new { Name = Name, ConnectorName = Name, Identifier = Name }, "Connector", roles)) {
+      throw new HttpResponseException(HttpStatusCode.Forbidden);
+  }
+...
+
+------------------------
+// Filter.cs
+public static bool IsAuthorized<T>(T Model, string Context, IEnumerable<string> Roles)
+{
+  var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByContext(Context);
+...
+```
+
+The `IsAuthorized ()` method takes an object to be inspected, the context where it occurs (the controller name by convention) and any roles specified on the claims principal. Its first operation collects all the rules for the designated context. Since this filter is matching against the request, not the response, an anonymous object is created with the name of the connector specified in the request. If the requestor doesn't have a rule that would allow querying for the connector of the given name, it denies your request for statistics related that same connector. _Passing the context/controller name into the rule evaulation isn't usually needed._
+
+## Resource based authorization
+_Filtering a response._
+This example comes from ConnectorController.cs:
+```json
+{
+  "Role": "Garage.Api",
+  "Context": "Connector",
+  "ClaimProperty": null,
+  "ClaimValue": null,
+  "ModelProperty": "Name",
+  "ModelValue": "garage.mcardletech.com",
+  "ModelValues": null
+}
+```
+```csharp
+
+public dynamic Get(string Name=null)
+{
+  // Run PowerShell command to get AADC connector configurations
+  using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_ADSyncConnectorsBasic))
+  {
+    runner.Parameters.Add("Name", Name);
+    runner.Run();
+
+    // Map PowerShell objects to models, C# classes with matching property names.
+    // All results should be AadcConnector but CapturePSResult can return as
+    // type: dynamic if the PowerShell object doesn't successfully map to the
+    // desired model type. For those that are the correct model, we pass them
+    // to the IsAuthorized method which loads and runs any rules for this connector
+    // who match the requestors roles.
+    var resultValues = runner.Results.CapturePSResult<AadcConnector>()
+        .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as AadcConnector.
+        .Select(x => x as AadcConnector);   // Take as AadcConnector so typed call to WhereAuthorized avoids GetType() call.
+
+    resultValues = this.WhereAuthorized<AadcConnector>(resultValues);
+
+    if (resultValues != null)
+    {
+        var result = Ok(resultValues);
+        return result;
+    }
+  }
+
+  ...
+```
+This example functions on the response side and more closely resembles what one would call a filter. Unlike previous examples, the claims principal is not expected except to extract roles, not to authorize the request itself. Instead, the policy rules which make up the filter act on the AadcConnector models which make up our PowerShell command results. Filtering is performed by our WhereAuthorized extension method. Just like the IsAuthorized extension method above, it acts on the controller object itself to resolve everything needed to assemble a relevant rule list. It takes an IEnumerable<T> to filter out, returning only results _Where_ a rule matched, indicating the result is _Authorized_. If no rules match, an empty set is returned.
