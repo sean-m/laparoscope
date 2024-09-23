@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 namespace McAuthorization
@@ -96,6 +97,22 @@ namespace McAuthorization
                             return testValue.Like(pattern);
                         }
                     });
+        }
+
+
+        public static bool IsAuthorized<T>(T Model, string Context, ClaimsPrincipal principal)
+        {
+            return IsAuthorized<T>(Model, Context, RoleClaims(principal));
+        }
+
+        /// <summary>
+        /// Yields a collection of role values for a given ClaimsPrincipal.
+        /// </summary>
+        /// <param name="Principal"></param>
+        /// <returns></returns>
+        private static IEnumerable<string> RoleClaims(ClaimsPrincipal Principal)
+        {
+            return Principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
         }
 
         /// <summary>

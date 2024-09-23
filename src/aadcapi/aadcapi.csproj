@@ -802,6 +802,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Account\" />
+    <Folder Include="Views\Index\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.min.css.map" />

@@ -3,222 +3,247 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="server" class="row container fluid">
+    <div id="server" class="row container fluid">
 
 
-    <div class="row progress flex-column p-2">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-             :aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" :style="{width: progLoad + '%'}"></div>
-    </div>
-
-
-    <div class="d-flex flex-row" style="padding-top:0.5em">
-        <!-- Vertical Tabs on the Left -->
-        <div class="flex-column">
-            <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
-                <!-- Sync Scheduler Nav Tab -->
-                <li class="nav-item">
-                    <a class="nav-link active" id="sched-tab" data-toggle="tab" href="#syncScheduler" role="tab" aria-orientation="vertical" aria-controls="Sync Scheduler" aria-selected="true">Sync Scheduler</a>
-                </li>
-
-                <!-- Hash Sync Nav Tab -->
-                <li class="nav-item">
-                    <a v-bind:class="'nav-link' + (hashSyncEnabled ? '' : ' disabled')" id="hashSync-tab" data-toggle="tab" href="#hashSync" role="tab" aria-orientation="vertical" aria-controls="Password Hash Sync" aria-selected="true">Password Hash Sync</a>
-                </li>
-
-                <!-- Sync Connector Nav Tabs -->
-                <li class="nav-item" v-for="(c) in connectors">
-                    <!-- For AD connectors whos name does not indicate an organizational affiliation, joining it with the connector description can help. -->
-                    <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ [c.Name, c.Description].filter(x => x).join(' | ') }}</a>
-                </li>
-            </ul>
+        <div class="row progress flex-column p-2">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                 :aria-valuenow="progLoad" aria-valuemin="0" aria-valuemax="100" :style="{width: progLoad + '%'}"></div>
         </div>
 
-        <!-- Tab Content on the Right -->
-        <div class="col-11">
-            <div id="myTabContent" class="tab-content d-flex flex-column">
 
-                <!-- Sync Scheduler Tab -->
-                <div id="syncScheduler" class="tab-pane active" role="tabpanel" aria-labelledby="sched-tab">
-                    <div class="d-flex flex-column">
-                        <div class="d-flex flex-row">
-                            <!-- Scheduler Status -->
-                            <object-table class="table table-responsive-md p-2" :record="scheduler" title="Scheduler"></object-table>
-                            <!-- Company Features -->
-                            <object-table class="table table-responsive-sm p-2" :record="companyFeatures" title="Company Features"></object-table>
-                        </div>
-                        <div class="d-flex flex-row">
-                            <button class="btn btn-secondary p-2" id="syncBtn" type="button" v-on:click="startSync" style="margin-left:0.5em; margin-bottom:12px;">Start Sync</button>
-                            <div class="p-2" style="float:right">{{schedMsg}}</div>
+        <div class="d-flex flex-row" style="padding-top:0.5em">
+            <!-- Vertical Tabs on the Left -->
+            <div class="flex-column">
+                <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
+                    <!-- Sync Scheduler Nav Tab -->
+                    <li class="nav-item">
+                        <a class="nav-link active" id="sched-tab" data-toggle="tab" href="#syncScheduler" role="tab" aria-orientation="vertical" aria-controls="Sync Scheduler" aria-selected="true">Sync Scheduler</a>
+                    </li>
+
+                    <!-- Hash Sync Nav Tab -->
+                    <li class="nav-item">
+                        <a v-bind:class="'nav-link' + (hashSyncEnabled ? '' : ' disabled')" id="hashSync-tab" data-toggle="tab" href="#hashSync" role="tab" aria-orientation="vertical" aria-controls="Password Hash Sync" aria-selected="true">Password Hash Sync</a>
+                    </li>
+
+                    <!-- Sync Connector Nav Tabs -->
+                    <li class="nav-item" v-for="(c) in connectors">
+                        <!-- For AD connectors whos name does not indicate an organizational affiliation, joining it with the connector description can help. -->
+                        <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ [c.Name, c.Description].filter(x => x).join(' | ') }}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tab Content on the Right -->
+            <div class="col-11">
+                <div id="myTabContent" class="tab-content d-flex flex-column">
+
+                    <!-- Sync Scheduler Tab -->
+                    <div id="syncScheduler" class="tab-pane active" role="tabpanel" aria-labelledby="sched-tab">
+                        <div class="d-flex flex-column">
+                            <div class="d-flex flex-row">
+                                <!-- Scheduler Status -->
+                                <object-table class="table table-responsive-md p-2" :record="scheduler" title="Scheduler"></object-table>
+                                <!-- Company Features -->
+                                <object-table class="table table-responsive-sm p-2" :record="companyFeatures" title="Company Features"></object-table>
+                            </div>
+
+                            @if (ViewBag != null && ViewBag.CanPause)
+                            {
+                            <div class="d-flex flex-row">
+                                <button class="btn p-2" :class="scheduler.SchedulerSuspended ? 'btn-danger' : 'btn-success'"
+                                        id="syncPauseBtn" type="button" v-on:click="pauseResumeSync" style="margin-left:0.5em; margin-bottom:12px;">
+                                    {{ scheduler.SchedulerSuspended ? 'Resume' : 'Pause' }}
+                                </button>
+                                <div class="p-2" style="float:right">{{ scheduler.SchedulerSuspended ? 'Paused' : 'Running' }}</div>
+                            </div>
+                            }
+
+                            <div class="d-flex flex-row">
+                                <button class="btn btn-secondary p-2" id="syncBtn" type="button" v-on:click="startSync" style="margin-left:0.5em; margin-bottom:12px;">Start Sync</button>
+                                <div class="p-2" style="float:right">{{schedMsg}}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Hash Sync Status -->
-                <div id="hashSync" class="tab-pane flex-column container" role="tabpanel" aria-labelledby="hashSync-tab">
-                    <ul class="no-bullets" v-if="hashSyncEnabled">
-                        <li v-for="value in hashSync"><object-table :record="value" :title="'Domain: ' + value.DN"></object-table></li>
-                    </ul>
-                </div>
+                    <!-- Hash Sync Status -->
+                    <div id="hashSync" class="tab-pane flex-column container" role="tabpanel" aria-labelledby="hashSync-tab">
+                        <ul class="no-bullets" v-if="hashSyncEnabled">
+                            <li v-for="value in hashSync"><object-table :record="value" :title="'Domain: ' + value.DN"></object-table></li>
+                        </ul>
+                    </div>
 
-                <!-- Sync Connector Tabs : AAD -->
-                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type != 'AD')" role="tabpanel">
-                    <server-connector :connector="c" :hashsync="hashSync"></server-connector>
-                </div>
+                    <!-- Sync Connector Tabs : AAD -->
+                    <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type != 'AD')" role="tabpanel">
+                        <server-connector :connector="c" :hashsync="hashSync"></server-connector>
+                    </div>
 
-                <!-- Sync Connector Tabs : AD -->
-                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type === 'AD')" role="tabpanel">
-                    <server-connector :connector="c" :hashsync="hashSync"></server-connector>
+                    <!-- Sync Connector Tabs : AD -->
+                    <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type === 'AD')" role="tabpanel">
+                        <server-connector :connector="c" :hashsync="hashSync"></server-connector>
+                    </div>
                 </div>
             </div>
+
+            <hr />
+            <!--Global status messages show at bottom of page-->
+            <div>{{statusMsg ? new Date().toLocaleTimeString() + " : " + statusMsg : ''}}</div>
         </div>
-
-        <hr />
-        <!--Global status messages show at bottom of page-->
-        <div>{{statusMsg ? new Date().toLocaleTimeString() + " : " + statusMsg : ''}}</div>
     </div>
-</div>
 
-<!-- These are defined in _VueComponents.cshtml and imported as a partial here. -->
-@Html.Partial("_VueComponents")
+    <!-- These are defined in _VueComponents.cshtml and imported as a partial here. -->
+    @Html.Partial("_VueComponents")
 
 
-<!-------------------  Main Vue App -------------------->
-<script type="text/javascript">
-    const apiScheduler = "/api/Scheduler/";
-    const apiStartSync = "/api/StartSync/";
-    const apiConnector = "/api/Connector/";
-    const apiCompanyFeatures = "/api/AADCompanyFeature/";
-    const apiHashSyncStatus = "/api/PartitionPasswordSyncState/"
+    <!-------------------  Main Vue App -------------------->
+    <script type="text/javascript">
+        const apiScheduler = "/api/Scheduler/";
+        const apiStartSync = "/api/StartSync/";
+        const apiConnector = "/api/Connector/";
+        const apiCompanyFeatures = "/api/AADCompanyFeature/";
+        const apiHashSyncStatus = "/api/PartitionPasswordSyncState/"
 
-    var server = new Vue({
-        el: '#server',
-        data: {
+        var server = new Vue({
+            el: '#server',
+            data: {
 
-            scheduler: {},
-            schedMsg: "",
-            companyFeatures: {},
-            hashSyncEnabled: false,
-            hashSync: [],
-            connectors: [],
-            statusMsg: "",
+                scheduler: {},
+                schedMsg: "",
+                companyFeatures: {},
+                hashSyncEnabled: false,
+                hashSync: [],
+                connectors: [],
+                statusMsg: "",
 
-            schedulePolling: null,
+                schedulePolling: null,
 
-            // Loading Progress Bars
-            progLoad: 25,
-        },
-        computed: {
-            progressWidth: function () {
-                return ""
-            }
-        },
-        mounted: function () {
-            this.refreshServerStatus();
-        },
-        methods: {
-            getRandomInt(min, max) {
-                min = Math.ceil(min);
-                max = Math.floor(max);
-                return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+                // Loading Progress Bars
+                progLoad: 25,
             },
-            getSeed() {
-                return this.getRandomInt(0, 10000).toString();
+            computed: {
+                progressWidth: function () {
+                    return ""
+                }
             },
-            refreshServerStatus() {
-                this.fetchScheduler();
-                this.fetchCompanyFeatures();
-                this.fetchConnectors();
-                this.schedulePolling = setInterval((ctx) => {
+            mounted: function () {
+                this.refreshServerStatus();
+            },
+            methods: {
+                getRandomInt(min, max) {
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+                    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+                },
+                getSeed() {
+                    return this.getRandomInt(0, 10000).toString();
+                },
+                refreshServerStatus() {
+                    this.fetchScheduler();
+                    this.fetchCompanyFeatures();
+                    this.fetchConnectors();
+                    this.schedulePolling = setInterval((ctx) => {
+                        $.getJSON(apiScheduler, json => {
+                            ctx.scheduler = json;
+                        });
+
+                        $.getJSON(apiHashSyncStatus, json => {
+                            ctx.hashSync = json;
+                        });
+                    }, (30 * 1000), this);
+                },
+                // Get sync scheduler status.
+                fetchScheduler() {
                     $.getJSON(apiScheduler, json => {
-                        ctx.scheduler = json;
+                        this.scheduler = json;
+                        this.progLoad += 25;
                     });
-
+                },
+                // List all connectors you have rights to.
+                fetchConnectors() {
+                    $.getJSON(apiConnector, json => {
+                        this.connectors = json.sort((a, b) => { a.Name > b.Name ? 1 : -1; });
+                        this.progLoad += 25;
+                    });
+                },
+                // Show feature configurations that are AAD tenant wide.
+                fetchCompanyFeatures() {
+                    $.getJSON(apiCompanyFeatures, json => {
+                        this.companyFeatures = json;
+                        this.hashSyncEnabled = json.PasswordHashSync;
+                        if (this.hashSyncEnabled) { this.fetchHashSyncStatus(); }
+                        this.progLoad += 25;
+                    });
+                },
+                // List the hash sync status for connectors you have rights to.
+                fetchHashSyncStatus() {
                     $.getJSON(apiHashSyncStatus, json => {
-                        ctx.hashSync = json;
+                        this.hashSync = json;
                     });
-                }, (30 * 1000), this);
-            },
-            // Get sync scheduler status.
-            fetchScheduler() {
-                $.getJSON(apiScheduler, json => {
-                    this.scheduler = json;
-                    this.progLoad += 25;
-                });
-            },
-            // List all connectors you have rights to.
-            fetchConnectors() {
-                $.getJSON(apiConnector, json => {
-                    this.connectors = json.sort((a, b) => { a.Name > b.Name ? 1 : -1; });
-                    this.progLoad += 25;
-                });
-            },
-            // Show feature configurations that are AAD tenant wide.
-            fetchCompanyFeatures() {
-                $.getJSON(apiCompanyFeatures, json => {
-                    this.companyFeatures = json;
-                    this.hashSyncEnabled = json.PasswordHashSync;
-                    if (this.hashSyncEnabled) { this.fetchHashSyncStatus(); }
-                    this.progLoad += 25;
-                });
-            },
-            // List the hash sync status for connectors you have rights to.
-            fetchHashSyncStatus() {
-                $.getJSON(apiHashSyncStatus, json => {
-                    this.hashSync = json;
-                });
-            },
-            // Attempt to kick off a delta sync.
-            startSync() {
-                this.schedMsg = '';
+                },
+                // Attempt to kick off a delta sync.
+                startSync() {
+                    this.schedMsg = '';
 
-                $.post(apiStartSync).then(response => {
-                    var btn = document.getElementById("syncBtn");
-                    var btnClass = response.Started ? 'btn-success' : 'btn-warning';
-                    btn.classList.remove('btn-secondary');
-                    if (response.Started) {
-                        btn.classList.remove('btn-warning');
-                    } else {
-                        btn.classList.remove('btn-success');
+                    $.post(apiStartSync).then(response => {
+                        var btn = document.getElementById("syncBtn");
+                        var btnClass = response.Started ? 'btn-success' : 'btn-warning';
+                        btn.classList.remove('btn-secondary');
+                        if (response.Started) {
+                            btn.classList.remove('btn-warning');
+                        } else {
+                            btn.classList.remove('btn-success');
+                        }
+                        btn.classList.add(btnClass);
+
+                        this.schedMsg = response.Result;
+                    })
+                },
+                pauseResumeSync() {
+                    let desiredSchedulerState = !this.scheduler.SchedulerSuspended;
+                    console.log("Setting scheduler suspended: " + desiredSchedulerState);
+                    $.post(apiScheduler, { schedulerSuspended: desiredSchedulerState }).then(response => {
+                        console.log("Toggled scheduler");
+                        console.log(response);
+                        this.fetchScheduler();
+                    }, fail => {
+                        if (fail) {
+                            this.pauseMsg = "Failed suspend or resume sync scheduler. Verify authorization policies."
+                        }
+                    })
+                },
+                beforeDestroy() {
+                    clearInterval(this.schedulePolling);
+                }
+            },
+            watch: {
+                // Remove the progress bar after everything is fetched.
+                progLoad: function () {
+                    if (this.progLoad >= 100) {
+                        $(".progress").fadeOut(200);
                     }
-                    btn.classList.add(btnClass);
-
-                    this.schedMsg = response.Result;
-                })
-            },
-            beforeDestroy() {
-                clearInterval(this.schedulePolling);
-            }
-        },
-        watch: {
-            // Remove the progress bar after everything is fetched.
-            progLoad: function () {
-                if (this.progLoad >= 100) {
-                    $(".progress").fadeOut(200);
                 }
             }
+        });
+
+
+        // ---------------- Layout Modifications ----------------- //
+        // Remove bottom <hr> from layout so we can put our own things below it
+        setTimeout(() => {
+            var footerLine = document.getElementById("footerLine");
+            if (footerLine) { footerLine.remove(); }
+        }, 250);
+
+        // Make content full width since it's displaying settings that may be wider than the viewport
+        var parent = document.getElementById('renderBody');
+        parent.classList.remove('container')
+        parent.classList.remove('container-fluid')
+
+    </script>
+    <style type="text/css">
+        /* From: https://www.w3schools.com/howto/howto_css_list_without_bullets.asp */
+        ul.no-bullets {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
         }
-    });
-
-
-    // ---------------- Layout Modifications ----------------- //
-    // Remove bottom <hr> from layout so we can put our own things below it
-    setTimeout(() => {
-        var footerLine = document.getElementById("footerLine");
-        if (footerLine) { footerLine.remove(); }
-    }, 250);
-
-    // Make content full width since it's displaying settings that may be wider than the viewport
-    var parent = document.getElementById('renderBody');
-    parent.classList.remove('container')
-    parent.classList.remove('container-fluid')
-
-</script>
-<style type="text/css">
-    /* From: https://www.w3schools.com/howto/howto_css_list_without_bullets.asp */
-    ul.no-bullets {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-</style>
+    </style>
