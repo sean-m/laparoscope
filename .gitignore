@@ -12,6 +12,9 @@
 *.userosscache
 *.sln.docstates
 
+scripts/result.html
+scripts/*_dev.ps1
+
 *ApplicationInsights.conf*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
