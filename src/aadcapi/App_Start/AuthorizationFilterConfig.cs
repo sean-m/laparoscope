@@ -20,7 +20,11 @@ namespace aadcapi
     {
         private void ConfigureAuthorizationFilters(IAppBuilder app)
         {
-            var adminRoleBuiltinAuthz = @"[{'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]},{'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]}]";
+            var adminRoleBuiltinAuthz = @"[
+                {'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]},
+                {'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]},
+                {'Role':'Admin','Context':'Scheduler','ClaimProperty':null,'ClaimValue':null,'ModelProperty':'Setting','ModelValue':'SchedulerSuspended','ModelValues':null}
+            ]";
             var rules = JsonConvert.DeserializeObject<List<RoleFilterModel>>(adminRoleBuiltinAuthz);
 
             foreach (var rule in rules) RegisteredRoleControllerRules.RegisterRoleControllerModel(rule);
