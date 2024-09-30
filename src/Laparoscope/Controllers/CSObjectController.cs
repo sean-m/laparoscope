@@ -11,6 +11,8 @@ using static aadcapi.Utils.Authorization.ControllerAuthorizationExtensions;
 
 namespace aadcapi.Controllers.Server
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class CSObjectController : Controller
     {
@@ -52,6 +54,7 @@ namespace aadcapi.Controllers.Server
 
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncCSObjectStrict";

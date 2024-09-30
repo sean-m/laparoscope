@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace aadcapi.Controllers.Server
 {
+    [Route("api/[controller]")]
+    [ApiController]
     /// <summary>
     /// Maps to cmdlets for the AADC Scheduler. Unqualified GET returns the result of Get-ADSyncScheduler.
     /// </summary>
@@ -24,10 +26,11 @@ namespace aadcapi.Controllers.Server
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncScheduler";
-                    var result = await jsonRpc.InvokeAsync<dynamic>(function);
+                    var result = await jsonRpc.InvokeAsync<Dictionary<string, object>>(function);
                     return result;
                 }
             }
@@ -60,6 +63,7 @@ namespace aadcapi.Controllers.Server
         /// <param name="settings"></param>
         /// <returns></returns>
         /// <exception cref="HttpResponseException"></exception>
+        [HttpPost]
         public async Task<dynamic> PostAsync([FromBody] SyncScheduleSettings settings) {
             // Filter parameters to just include what's allowed
             if (null != settings.SyncCycleEnabled && !this.IsAuthorized(new {Setting = "SyncCycleEnabled"}))
@@ -86,6 +90,7 @@ namespace aadcapi.Controllers.Server
 
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "SetADSyncScheduler";

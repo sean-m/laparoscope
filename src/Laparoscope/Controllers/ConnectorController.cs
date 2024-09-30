@@ -7,6 +7,8 @@ using System.IO.Pipes;
 
 namespace aadcapi.Controllers.Server
 {
+    [Route("api/[controller]")]
+    [ApiController]
     /// <summary>
     /// Unqualified GET returns a subset of information for connectors. With multiple connectors
     /// the result can be 100MB+ so some properties are left out.
@@ -26,6 +28,7 @@ namespace aadcapi.Controllers.Server
 
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetADSyncConnector", Name);

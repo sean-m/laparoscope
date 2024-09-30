@@ -6,6 +6,8 @@ using System.IO.Pipes;
 
 namespace aadcapi.Controllers.ServerApi
 {
+    [Route("api/[controller]")]
+    [ApiController]
     /// <summary>
     /// Unqualified GET returns sync history for the last hour. Results are filtered
     /// to connectors you have rights to view in this context.
@@ -43,6 +45,7 @@ namespace aadcapi.Controllers.ServerApi
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncRunProfileLastHour";

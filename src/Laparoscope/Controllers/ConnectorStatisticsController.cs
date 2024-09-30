@@ -8,6 +8,8 @@ using System.Net;
 
 namespace aadcapi.Controllers.Server
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class ConnectorStatisticsController : Controller
     {
@@ -41,6 +43,7 @@ namespace aadcapi.Controllers.Server
 
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncConnectorStatistics";

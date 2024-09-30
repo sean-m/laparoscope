@@ -6,6 +6,8 @@ using System.IO.Pipes;
 
 namespace aadcapi.Controllers.Server
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class MVObjectController : Controller
     {
@@ -28,6 +30,7 @@ namespace aadcapi.Controllers.Server
             // TODO require an MVObject role
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncMVObjectStrict";

@@ -19,11 +19,11 @@ namespace aadcapi.Controllers.Server
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncAADCompanyFeature";
-                    Console.WriteLine($">> {function}()");
-                    var result = await jsonRpc.InvokeAsync<dynamic>(function);
+                    var result = await jsonRpc.InvokeAsync<Dictionary<string, object>>(function);
                     return result;
                 }
             }

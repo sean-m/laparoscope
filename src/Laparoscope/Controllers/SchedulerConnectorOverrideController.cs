@@ -9,6 +9,8 @@ using System.Net;
 
 namespace aadcapi.Controllers.ServerApi
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class SchedulerConnectorOverrideController : Controller
     {
@@ -49,6 +51,7 @@ namespace aadcapi.Controllers.ServerApi
 
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncSchedulerConnectorOverride";
@@ -91,6 +94,7 @@ namespace aadcapi.Controllers.ServerApi
 
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "SetADSyncSchedulerConnectorOverride";

@@ -5,6 +5,8 @@ using System.IO.Pipes;
 
 namespace aadcapi.Controllers.Server
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class AutoUpgradeController : Controller
     {
@@ -17,6 +19,7 @@ namespace aadcapi.Controllers.Server
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncAutoUpgrade";

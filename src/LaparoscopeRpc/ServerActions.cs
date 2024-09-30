@@ -87,7 +87,7 @@ namespace LaparoscopeRpc
             }
         }
 
-        public dynamic GetADSyncAADCompanyFeature()
+        public Dictionary<string, object> GetADSyncAADCompanyFeature()
         {
             using (var runner = new SimpleScriptRunner("Get-ADSyncAADCompanyFeature"))
             {
@@ -102,7 +102,7 @@ namespace LaparoscopeRpc
             }
         }
 
-        public dynamic GetADSyncAADPasswordResetConfiguration()
+        public Dictionary<string, object> GetADSyncAADPasswordResetConfiguration()
         {
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAADPasswordResetConfiguration))
             {
@@ -117,7 +117,7 @@ namespace LaparoscopeRpc
             }
         }
 
-        public dynamic GetADSyncAADPasswordSyncConfiguration(string SourceConnector)
+        public Dictionary<string, object> GetADSyncAADPasswordSyncConfiguration(string SourceConnector)
         {
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAADPasswordSyncConfiguration))
             {
@@ -133,7 +133,7 @@ namespace LaparoscopeRpc
             }
         }
 
-        public dynamic GetADSyncAutoUpgrade()
+        public Dictionary<string, object> GetADSyncAutoUpgrade()
         {
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAutoUpgrade))
             {
