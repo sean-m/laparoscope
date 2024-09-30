@@ -1,21 +1,22 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using aadcapi.Models;
 using StreamJsonRpc;
+using System.Diagnostics;
 using System.IO.Pipes;
 
+var stopWatch = new Stopwatch();
+Thread.Sleep(2000);
 Console.WriteLine("Connecting to server...");
+stopWatch.Start();
 using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous)) {
     await stream.ConnectAsync();
+    stopWatch.Stop();
+    Console.WriteLine($"Connected in {stopWatch.ToString()}");
     await ActAsRpcClientAsync(stream);
     Console.WriteLine("Terminating stream...");
 }
 Console.ReadLine();
 
-
-static void AdSyncFunction()
-{
-
-}
 
 static async Task ActAsRpcClientAsync(Stream stream) {
     using var jsonRpc = JsonRpc.Attach(stream);
