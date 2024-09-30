@@ -22,8 +22,8 @@ static async Task ActAsRpcClientAsync(Stream stream) {
     using var jsonRpc = JsonRpc.Attach(stream);
     {
         Console.WriteLine("\nConnected. Sending request...");
-        Console.WriteLine(">> GetAdSyncConnector()");
-        var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetAdSyncConnector", "garage.mcardletech.com");
+        Console.WriteLine(">> GetADSyncConnector()");
+        var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetADSyncConnector", "garage.mcardletech.com");
         Console.WriteLine("Result:");
         Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
     }
@@ -114,6 +114,15 @@ static async Task ActAsRpcClientAsync(Stream stream) {
         string function = "GetADSyncScheduler";
         Console.WriteLine($">> {function}()");
         var result = await jsonRpc.InvokeAsync<dynamic>(function);
+        Console.WriteLine("Result:");
+        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+    }
+
+    {
+        Console.WriteLine("\nConnected. Sending request...");
+        string function = "GetADSyncSchedulerConnectorOverride";
+        Console.WriteLine($">> {function}()");
+        var result = await jsonRpc.InvokeAsync<dynamic>(function, "garage.mcardletech.com");
         Console.WriteLine("Result:");
         Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
     }

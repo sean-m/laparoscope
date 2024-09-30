@@ -1,5 +1,6 @@
 ﻿using aadcapi.Models;
 using LaparoscopeShared;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SMM.Automation;
 using SMM.Helper;
@@ -17,9 +18,17 @@ namespace LaparoscopeRpc
 {
     public class ServerActions
     {
+        ILogger logger;
+        public ServerActions() { }
+
+        public ServerActions(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         public string Hello() => "Hi there!";
 
-        public SyncResult StartSync()
+        public SyncResult StartADSync()
         {
             using (var runner = new SimpleScriptRunner(Properties.Resources.Start_ADSyncDelta))
             {
@@ -34,7 +43,7 @@ namespace LaparoscopeRpc
             }
         }
 
-        public AadcConnector[] GetAdSyncConnector(string Name = null)
+        public AadcConnector[] GetADSyncConnector(string Name = null)
         {
             // Run PowerShell command to get AADC connector configurations
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncConnectorsBasic))
@@ -263,7 +272,7 @@ namespace LaparoscopeRpc
             }
         }
 
-        public IEnumerable<Dictionary<string, object>> Get(Guid? RunHistoryId = null, Guid? ConnectorId = null, int NumberRequested = 0, bool RunStepDetails = false)
+        public IEnumerable<Dictionary<string, object>> GetADSyncRunProfileLastHour(Guid? RunHistoryId = null, Guid? ConnectorId = null, int NumberRequested = 0, bool RunStepDetails = false)
         {
             // Run PowerShell command to get AADC connector configurations
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncRunProfileLastHour))
