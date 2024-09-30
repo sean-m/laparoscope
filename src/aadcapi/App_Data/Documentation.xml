@@ -701,7 +701,7 @@
             </summary>
             <returns>List&lt; Dictionary &lt; string, object &gt; &gt;</returns>
         </member>
-        <member name="M:aadcapi.Controllers.Server.SchedulerController.Post(aadcapi.Controllers.Server.SchedulerController.SyncCycleSettings)">
+        <member name="M:aadcapi.Controllers.Server.SchedulerController.Post(LaparoscopeShared.SyncScheduleSettings)">
             <summary>
             Executes Set-ADSyncScheduler with the specified settings.
             The following settings are supported:

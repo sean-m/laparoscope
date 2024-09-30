@@ -1,8 +1,10 @@
 ﻿using aadcapi.Utils.Authorization;
 using SMM.Automation;
 using SMM.Helper;
+using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -22,18 +24,17 @@ namespace aadcapi.Controllers.Server
         [ResponseType(typeof(Dictionary<string, object>))]
         public dynamic Get()
         {
-            using (var runner = new SimpleScriptRunner("Get-ADSyncAADCompanyFeature"))
+            using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
-                runner.Run();
-
-                if (runner.HadErrors)
+                using (var jsonRpc = JsonRpc.Attach(stream))
                 {
-                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                    return InternalServerError(err);
+                    string function = "GetADSyncAADCompanyFeature";
+                    Console.WriteLine($">> {function}()");
+                    var resultTask = jsonRpc.InvokeAsync<dynamic>(function);
+                    resultTask.Wait();
+                    var result = Ok(resultTask.Result);
+                    return result;
                 }
-
-                var result = Ok(runner.Results.ToDict().FirstOrDefault());
-                return result;
             }
         }
     }

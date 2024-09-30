@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "Me";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Me</h2>
+
+<h3>@ViewBag.UserId.Name</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td>Type</td>
+            <td>Value</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in ViewBag.UserId.Claims)
+        {
+            if (c.Type == "nonce") { continue; }
+            if (c.Type == "c_hash") { continue; }
+        <tr>
+            <td>@c.Type</td>
+            <td>@c.Value</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<p>
+    <a class="btn btn-info" data-toggle="collapse" href="#jsonIdentity" role="button" aria-expanded="false" aria-controls="jsonIdentity">
+    ClaimsPrincipal Json
+    </a>
+</p>
+<div class="collapse" id="jsonIdentity">
+    <div class="card card-body">
+        <pre>
+@ViewBag.IdentityJson
+        </pre>
+    </div>
+</div>
+

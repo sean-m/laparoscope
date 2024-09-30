@@ -1,8 +1,10 @@
 ﻿using aadcapi.Utils.Authorization;
 using SMM.Automation;
 using SMM.Helper;
+using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -35,18 +37,16 @@ namespace aadcapi.Controllers.Server
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
 
-            using (var runner = new SimpleScriptRunner(aadcapi.Properties.Resources.Get_AdSyncGlobalSettingsStrict))
+            using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
-                runner.Run();
-
-                if (runner.HadErrors)
+                using (var jsonRpc = JsonRpc.Attach(stream))
                 {
-                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
-                    return InternalServerError(err);
-                }
-
-                var result = Ok(runner.Results.ToDict().FirstOrDefault());
-                return result;
+                    string function = "GetAdSyncGlobalSettingsStrict";
+                    var awaitableResult = jsonRpc.InvokeAsync<Dictionary<string, object>>(function);
+                    awaitableResult.Wait();
+                    var result = Ok(awaitableResult.Result);
+                    return result;
+                }                
             }
         }
     }

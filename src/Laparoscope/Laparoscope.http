@@ -1,0 +1,6 @@
+@Laparoscope_HostAddress = http://localhost:5253
+
+GET {{Laparoscope_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

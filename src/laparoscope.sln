@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaparoscopeShared", "Shared
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoshRpcTestClient", "RpcClient\PoshRpcTestClient.csproj", "{E3865B4E-6754-4812-965A-81E902389FF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laparoscope", "Laparoscope\Laparoscope.csproj", "{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,18 @@ Global
 		{E3865B4E-6754-4812-965A-81E902389FF3}.Release|x64.Build.0 = Release|Any CPU
 		{E3865B4E-6754-4812-965A-81E902389FF3}.Release|x86.ActiveCfg = Release|Any CPU
 		{E3865B4E-6754-4812-965A-81E902389FF3}.Release|x86.Build.0 = Release|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Debug|x64.Build.0 = Debug|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Debug|x86.Build.0 = Debug|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Release|x64.ActiveCfg = Release|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Release|x64.Build.0 = Release|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Release|x86.ActiveCfg = Release|Any CPU
+		{DCF53919-F7E6-454F-B9D0-D6F823D6EF39}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

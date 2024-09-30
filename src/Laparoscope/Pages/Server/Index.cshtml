@@ -1,6 +1,8 @@
 ﻿
+@page
+@model Laparoscope.Pages.Server.IndexModel;
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "_Layout";
 }
 
     <div id="server" class="row container fluid">
@@ -48,7 +50,7 @@
                                 <object-table class="table table-responsive-sm p-2" :record="companyFeatures" title="Company Features"></object-table>
                             </div>
 
-                            @if (ViewBag != null && ViewBag.CanPause)
+                            @if (Model != null && Model.CanPause)
                             {
                             <div class="d-flex flex-row">
                                 <button class="btn p-2" :class="scheduler.SchedulerSuspended ? 'btn-danger' : 'btn-success'"
@@ -92,7 +94,7 @@
     </div>
 
     <!-- These are defined in _VueComponents.cshtml and imported as a partial here. -->
-    @Html.Partial("_VueComponents")
+    <partial name="~/Pages/Server/_VueComponents.cshtml" />
 
 
     <!-------------------  Main Vue App -------------------->
@@ -234,9 +236,9 @@
         }, 250);
 
         // Make content full width since it's displaying settings that may be wider than the viewport
-        var parent = document.getElementById('renderBody');
-        parent.classList.remove('container')
-        parent.classList.remove('container-fluid')
+        // var parent = document.getElementById('renderBody');
+        // parent.classList.remove('container')
+        // parent.classList.remove('container-fluid')
 
     </script>
     <style type="text/css">
