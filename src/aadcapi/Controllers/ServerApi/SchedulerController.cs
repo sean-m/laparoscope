@@ -1,4 +1,5 @@
 ﻿using aadcapi.Utils.Authorization;
+using LaparoscopeShared;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
@@ -44,14 +45,6 @@ namespace aadcapi.Controllers.Server
             }
         }
 
-        public class SyncCycleSettings
-        {
-            public bool? SyncCycleEnabled { get; set; }
-            public bool? SchedulerSuspended { get; set; }
-            public bool? MaintenanceEnabled { get; set; }
-            public string NextSyncCyclePolicyType { get; set; }
-        }
-
         static Regex validSyncPolicyTypes = new Regex(@"(?i)(Unspecified|Delta|Initial)");
         /// <summary>
         /// Executes Set-ADSyncScheduler with the specified settings.
@@ -79,7 +72,7 @@ namespace aadcapi.Controllers.Server
         /// <param name="settings"></param>
         /// <returns></returns>
         /// <exception cref="HttpResponseException"></exception>
-        public dynamic Post([FromBody]SyncCycleSettings settings) {
+        public dynamic Post([FromBody] SyncScheduleSettings settings) {
             // Filter parameters to just include what's allowed
             if (null != settings.SyncCycleEnabled && !this.IsAuthorized(new {Setting = "SyncCycleEnabled"}))
             {

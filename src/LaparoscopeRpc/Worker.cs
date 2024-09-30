@@ -1,4 +1,5 @@
 using aadcapi.Models;
+using LaparoscopeRpc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace RpcWorker {
+namespace LaparoscopeRpc {
     public class Worker : BackgroundService {
         private readonly ILogger<Worker> _logger;
 
@@ -45,20 +46,10 @@ namespace RpcWorker {
 
         private async Task RespondToRpcRequestsAsync(Stream stream, int clientId) {
             _logger.LogInformation($"Connection request {clientId} received.");
-            var jsonRpc = JsonRpc.Attach(stream, new ServerMethods());
+            var jsonRpc = JsonRpc.Attach(stream, new ServerActions());
             _logger.LogInformation($"JSON-RPC listener attached to {clientId}. Waiting for requests...");
             await jsonRpc.Completion;
             _logger.LogInformation($"Connection {clientId} terminated.");
-        }
-    }
-
-    internal class ServerMethods {
-
-        public SyncResult StartSync(string connectorName) {
-            return new SyncResult {
-                Result = $"Now this is pod racing! connector: {connectorName}",
-                Started = true
-            };
         }
     }
 }

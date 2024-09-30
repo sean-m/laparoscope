@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Get-ADSyncAADPasswordResetConfiguration" xml:space="preserve">
+    <value>$connector = @(Get-ADSyncConnector | ? Type -like "Extensible2" | ? Subtype -like "Windows Azure Active Directory*")
+
+if ($connector.Count -gt 1) {
+    throw "Unsupported AADC configuration. More than one AAD connector is not supported."
+}
+
+Get-ADSyncAADPasswordResetConfiguration -Connector ($connector.Name)</value>
+  </data>
+  <data name="Get-ADSyncAADPasswordSyncConfiguration" xml:space="preserve">
+    <value>param($SourceConnector)
+
+Get-ADSyncAADPasswordSyncConfiguration -SourceConnector $SourceConnector</value>
+  </data>
+  <data name="Get-ADSyncAutoUpgrade" xml:space="preserve">
+    <value>$state  = Get-ADSyncAutoUpgrade -Detail
+$props  = $state | GM | ? MemberType -like "Property"
+$result = New-Object PSObject
+$props | foreach {
+    $val = $state.($_.Name)
+    $result | Add-Member -MemberType NoteProperty -Name ($_.Name) -Value ([string]$val)
+}
+$result</value>
+  </data>
+  <data name="Get-ADSyncConnectorsBasic" xml:space="preserve">
+    <value>param ($Name)
+
+Import-Module ADSync;
+$param = @{}
+if ($Name) { $param.Add('Name', $Name) }
+$fmt_connectivity_params = @{
+    Name="ConnectivityParameters"
+    Expression={
+        $val = New-Object PSObject
+        $_.ConnectivityParameters | foreach {
+            $p = $_
+            $val | Add-Member -MemberType NoteProperty -Name $p.Name -Value $p.Value
+        }
+        $val
+    }
+}
+$fmt_partition_params = @{
+    Name="Partitions"
+    Expression={
+        $fmt_params = @{
+            Name="Parameters"
+            Expression={
+                $val = New-Object PSObject
+                $_.ConnectivityParameters | foreach {
+                    $p = $_
+                    $val | Add-Member -MemberType NoteProperty -Name $p.Name -Value $p.Value
+                }
+                $val
+            }
+        }
+        $partition_params = @(
+            "Identifier",
+            "DN",
+            "Version",
+            "CreationTime",
+            "LastModificationTime",
+            "Selected",
+            "ConnectorPartitionScope",
+            "Name",
+            $fmt_params,
+            "PreferredDCs",
+            "IsDomain"
+        )
+        $_.Partitions | select $partition_params
+    }
+}
+
+$conn = Get-ADSyncConnector @param 
+$aad, $other = $conn.Where({$_.Subtype -like 'Windows Azure Active Directory (Microsoft)'},'Split')
+$aad + ($other | Sort Name) | select Name, Identifier, Description, CreationTime, LastModificationTime, $fmt_partition_params, $fmt_connectivity_params, ObjectInclusionList, AttributeInclusionList, AnchorConstructionSettings, CompanyName, Type, Subtype</value>
+    <comment>Semi-reduced output from Get-ADSyncConnector. Full output has too much nested data and is 100+ MB when there are many connectors.</comment>
+  </data>
+  <data name="Get-ADSyncCSObjectStrict" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    $ConnectorName,
+    [Parameter(Mandatory=$true)]
+    $DistinguishedName)
+
+Import-Module ADSync
+
+$attributes = @(
+"ObjectId",
+"ConnectorId",
+"ConnectorName",
+"ConnectorType",
+"PartitionId",
+"DistinguishedName",
+"AnchorValue",
+"ObjectType",
+"IsTransient",
+"IsPlaceHolder",
+"IsConnector",
+"HasSyncError",
+"HasExportError",
+"ExportError",
+"SynchronizationError",
+"ConnectedMVObjectId",
+"Lineage",
+"Attributes"
+)
+
+Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName | select $attributes</value>
+  </data>
+  <data name="Get-ADSyncDomainReachabilityStatus" xml:space="preserve">
+    <value>param ($ConnectorName)
+
+Get-ADSyncDomainReachabilityStatus -ConnectorName $ConnectorName</value>
+  </data>
+  <data name="Get-AdSyncGlobalSettingsStrict" xml:space="preserve">
+    <value>$global_config = Get-ADSyncGlobalSettings
+$parameters = @{}
+$global_config.Parameters | foreach {
+    $parameters.Add($_.Name, $_.Value)
+}
+
+New-Object PSObject -Property @{
+    Version = $global_config.Version
+    InstanceId = $global_config.InstanceId
+    SqlSchemaVersion = $global_config.SqlSchemaVersion
+    Parameters = $parameters
+}</value>
+  </data>
+  <data name="Get-ADSyncMVObjectStrict" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    $Identifier
+    )
+
+Import-Module ADSync
+
+$attributes = @(
+"ObjectId",
+"Lineage",
+"Attributes"
+)
+
+Get-ADSyncMVObject -Identifier $Identifier | select $attributes</value>
+  </data>
+  <data name="Get-ADSyncRunProfileLastHour" xml:space="preserve">
+    <value>param (
+    [Guid]
+    $Id,
+
+    [Guid]
+    $ConnectorId, 
+    
+    [int]
+    $NumberRequested,
+     
+    [bool]
+    $RunStepDetails=$false
+)
+
+
+$params = @{
+}
+
+if ($Id) { $params.Add('Id', $Id) }
+if ($ConnectorId) { $params.Add('ConnectorId', $ConnectorId) }
+if ($NumberRequested) { $params.Add('NumberRequested', $NumberRequested) }
+
+$lastHour = [DateTime]::UtcNow.AddHours(-1)
+
+Get-ADSyncRunProfileResult -RunStepDetails:$RunStepDetails @params | where { 
+    $_.StartDate -gt $lastHour -or $_.EndDate -gt $lastHour
+}</value>
+  </data>
+  <data name="Get-ADSyncSchedulerConnectorOverride" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    [string]
+    $ConnectorName
+)
+
+Get-ADSyncSchedulerConnectorOverride @PSBoundParameters</value>
+  </data>
+  <data name="Set-ADSyncSchedulerConnectorOverride" xml:space="preserve">
+    <value>param (
+    [Parameter(Mandatory=$true)]
+    [string]
+    $ConnectorName,
+    [Parameter(Mandatory=$true)]
+    [bool]
+    $FullImportRequired=$false,
+    [Parameter(Mandatory=$true)]
+    [bool]
+    $FullSyncRequired=$false
+)
+
+Set-ADSyncSchedulerConnectorOverride @PSBoundParameters</value>
+  </data>
+  <data name="Start-ADSyncDelta" xml:space="preserve">
+    <value>Import-Module ADSync
+
+&lt;#
+Don't dispatch a sync if the last run was less than 10 minutes ago.
+#&gt;
+
+$lastRun = $null
+$lastRun = Get-ADSyncRunProfileResult | select -First 1
+$schedule = Get-ADSyncScheduler
+$threshold = 10
+
+$mostReccent = if ($lastRun.StartDate -gt $lastRun.EndDate) { $lastRun.StartDate } else { $lastRun.EndDate }
+
+$return = New-Object PSObject -Property @{
+    Result=''
+    Started=$false
+}
+
+if (($schedule.SyncCycleEnabled) -and (-not $schedule.SyncCycleInProgress) -and ((-not ($lastRun)) -or ($mostReccent.AddMinutes($threshold) -lt [DateTime]::UtcNow))) {
+    try {
+        $result = Start-ADSyncSyncCycle -PolicyType Delta | select -ExpandProperty Result
+        
+        if ($result -like "Success") {
+            $return.Result = "Delta sync started at $(Get-Date)."
+            $return.Started = $true
+        }
+        else {
+            $return.Result = $result
+        }
+    }
+    catch {
+        $return.Result = $_ | Out-String
+    }
+    
+    return $return
+}
+
+if (-not $schedule.SyncCycleEnabled) {
+    $return.Result = "Syncing currently disabled for maintenance."
+    return $return
+}
+
+if ($schedule.SyncCycleInProgress) {
+    $return.Result = "Currently syncing, cannot start new cycle."
+    return $return
+}
+    
+$return.Result = "Last sync was less than $threshold minutes ago; $mostReccent UTC, not starting sync."
+return $return</value>
+  </data>
+</root>
