@@ -2,6 +2,7 @@
 using aadcapi.Utils.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 using System.IO.Pipes;
 
@@ -34,6 +35,36 @@ namespace aadcapi.Controllers.Server
                     var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetADSyncConnector", Name);
 
                     var resultValues = this.WhereAuthorized<AadcConnector>(result);
+
+                    // This is just plain horrible but it's the only way I could thing to get it working
+                    // If connector.Partitions only has a single value, PowerShell will box the property
+                    // as a single value even though it's a collection. It's trying to do us a favor in
+                    // a terrible way.
+                    foreach (var r in resultValues)
+                    {
+                        if (r.Partitions == null) continue;
+
+                        if (r.Partitions is JObject jpartition)
+                        {
+                            if (jpartition.Type == JTokenType.Array)
+                            {
+                                try
+                                {
+                                    var partitionList = jpartition.ToObject<AadcConnector.Partition[]>();
+                                    r.Partitions = partitionList;
+                                }
+                                catch { }
+                            } else
+                            {
+                                try
+                                {
+                                    var partition = jpartition.ToObject<AadcConnector.Partition>();
+                                    r.Partitions = partition;
+                                }
+                                catch { }
+                            }
+                        }
+                    }
                     return result;
                 }
             }
