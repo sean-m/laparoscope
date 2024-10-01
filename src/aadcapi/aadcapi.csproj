@@ -192,9 +192,8 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Identity.Client, Version=4.61.3.0, Culture=neutral, PublicKeyToken=0a613f4dd989e8ae">
+    <Reference Include="Microsoft.Identity.Client, Version=4.61.3.0, Culture=neutral, PublicKeyToken=0a613f4dd989e8ae, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Identity.Client.4.61.3\lib\net462\Microsoft.Identity.Client.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Identity.Client.Extensions.Msal, Version=4.61.3.0, Culture=neutral, PublicKeyToken=0a613f4dd989e8ae, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Identity.Client.Extensions.Msal.4.61.3\lib\netstandard2.0\Microsoft.Identity.Client.Extensions.Msal.dll</HintPath>
@@ -874,8 +873,6 @@
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.17.10.48\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.17.10.48\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.CSharp.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.17.10.48\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.17.10.48\analyzers\vb\Microsoft.VisualStudio.Threading.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.17.10.48\analyzers\vb\Microsoft.VisualStudio.Threading.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.17.10.48\analyzers\vb\Microsoft.VisualStudio.Threading.Analyzers.VisualBasic.dll" />
   </ItemGroup>
   <PropertyGroup>
