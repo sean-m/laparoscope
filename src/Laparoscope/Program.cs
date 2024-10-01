@@ -80,6 +80,7 @@ namespace Laparoscope
 
             app.UseRouting();
 
+            app.ConfigureAuthorizationFilters();
             app.UseAuthorization();
 
 
