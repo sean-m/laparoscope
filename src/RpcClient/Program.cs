@@ -23,7 +23,7 @@ static async Task ActAsRpcClientAsync(Stream stream) {
     {
         Console.WriteLine("\nConnected. Sending request...");
         Console.WriteLine(">> GetADSyncConnector()");
-        var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetADSyncConnector", "garage.mcardletech.com");
+        var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetADSyncConnector", "");
         Console.WriteLine("Result:");
         Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
     }
