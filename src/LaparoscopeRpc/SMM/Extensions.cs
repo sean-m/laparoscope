@@ -14,6 +14,7 @@ using System.Net;
 using System.Management.Automation;
 using Microsoft.VisualBasic.CompilerServices;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace SMM.Helper
 {
@@ -103,13 +104,14 @@ namespace SMM.Helper
                 foreach (var p in props)
                 {
                     var psprop = input.Properties.FirstOrDefault(x => x.Name.Like(p.Name));
+                    
                     if (psprop != null)
                     {
                         if (psprop.Value is PSObject psobj)
                         {
-                            if (p.PropertyType == typeof(T))
+                            if (p.PropertyType == psobj.BaseObject.GetType())
                             {
-                                p.SetValue(result, psobj.CapturePSResult<T>());
+                                p.SetValue(result, Convert.ChangeType(psobj.BaseObject, p.PropertyType));
                             }
                             else { p.SetValue(result, psobj.ToDict()); }
                         }

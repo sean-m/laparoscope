@@ -61,7 +61,8 @@ namespace LaparoscopeRpc
                 // desired model type. For those that are the correct model, we pass them
                 // to the IsAuthorized method which loads and runs any rules for this connector
                 // who match the requestors roles.
-                var resultValues = runner.Results.CapturePSResult<AadcConnector>()
+                var dynResults = runner.Results.CapturePSResult<AadcConnector>();
+                var resultValues = dynResults
                     .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as AadcConnector.
                     .Select(x => x as AadcConnector)    // Take as AadcConnector so typed call to WhereAuthorized avoids GetType() call.
                     .ToArray();   
