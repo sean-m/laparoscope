@@ -20,18 +20,18 @@
                 <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
                     <!-- Sync Scheduler Nav Tab -->
                     <li class="nav-item">
-                        <a class="nav-link active" id="sched-tab" data-toggle="tab" href="#syncScheduler" role="tab" aria-orientation="vertical" aria-controls="Sync Scheduler" aria-selected="true">Sync Scheduler</a>
+                        <a class="nav-link active" id="sched-tab" data-bs-toggle="tab" href="#syncScheduler" role="tab" aria-orientation="vertical" aria-controls="Sync Scheduler" aria-selected="true">Sync Scheduler</a>
                     </li>
 
                     <!-- Hash Sync Nav Tab -->
                     <li class="nav-item">
-                        <a v-bind:class="'nav-link' + (hashSyncEnabled ? '' : ' disabled')" id="hashSync-tab" data-toggle="tab" href="#hashSync" role="tab" aria-orientation="vertical" aria-controls="Password Hash Sync" aria-selected="true">Password Hash Sync</a>
+                        <a v-bind:class="'nav-link' + (hashSyncEnabled ? '' : ' disabled')" id="hashSync-tab" data-bs-toggle="tab" href="#hashSync" role="tab" aria-orientation="vertical" aria-controls="Password Hash Sync" aria-selected="true">Password Hash Sync</a>
                     </li>
 
                     <!-- Sync Connector Nav Tabs -->
                     <li class="nav-item" v-for="(c) in connectors">
                         <!-- For AD connectors whos name does not indicate an organizational affiliation, joining it with the connector description can help. -->
-                        <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ [c.Name, c.Description].filter(x => x).join(' | ') }}</a>
+                        <a class="nav-link" :id="'tab-' + c.Identifier" data-bs-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ [c.Name, c.Description].filter(x => x).join(' | ') }}</a>
                     </li>
                 </ul>
             </div>
@@ -76,12 +76,17 @@
                     </div>
 
                     <!-- Sync Connector Tabs : AAD -->
-                    <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type != 'AD')" role="tabpanel">
+                    <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Subtype == 'Windows Azure Active Directory (Microsoft)')" role="tabpanel">
                         <server-connector :connector="c" :hashsync="hashSync"></server-connector>
                     </div>
 
                     <!-- Sync Connector Tabs : AD -->
-                    <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type === 'AD')" role="tabpanel">
+                    <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type == 'AD')" role="tabpanel">
+                        <server-connector :connector="c" :hashsync="hashSync"></server-connector>
+                    </div>
+
+                    <!-- Sync Connector Tabs : Other -->
+                    <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type != 'AD' && x.Subtype != 'Windows Azure Active Directory (Microsoft)')" role="tabpanel">
                         <server-connector :connector="c" :hashsync="hashSync"></server-connector>
                     </div>
                 </div>

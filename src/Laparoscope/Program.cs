@@ -6,6 +6,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.Identity.Web.Resource;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Laparoscope
 {
@@ -36,8 +37,9 @@ namespace Laparoscope
             .AddMicrosoftIdentityUI();
 
 
-
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options => {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(

@@ -9,19 +9,18 @@
     },
     {
       "provider": "cdnjs",
-      "library": "bootstrap@5.3.3",
+      "library": "bootstrap@4.6.0",
       "destination": "wwwroot/lib/bootstrap/"
     },
     {
       "provider": "cdnjs",
       "library": "vue@2.7.16",
       "destination": "wwwroot/lib/vue/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery/"
     }
-  ,
-{
-  "provider": "cdnjs",
-  "library": "jquery@3.7.1",
-  "destination": "wwwroot/lib/jquery/"
-}
-]
+  ]
 }
