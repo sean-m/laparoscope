@@ -1,6 +1,7 @@
 ﻿using McAuthorization;
 using McAuthorization.Models;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Laparoscope
 {
@@ -8,7 +9,6 @@ namespace Laparoscope
     {
         public static IApplicationBuilder ConfigureAuthorizationFilters(this IApplicationBuilder app)
         {
-           
             var adminRoleBuiltinAuthz = @"[
                 {'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]},
                 {'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]},
@@ -19,23 +19,26 @@ namespace Laparoscope
             foreach (var rule in rules) RegisteredRoleControllerRules.RegisterRoleControllerModel(rule);
 
             // TODO fix all this and get rules from Azure App Config
-            //Microsoft.Configuration.ConfigurationBuilders.AzureAppConfigurationBuilder()
-            //foreach (string k in ConfigurationManager.AppSettings.Keys)
-            //{
-            //    if (! k.StartsWith("Rule.", StringComparison.CurrentCultureIgnoreCase)) { continue; }
+            foreach (var config in app.ApplicationServices.GetServices<IConfiguration>())
+            {
+                foreach (var kv in config.AsEnumerable())
+                {
+                    if (!kv.Key.StartsWith("Rule.", StringComparison.CurrentCultureIgnoreCase)) { continue; }
 
-            //    try
-            //    {
-            //        var rule = ConfigurationManager.AppSettings[k];
-            //        var rule_model = JsonConvert.DeserializeObject<RoleFilterModel>(rule);
-            //        RegisteredRoleControllerRules.RegisterRoleControllerModel(rule_model);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        // TODO LOGME (Sean) Log failure to deserialize and store rule.
-            //        Trace.WriteLine($"Failed to deserialize key: {k}. Error:\n{e.Message}");
-            //    }
-            //}
+                    try
+                    {
+                        var rule = kv.Value;
+                        if (rule == null) continue;
+                        var rule_model = JsonConvert.DeserializeObject<RoleFilterModel>(rule);
+                        RegisteredRoleControllerRules.RegisterRoleControllerModel(rule_model);
+                    }
+                    catch (Exception e)
+                    {
+                        // TODO LOGME (Sean) Log failure to deserialize and store rule.
+                        Trace.WriteLine($"Failed to deserialize key: {kv.Key}. Error:\n{e.Message}");
+                    }
+                }
+            }
 
             return app;
         }

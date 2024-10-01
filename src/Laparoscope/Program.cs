@@ -16,6 +16,36 @@ namespace Laparoscope
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add and load configuration sources.
+#pragma warning disable ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
+            bool didAzAppConfig = false;
+            string configString = String.Empty;
+            builder.Host.ConfigureAppConfiguration((hostingContext, config) => {
+                config.Sources.Clear();
+
+                var env = hostingContext.HostingEnvironment;
+                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+                config.AddEnvironmentVariables();
+
+                if (args != null)
+                {
+                    config.AddCommandLine(args);
+                }
+
+                // NOTE: set the connection string value in an environment variable or appsettings json file with key: AppConfigConnectionString
+                configString = builder.Configuration.GetValue<string>("AppConfigConnectionString");
+                if (!String.IsNullOrEmpty(configString))
+                {
+                    config.AddAzureAppConfiguration(options => {
+                        options.Connect(configString);
+                    });
+                    didAzAppConfig = true;
+                }
+            });
+#pragma warning restore ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
+
             // Azure AD Auth OIDC
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
@@ -91,7 +121,6 @@ namespace Laparoscope
             app.MapControllers();
 
             app.Run();
-
         }
     }
 }

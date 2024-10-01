@@ -397,3 +397,4 @@ FodyWeavers.xsd
 
 */App_Data/
 src/aadcapi/App_Data/Documentation.xml
+/src/Laparoscope/appsettings.Development.json
