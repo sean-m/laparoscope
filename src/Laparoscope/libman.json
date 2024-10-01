@@ -22,5 +22,11 @@
       "library": "jquery@3.7.1",
       "destination": "wwwroot/lib/jquery/"
     }
-  ]
+  ,
+{
+  "provider": "cdnjs",
+  "library": "popper.js@2.11.8",
+  "destination": "wwwroot/lib/popper.js/"
+}
+]
 }
