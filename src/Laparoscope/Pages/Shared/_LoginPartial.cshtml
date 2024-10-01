@@ -2,7 +2,7 @@
 
 <ul class="navbar-nav">
     @if (User.Identity?.IsAuthenticated == true) {
-        <span class="navbar-text text-dark">Hello @User.Identity?.Name!</span>
+        <span class="navbar-text text-dark">Hello <a href="/Me">@User.Identity?.Name!</a></span>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">Sign out</a>
         </li>

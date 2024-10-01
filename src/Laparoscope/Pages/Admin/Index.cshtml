@@ -1,7 +1,8 @@
-﻿
+﻿@page
+@model Laparoscope.Pages.Admin.IndexModel;
 @{
     ViewBag.Title = "Application Configuration";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
 
@@ -25,13 +26,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var p in ViewBag.GlobalProps)
+                        @* @foreach (var p in Model.GlobalProps)
                         {
                             <tr>
                                 <td>@p.Name</td>
                                 <td>@( SMM.Helper.Extensions.Like(p.Name, "*Secret*") ? "**************" : p.GetValue(null, null) )</td>
                             </tr>
-                        }
+                        } *@
                     </tbody>
                 </table>
             </div>
@@ -56,13 +57,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var k in ViewBag.SettingKeys)
+                        @* @foreach (var k in ViewBag.SettingKeys)
                         {
                             <tr>
                                 <td>@k</td>
                                 <td>@( SMM.Helper.Extensions.Like(k, "*Secret*") ? "**************" : ViewBag.AppSettings[k] )</td>
                             </tr>
-                        }
+                        } *@
                     </tbody>
                 </table>
             </div>
@@ -140,7 +141,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var r in ViewBag.AuthorizationRules)
+                            @foreach (var r in Model.AuthorizationRules)
                             {
                                 <tr>
                                     <td>@r.Role</td>
@@ -255,7 +256,7 @@
     }
 
     // Make content full width since it's displaying settings that may be wider than the viewport
-    var parent = document.getElementById('renderBody');
-    parent.classList.remove('container')
-    parent.classList.remove('container-fluid')
+    // var parent = document.getElementById('renderBody');
+    // parent.classList.remove('container')
+    // parent.classList.remove('container-fluid')
 </script>
