@@ -42,32 +42,79 @@ namespace aadcapi.Controllers.Server
                     // a terrible way.
                     foreach (var r in resultValues)
                     {
-                        if (r.Partitions == null) continue;
-
-                        if (r.Partitions is JObject jpartition)
-                        {
-                            if (jpartition.Type == JTokenType.Array)
-                            {
-                                try
-                                {
-                                    var partitionList = jpartition.ToObject<AadcConnector.Partition[]>();
-                                    r.Partitions = partitionList;
-                                }
-                                catch { }
-                            } else
-                            {
-                                try
-                                {
-                                    var partition = jpartition.ToObject<AadcConnector.Partition>();
-                                    r.Partitions = partition;
-                                }
-                                catch { }
-                            }
-                        }
+                        if (r.Partitions != null) 
+                            r.Partitions = JObjectToTypeOrCollectionOfType<Partition>(r.Partitions);
+                        
+                        if (r.AnchorConstructionSettings != null)
+                            r.AnchorConstructionSettings = JObjectToTypeOrCollectionOfType<AnchorConstructionSetting>(r.AnchorConstructionSettings);
                     }
                     return result;
                 }
             }
+        }
+
+        private dynamic JObjectToTypeOrCollectionOfType<T>(dynamic input)
+        {
+            if (input == null) return input;
+            if (input is JObject jobj)
+            {
+                return JObjectToTypeOrCollectionOfType<T>(jobj);
+            }
+            else if (input is JArray jarray)
+            {
+                return JObjectToTypeOrCollectionOfType<T>(jarray);
+            }
+
+            // All else failed
+            return input;
+        }
+
+        private dynamic JObjectToTypeOrCollectionOfType<T>(JObject jobject)
+        {
+            if (jobject.Type == JTokenType.Array)
+            {
+                try
+                {
+                    var list = jobject.ToObject<T[]>();
+                    return list;
+                }
+                catch { }
+            }
+            else
+            {
+                try
+                {
+                    var record = jobject.ToObject<T>();
+                    return record;
+                }
+                catch { }
+            }
+            // All else failed
+            return jobject;
+        }
+
+        private dynamic JObjectToTypeOrCollectionOfType<T>(JArray jobject)
+        {
+            if (jobject.Type == JTokenType.Array)
+            {
+                try
+                {
+                    var list = jobject.ToObject<T[]>();
+                    return list;
+                }
+                catch { }
+            }
+            else
+            {
+                try
+                {
+                    var record = jobject.ToObject<T>();
+                    return record;
+                }
+                catch { }
+            }
+            // All else failed
+            return jobject;
         }
     }
 }
