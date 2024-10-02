@@ -35,14 +35,14 @@ namespace aadcapi.UnitTests
         public void TestAnyMatchingRule()
         {
             var match = result.Any(x => Filter.IsAuthorized(x, "Connector", testRoles));
-            Assert.IsNotNull(match);
+            Assert.That(match, Is.True);
         }
 
         [Test]
         public void TestFilteringByRule()
         {
             var match = Filter.IsAuthorized(result, "Connector", testRoles);
-            Assert.AreNotEqual(match.Count(), result.Count());
+            Assert.That(match.Count(), Is.Not.EqualTo(result.Count()));
         }
 
         [Test]
@@ -52,14 +52,14 @@ namespace aadcapi.UnitTests
             var testModelText = Encoding.ASCII.GetString(Resources.TestRunHistory);
             var testModels = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(testModelText);
 
-            Assert.NotZero(testModels.Count);
+            Assert.That(testModels.Count, Is.Not.Zero);
 
             // The test rule should filter out two of the records
             var matches = testModels.Where(x => Filter.IsAuthorized(x, "RunProfileResult", testRoles))?.ToList();
 
-            Assert.NotNull(matches);
-            Assert.NotZero(matches.Count);
-            Assert.AreNotEqual(testModels.Count, matches.Count);
+            Assert.That(matches, Is.Not.Null);
+            Assert.That(matches.Count, Is.Not.Zero);
+            Assert.That(testModels.Count, Is.Not.EqualTo(matches.Count));
         }
     }
 }

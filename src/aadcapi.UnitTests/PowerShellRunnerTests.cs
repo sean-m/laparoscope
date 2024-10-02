@@ -32,7 +32,7 @@ namespace aadcapi.UnitTests
                 if (extracted is bool value) { result = value; }
 
                 // Will return true if the proxy variable was passed
-                Assert.IsTrue(result);
+                Assert.That(result, Is.EqualTo(true));
             }
         }
 
@@ -46,7 +46,7 @@ namespace aadcapi.UnitTests
                 runner.Run();
 
                 // Hello World! is in the validation list and should not generate an error
-                Assert.IsFalse(runner.HadErrors);
+                Assert.That(runner.HadErrors, Is.False);
             }
         }
 
@@ -60,11 +60,11 @@ namespace aadcapi.UnitTests
                 runner.Run();
 
                 // Should error
-                Assert.IsTrue(runner.HadErrors, "Should throw an error, \"Hello Universe!\" is not in the validation list");
+                Assert.That(runner.HadErrors, Is.EqualTo(true), "Should throw an error, \"Hello Universe!\" is not in the validation list");
 
                 // Should be a parameter binding error
                 var ex = runner.LastError;
-                Assert.IsTrue(ex is System.Management.Automation.ParameterBindingException, "Parameter validation exception was not thrown but another error was.");
+                Assert.That(ex is System.Management.Automation.ParameterBindingException, Is.EqualTo(true), "Parameter validation exception was not thrown but another error was.");
             }
         }
 
@@ -76,14 +76,14 @@ namespace aadcapi.UnitTests
                 runner.Run();
 
                 // runner should show that an error occurred.
-                Assert.IsTrue(runner.HadErrors, "PowerShell session did not have errors.");
+                Assert.That(runner.HadErrors, Is.EqualTo(true), "PowerShell session did not have errors.");
 
                 // Exception is extracted from ErrorRecord
                 var ex = runner.LastError;
-                Assert.IsNotNull(ex, "Exception message not retreived from ErrorRecord.");
+                Assert.That(ex, Is.Not.Null, "Exception message not retreived from ErrorRecord.");
 
                 // Exception message from inside PowerShell is curried out
-                Assert.IsTrue((ex.Message.Equals("Thrown from PowerShell")), "Couldn't get message from PowerShell exception.");
+                Assert.That((ex.Message.Equals("Thrown from PowerShell")), Is.True, "Couldn't get message from PowerShell exception.");
             }
         }
 
@@ -95,7 +95,7 @@ namespace aadcapi.UnitTests
                 runner.Parameters.Add("stringIn", "; Write-Output 'Should be on the same line.'");
                 runner.Run();
 
-                Assert.IsTrue(runner.Results.Count == 1);
+                Assert.That(runner.Results.Count, Is.EqualTo(1));
             }
         }
 
@@ -111,14 +111,14 @@ namespace aadcapi.UnitTests
             {
                 runner.Run();
                 resultList.AddRange(runner.Results.CapturePSResult<string>().Select(x => x["Output"]));
-                Assert.IsTrue(runner.Results.Count == 5);
+                Assert.That(runner.Results.Count, Is.EqualTo(5));
             }
             System.Threading.Thread.Sleep(500);
-            Assert.IsTrue(resultList.Count == 5);
-            Assert.IsFalse(resultList.Any(x => x == null));
+            Assert.That(resultList.Count, Is.EqualTo(5));
+            Assert.That(resultList.Any(x => x == null), Is.False);
             for (var i = 1; i <= resultList.Count; i++)
             {
-                Assert.IsTrue(String.Equals(resultList[i-1].ToString(), i.ToString(), StringComparison.CurrentCultureIgnoreCase));
+                Assert.That(String.Equals(resultList[i-1].ToString(), i.ToString(), StringComparison.CurrentCultureIgnoreCase), Is.True);
             }
         }
     }

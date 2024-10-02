@@ -21,27 +21,27 @@ namespace aadcapi.UnitTests
         [Test]
         public void TestCapturedTypeNotNull()
         {
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         [Test]
         public void TestCapturedTypeCastCorrectly()
         {
-            Assert.IsInstanceOf<FooTest>(result, "Did not capture PSCustomObject as FooTest.");
+            Assert.That(result, Is.InstanceOf<FooTest>(), "Did not capture PSCustomObject as FooTest.");
         }
 
         [Test]
         public void TestCapturedProperties()
         {
-            Assert.AreEqual(result.Foo, "Bar");
-            Assert.AreEqual(result.FooBar, "Baz");
+            Assert.That(result.Foo, Is.EqualTo("Bar"));
+            Assert.That(result.FooBar, Is.EqualTo("Baz"));
         }
 
         [Test]
         public void TestNestedCapture()
         {
-            Assert.IsNotNull(result.Nested);
-            Assert.IsInstanceOf<FooTest>(result.Nested);
+            Assert.That(result.Nested, Is.Not.Null);
+            Assert.That(result.Nested, Is.InstanceOf<FooTest>());
         }
     }
 }
