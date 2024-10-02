@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using StreamJsonRpc;
 using System.IO.Pipes;
 
-namespace aadcapi.Controllers.Server
+namespace Laparoscope.Controllers.Server
 {
     [Route("api/[controller]")]
     [ApiController]

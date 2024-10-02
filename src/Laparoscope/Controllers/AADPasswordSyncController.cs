@@ -1,11 +1,11 @@
-﻿using aadcapi.Utils.Authorization;
+﻿using Laparoscope.Utils.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StreamJsonRpc;
 using System.IO.Pipes;
 using System.Net;
 
-namespace aadcapi.Controllers.Server
+namespace Laparoscope.Controllers.Server
 {
     [Route("api/[controller]")]
     [ApiController]

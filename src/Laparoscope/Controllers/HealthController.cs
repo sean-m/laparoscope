@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace aadcapi.Controllers
+namespace Laparoscope.Controllers
 {
     public class HealthController : Controller
     {

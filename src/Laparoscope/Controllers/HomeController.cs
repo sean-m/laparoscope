@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace aadcapi.Controllers
+namespace Laparoscope.Controllers
 {   
     public class HomeController : Controller
     {

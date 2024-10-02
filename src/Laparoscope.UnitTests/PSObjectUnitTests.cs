@@ -4,7 +4,7 @@ using System.Linq;
 using System.Management.Automation;
 using static SMM.Helper.Extensions;
 
-namespace aadcapi.UnitTests
+namespace Laparoscope.UnitTests
 {
     public partial class PSObjectExtension
     {

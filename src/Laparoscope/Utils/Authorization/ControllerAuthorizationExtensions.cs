@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Web;
 
-namespace aadcapi.Utils.Authorization
+namespace Laparoscope.Utils.Authorization
 {
     /// <summary>
     /// Methods to assist in processing authorization rules from within a controller.

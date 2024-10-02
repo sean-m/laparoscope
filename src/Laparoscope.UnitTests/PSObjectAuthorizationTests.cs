@@ -1,16 +1,14 @@
-﻿using aadcapi.UnitTests.Properties;
+﻿using Laparoscope.UnitTests.Properties;
 using McAuthorization;
 using McAuthorization.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SMM.Helper;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace aadcapi.UnitTests
+namespace Laparoscope.UnitTests
 {
     class PSObjectAuthorizationTests
     {

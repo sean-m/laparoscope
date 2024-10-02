@@ -1,4 +1,4 @@
-﻿using aadcapi.Models;
+﻿using Laparoscope.Models;
 using LaparoscopeShared;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -14,7 +14,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace LaparoscopeRpc
+namespace Laparoscope.RpcServer
 {
     public class ServerActions
     {

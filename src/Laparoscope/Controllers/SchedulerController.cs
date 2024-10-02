@@ -1,4 +1,4 @@
-﻿using aadcapi.Utils.Authorization;
+﻿using Laparoscope.Utils.Authorization;
 using LaparoscopeShared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using System.IO.Pipes;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace aadcapi.Controllers.Server
+namespace Laparoscope.Controllers.Server
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace aadcapi.Controllers.Server
+namespace Laparoscope.Controllers.Server
 {
     [Authorize]
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

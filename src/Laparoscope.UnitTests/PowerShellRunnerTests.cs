@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace aadcapi.UnitTests
+namespace Laparoscope.UnitTests
 {
     class PowerShellRunnerTests
     {
@@ -17,7 +17,7 @@ namespace aadcapi.UnitTests
         [SetUp]
         public void Setup()
         {
-            ParameterValidationScript = Properties.Resources.PoshValidateParameterScript;
+            ParameterValidationScript = Laparoscope.UnitTests.Properties.Resources.PoshValidateParameterScript;
         }
 
         [Test]

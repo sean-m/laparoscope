@@ -1,4 +1,4 @@
-﻿namespace aadcapi.UnitTests
+﻿namespace Laparoscope.UnitTests
 {
     public class FooTest
     {

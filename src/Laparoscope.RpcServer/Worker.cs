@@ -1,5 +1,4 @@
-using aadcapi.Models;
-using LaparoscopeRpc;
+using Laparoscope.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace LaparoscopeRpc {
+namespace Laparoscope.RpcServer {
     public class Worker : BackgroundService {
         private readonly ILogger<Worker> _logger;
 
