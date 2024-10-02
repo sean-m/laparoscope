@@ -15,15 +15,15 @@ using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.
     await ActAsRpcClientAsync(stream);
     Console.WriteLine("Terminating stream...");
 }
-Console.ReadLine();
 
 
 static async Task ActAsRpcClientAsync(Stream stream) {
     using var jsonRpc = JsonRpc.Attach(stream);
     {
         Console.WriteLine("\nConnected. Sending request...");
-        Console.WriteLine(">> GetADSyncConnector()");
-        var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetADSyncConnector", "");
+        string function = "GetADSyncConnector";
+        Console.WriteLine($">> {function}()");
+        var result = await jsonRpc.InvokeAsync<AadcConnector[]>(function, "");
         Console.WriteLine("Result:");
         Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
     }
