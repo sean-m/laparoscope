@@ -109,9 +109,9 @@ namespace SMM.Helper
                     {
                         if (psprop.Value is PSObject psobj)
                         {
-                            if (p.PropertyType == psobj.BaseObject.GetType())
+                            if (p.PropertyType == typeof(T))
                             {
-                                p.SetValue(result, Convert.ChangeType(psobj.BaseObject, p.PropertyType));
+                                p.SetValue(result, psobj.CapturePSResult<T>());
                             }
                             else { p.SetValue(result, psobj.ToDict()); }
                         }
