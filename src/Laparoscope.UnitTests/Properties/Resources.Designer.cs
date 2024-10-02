@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace aadcapi.UnitTests.Properties {
+namespace Laparoscope.UnitTests.Properties {
     using System;
     
     
@@ -19,7 +19,7 @@ namespace aadcapi.UnitTests.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -39,7 +39,7 @@ namespace aadcapi.UnitTests.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("aadcapi.UnitTests.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Laparoscope.UnitTests.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -94,7 +94,7 @@ namespace aadcapi.UnitTests.Properties {
         ///	},
         ///	{
         ///		&quot;Id&quot;: &quot;2356095b-9462-465b-af8b-1edaeeb47455&quot;,
-        ///		&quot;Role&quot;: &quot;Garage.Api&quot;,
+        ///		&quot;Role&quot;: &quot;Admin:Garage&quot;,
         ///		&quot;Context&quot;: &quot;RunProfileResult&quot;,
         ///		&quot;ClaimProperty&quot;: null,
         ///		&quot;ClaimValue&quot;: null,
