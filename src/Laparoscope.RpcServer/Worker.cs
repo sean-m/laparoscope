@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,10 +21,24 @@ namespace Laparoscope.RpcServer {
     public class Worker : BackgroundService {
         private readonly ILogger<Worker> _logger;
 
+        private readonly PipeSecurity pipeSecurity;
+
         public Worker(ILogger<Worker> logger) {
             _logger = logger;
 
             RunSafetyChecks();
+
+            var authenticatedUsers = new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null);
+            var localService = new SecurityIdentifier(WellKnownSidType.LocalServiceSid, null);
+
+            // Setup a DACL that leaves out anonymous auth. Why the heck is that included by default?
+            pipeSecurity = new PipeSecurity();
+            pipeSecurity.AddAccessRule(new PipeAccessRule(authenticatedUsers,
+                PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance,
+                AccessControlType.Allow));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(localService,
+                PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance,
+                AccessControlType.Allow));
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
@@ -39,10 +55,12 @@ namespace Laparoscope.RpcServer {
             int clientId = 0;
             while (true) {
                 _logger.LogInformation ("Waiting for client to make a connection...");
+
                 var stream = new NamedPipeServerStream("Laparoscope", PipeDirection.InOut, 
                     NamedPipeServerStream.MaxAllowedServerInstances, 
-                    PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+                    PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, pipeSecurity);
                 await stream.WaitForConnectionAsync(token);
+                
                 Task nowait = RespondToRpcRequestsAsync(stream, ++clientId);
             }
         }
