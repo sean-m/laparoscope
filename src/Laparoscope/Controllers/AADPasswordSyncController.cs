@@ -1,6 +1,7 @@
 ﻿using Laparoscope.Utils.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
 using System.IO.Pipes;
 using System.Net;
@@ -38,7 +39,7 @@ namespace Laparoscope.Controllers.Server
 
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
-                await stream.ConnectAsync();
+                await stream.ConnectAsync().WithTimeout(TimeSpan.FromSeconds(20));
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncAADPasswordSyncConfiguration";
