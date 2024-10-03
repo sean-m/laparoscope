@@ -9,6 +9,7 @@ namespace McAuthorization.Models
 {
     public class RoleFilterModel
     {
+        public string LoadedFrom { get; set; }
         public Guid Id { get; set; } = Guid.NewGuid();
 
         // Authorization scoped to role and context

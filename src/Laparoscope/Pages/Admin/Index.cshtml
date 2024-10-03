@@ -138,6 +138,7 @@
                                 <th>ModelProperty</th>
                                 <th>ModelValue</th>
                                 <th>ModelValues</th>
+                                <th>LoadedFrom</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -151,6 +152,7 @@
                                     <td>@r.ModelProperty</td>
                                     <td>@r.ModelValue</td>
                                     <td>@{if (r.ModelValues != null) { String.Join(", ", r.ModelValues); } }</td>
+                                    <td>@r.LoadedFrom</td>
                                 </tr>
                             }
                         </tbody>
