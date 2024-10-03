@@ -12,7 +12,7 @@ namespace Laparoscope.Controllers
     public class SidecarStatusController : ControllerBase
     {
         ILogger logger;
-        public SidecarStatusController(ILogger logger)
+        public SidecarStatusController(ILogger<SidecarStatusController> logger)
         {
             this.logger = logger;
         }
@@ -30,24 +30,29 @@ namespace Laparoscope.Controllers
                 {
                     await stream.ConnectAsync().WithTimeout(TimeSpan.FromSeconds(timeout));
                     watch.Stop();
+                    stream.Close();
                 }
             }
             catch (TimeoutException te)
             {
                 result.PipeStatus = "Timeout";
                 result.Error = te.Message;
-                logger.LogError(te, "Timeout exception.");
+                logger?.LogError(te, "Timeout exception.");
             }
             catch (Exception ex)
             {
                 result.PipeStatus = "Error";
                 result.Error = ex.Message;
-                logger.LogError(ex, ex.Message);
+                logger?.LogError(ex, ex.Message);
             }
             finally
             {
                 if (watch.IsRunning) watch.Stop();
-                result.ConnectionLatency = watch.Elapsed.TotalSeconds.ToString();
+                else
+                {
+                    // We got here from failure so won't log the latency
+                    result.ConnectionLatency = watch.Elapsed.TotalSeconds.ToString();
+                }
             }
 
             return result;

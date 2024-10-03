@@ -46,9 +46,14 @@
                     <div class="d-flex flex-column">
                         <div class="d-flex flex-row">
                             <!-- Scheduler Status -->
-                            <object-table class="table table-responsive-md p-2" :record="scheduler" title="Scheduler"></object-table>
-                            <!-- Company Features -->
-                            <object-table class="table table-responsive-sm p-2" :record="companyFeatures" title="Company Features"></object-table>
+                            <div class="col">
+                                <object-table class="table table-responsive-md p-2" :record="scheduler" title="Scheduler"></object-table>
+                            </div>
+                            <div class="col">
+                                <!-- Company Features -->
+                                <object-table class="table table-responsive-sm p-2" :record="companyFeatures" title="Company Features"></object-table>
+                                <object-table class="table table-responsive-sm p-2" :record="sidecarStatus" title="RPC Server Status"></object-table>
+                            </div>
                         </div>
 
                         @if (Model != null && Model.CanPause)
@@ -108,6 +113,7 @@
     const apiScheduler = "/api/Scheduler/";
     const apiStartSync = "/api/StartSync/";
     const apiConnector = "/api/Connector/";
+    const apiRpcStatus = "/api/SidecarStatus"
     const apiCompanyFeatures = "/api/AADCompanyFeature/";
     const apiHashSyncStatus = "/api/PartitionPasswordSyncState/"
 
@@ -118,6 +124,7 @@
             scheduler: {},
             schedMsg: "",
             companyFeatures: {},
+            sidecarStatus: {},
             hashSyncEnabled: false,
             hashSync: [],
             connectors: [],
@@ -149,6 +156,7 @@
                 this.fetchScheduler();
                 this.fetchCompanyFeatures();
                 this.fetchConnectors();
+                this.fetchSidecarStatus();
                 this.schedulePolling = setInterval((ctx) => {
                     $.getJSON(apiScheduler, json => {
                         ctx.scheduler = json;
@@ -157,7 +165,16 @@
                     $.getJSON(apiHashSyncStatus, json => {
                         ctx.hashSync = json;
                     });
+
+                    $.getJSON(apiRpcStatus, json => {
+                        ctx.sidecarStatus = json;
+                    });
                 }, (30 * 1000), this);
+            },
+            fetchSidecarStatus() {
+                $.getJSON(apiRpcStatus, json => {
+                    this.sidecarStatus = json;
+                });
             },
             // Get sync scheduler status.
             fetchScheduler() {
