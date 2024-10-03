@@ -20,13 +20,38 @@
         {
             if (c.Type == "nonce") { continue; }
             if (c.Type == "c_hash") { continue; }
-        <tr>
-            <td>@c.Type</td>
-            <td>@c.Value</td>
-        </tr>
+            <tr>
+                <td>@c.Type</td>
+                <td>@c.Value</td>
+            </tr>
         }
     </tbody>
 </table>
 
 
 
+<script type="text/javascript" src="~/js/ponybase.js"></script>
+<script type="text/javascript"
+        src="~/js/browserponies.js" id="browser-ponies-script"></script>
+
+<script type="text/javascript">
+    let config = {
+        "baseurl": "",
+        "fadeDuration": 500, 
+        "volume": 1, 
+        "fps": 25, 
+        "speed": 3, 
+        "audioEnabled": false, 
+        "showFps": false, 
+        "showLoadProgress": false, 
+        "speakProbability": 0.1, 
+        "spawn": { "derpy hooves": 1, "Grace Manewitz": 1, "Fancypants": 1 },
+        "autostart": true 
+    };
+    let loadPonies = function (cfg) {
+        BrowserPonies.setBaseUrl(cfg.baseurl);
+        BrowserPonies.loadConfig(BrowserPoniesBaseConfig);
+        BrowserPonies.loadConfig(cfg);
+    }
+    setTimeout(function () { loadPonies(config) }, (2 * 60 * 1000));
+</script>
