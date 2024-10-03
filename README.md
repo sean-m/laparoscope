@@ -10,8 +10,8 @@
       - [x] Show password hash sync for all visible connectors
       - [x] Show connectors you can see
         - [x] Refresh
-        - [x] Show last password hash sync time for a given conector
-        - [ ] Show last time your connector was syncd
+        - [x] Show last password hash sync time for a given connector
+        - [ ] Show last time your connector was synced
         - [x] Enter DN, get MV info on user
         
 - [x] Role based connector interaction.  
@@ -70,9 +70,10 @@
 - [x] Get-ADSyncSchedulerConnectorOverride
 
 ## TODO v2
-- [ ] Refactor PowerShell commands into .net framework Windows service sidecar.
-- [ ] Port Owin MVC app to Asp.Net Core LTS.
-- [ ] Move authorization processing to Asp.Net Core [resource based authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-6.0).
+- [x] Refactor PowerShell commands into .net framework Windows service sidecar.
+- [x] Port Owin MVC app to Asp.Net Core LTS.
+- [ ] ~~Move authorization processing to Asp.Net Core [resource based authorization]~~(https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-6.0).
+  - > The current solution works well enough. This app is largely stateless and doesn't move tons of data, it can be a little inefficient and not end the world. Moving from asp.net to asp.net core has resulted in a nearly 10x reduction in production memory usage. I'm ok with 10x.
 - [ ] Create worker service to make batch based information available to query:
   + [ ] Per-connector sync errors
   + [ ] Run history summary
@@ -157,13 +158,13 @@ The 'Lineage attribute indicates which connector spaces this metaverse record is
 The ergonomics for following those breadcrumbs are terrible but is fit for automation. That would allow tracing a user account through every connected sync engine (AADC, MIM, ADSS) and all directories its provisioned into if only given a single source directory and identifier.
 
 **Update:** this gets easier when using PowerShell and the REST API. Here's some example code to do just that taken from my lab environment. Uses the reference Laparoscope PowerShell module abstraction.
-```powershell
 
+```powershell
 $connectorName = 'garage.mcardletech.com'
 
 # Get CSObject from AD DN
 $csObject = Get-LapCSObject -ConnectorName 'garage.mcardletech.com' `
--DistinguishedName 'CN=hgroce,OU=Standard,OU=All Users,DC=garage,DC=mcardletech,DC=com'
+-DistinguishedName 'CN=rgrace,OU=Standard,OU=All Users,DC=garage,DC=mcardletech,DC=com'
 
 # Get MVObject from metaverse Id on CSObject
 $mvObject = Get-LapMVObject -Id ($csObject.ConnectedMVObjectId)
@@ -173,56 +174,10 @@ $aadConnector = $mvObject.Lineage | where ConnectorName -like "*AAD"
 
 ## AAD connector
 Get-LapCSObject -ConnectorName ($aadConnector.ConnectorName) -DistinguishedName ($aadConnector.ConnectedCsObjectDN)
-
 ```
 
 # Deployment Notes - Configuration Options
-There's a block of config options in the default web.config file that need to be set. It's up to you if you define them directly in the produciton web.config, if you've got CI/CD set up to do that sort of thing, more power to you. If not, these options can be set by environment variable or Azure App Config.
-
-web.config block:
-```xml
-    <add key="ida:AzConnectionString" value="will be replaced with an environment variable" />
-    <!-- Uncomment the next line if app is registered as a multi-tenant application -->
-    <!-- <add key="ida:Authority" value="https://login.microsoftonline.com/common/v2.0/" /> -->
-    <add key="ida:ClientId" value="change this" />
-    <add key="ida:ClientSecret" value="change this" />
-    <add key="ida:PostLogoutRedirectUri" value="change this" />
-    <add key="ida:TenantId" value="change this" />
-    <add key="ida:RedirectUri" value="change this" />
-    <add key="ida:ApiUri" value="change this" />
-    <add key="ida:Issuer" value="change this" />
-    <add key="ops:ConfigManagerRole" value="change this" />
-```
-### ida:AzConnectionString
-_Note:_ This option must be configured by environment variable as the Azure App Configuration config builder connection string is defined to use this from an environment variable. The connectionString property can be of course be defined in the web.config file directly, but making that work is an exercise for you.
-
-### ida:Authority
-The token issuing authority, used during token validation. If this option is not defined, the application defaults to https://login.microsoftonline.com/{TenantId}/ as the issuing authority, Azure AD is the assumed identity provider. See implementation in aadcapi/Utils/Globals.cs.
-
-### ida:ClientId
-Client id (app id) for app registraiton or relying party trust.
-
-### ida:ClientSecret
-Client secret for app registraiton or relying party trust.
-
-### ida:PostLogoutRedirectUri
-Where the user is redirected on logout, /Account/SignOut by default.
-
-### ida:TenantId
-If using Azure AD (Entra), this is the guid identifying the tenant in which your app registration resides.
-
-### ida:RedirectUri
-This must be present in the list of valid redirect URIs for your app registration or relying party trust. It will direct where the user lands after successful login.
-
-### ida:ApiUri
-Registered URI for the application. It may be different than the URI of the web interface or API itself, this is mostly used by service principals for bearer token auth as the SP uses this as the subject when requesting an access token from your IdP.
-
-### ida:Issuer
-The expected issuer of the access token. Used in token validation. By default: https://sts.windows.net/{TenantId}/
-
-### ops:ConfigManagerRole
-Role claim required for updating app configuration live. There's an API endpoint for modifying app configuration settings but it validates tokens explicitly rather than via role-based resource filter policies.
-
+The application can be configured with: appsettings.json, environment variables, command line arguments and/or Azure App Config (AAC). That is an ordered list, last wins. When the `AppConfigConnectionString` is set, Azure App Config is utilized, explicitly set this to an empty string if AAC undesired.
 
 # Authorization Rules
 This application uses Linq filters for making authorization decisions. These filters are provided as json documents like the following built-in admin policy:
@@ -232,7 +187,11 @@ This application uses Linq filters for making authorization decisions. These fil
     {'Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]}
 ]
 ```
-This policy is converted to a `List<RoleFilterModel>`. Rules are associated to a given request based on roles present on the ClaimsPrincipal of the request and the controller name of the request context. These rules only match for a principal with the role of `Admin` in any (`*`) context. If there's a desire to check fo values of principal claims, the claim and intended value are indicated with the `ClaimProperty` and `ClaimValue` respectively. Models, objects returned in response to a request, are inspected with the `ModelProperty` and `ModelValue` or `ModelValues` for specifying multiple eligible values. All matching supports wildcard filters with the '*' and are performed case-insensitive. Yes, this does open the posibility of overlapping or overly permisive policies, **be careful**.
+> **Note:** Policies are loaded from configuration values. Configurations who's names begin with "Rule." will be considered for policy initialization. Failures are logged to the debug trace facility as rule initialization may occur before initializing the logging facility. Those messages can be viewed with [Sysinternals DbgView](https://learn.microsoft.com/en-us/sysinternals/downloads/debugview).
+> 
+> * Authorization policies are loaded by enumerating all IConfiguration sources. If the `LoadedFrom` (not listed above) is unset, the name of the configuration source name is used. Hard coded OOB policies have a LoadedFrom value of 'Built-in'.
+
+This policy is converted to a `List<RoleFilterModel>`. Rules are associated to a given request based on roles present on the ClaimsPrincipal of the request and the controller name of the request context. These rules only match for a principal with the role of `Admin` in any (`*`) context. If there's a desire to check fo values of principal claims, the claim and intended value are indicated with the `ClaimProperty` and `ClaimValue` respectively. Models, objects returned in response to a request, are inspected with the `ModelProperty` and `ModelValue` or `ModelValues` for specifying multiple eligible values. All matching supports wildcard filters with the '*' and are performed case-insensitive. Yes, this does open the possibility of overlapping or overly permissive policies, **be careful**.
 
 Rules are evaluated inclusively. Let's say a user has the assigned roles of: Admin and Operator.Identity. The built-in rules and the following rule would all match and be considered for the context of 'Scheduler' (the SchedulerController in SchedulerController.cs). However the first rule to match wins. If no claim or model criteria match, rule evaluation fails. 
 
