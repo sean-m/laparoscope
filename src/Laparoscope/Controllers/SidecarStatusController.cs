@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Threading;
 using System.IO.Pipes;
+using System.Threading;
 
 namespace Laparoscope.Controllers
 {
@@ -18,7 +20,7 @@ namespace Laparoscope.Controllers
         }
 
         [HttpGet]
-        public async Task<dynamic> GetAsync(int timeout=20)
+        public async Task<SidecarStatus> GetAsync(int timeout=20)
         {
             var watch = new System.Diagnostics.Stopwatch();
             var result = new SidecarStatus();
@@ -37,13 +39,11 @@ namespace Laparoscope.Controllers
             {
                 result.PipeStatus = "Timeout";
                 result.Error = te.Message;
-                logger?.LogError(te, "Timeout exception.");
             }
             catch (Exception ex)
             {
                 result.PipeStatus = "Error";
                 result.Error = ex.Message;
-                logger?.LogError(ex, ex.Message);
             }
             finally
             {

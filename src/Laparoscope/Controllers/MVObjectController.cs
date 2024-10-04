@@ -31,7 +31,7 @@ namespace Laparoscope.Controllers.Server
             // TODO require an MVObject role
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
-                await stream.ConnectAsync().WithTimeout(TimeSpan.FromSeconds(20));
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncMVObjectStrict";

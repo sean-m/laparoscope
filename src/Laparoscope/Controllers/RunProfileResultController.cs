@@ -46,7 +46,7 @@ namespace Laparoscope.Controllers.ServerApi
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
-                await stream.ConnectAsync().WithTimeout(TimeSpan.FromSeconds(20));
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncRunProfileLastHour";

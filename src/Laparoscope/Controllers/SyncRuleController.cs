@@ -25,7 +25,7 @@ namespace Laparoscope.Controllers.Server
             // TODO parse result and only return rules associated to authorized connectors
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
-                await stream.ConnectAsync().WithTimeout(TimeSpan.FromSeconds(20));
+                await stream.ConnectAsync();
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncRule";

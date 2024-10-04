@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-Laparoscope-a8b20b9d-6fa3-4bcc-9a0c-a1fd867d88ad</UserSecretsId>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
