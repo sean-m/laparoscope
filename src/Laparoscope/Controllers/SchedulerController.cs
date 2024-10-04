@@ -65,7 +65,7 @@ namespace Laparoscope.Controllers.Server
         /// <returns></returns>
         /// <exception cref="HttpResponseException"></exception>
         [HttpPost]
-        public async Task<dynamic> PostAsync([FromBody] SyncScheduleSettings settings) {
+        public async Task<dynamic> PostAsync([FromForm] SyncScheduleSettings settings) {
             // Filter parameters to just include what's allowed
             if (null != settings.SyncCycleEnabled && !this.IsAuthorized(new {Setting = "SyncCycleEnabled"}))
             {
