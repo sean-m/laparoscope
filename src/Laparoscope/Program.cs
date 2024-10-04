@@ -64,7 +64,8 @@ namespace Laparoscope
                 options.Conventions.AuthorizeFolder("/Server");
                 options.Conventions.AuthorizeFolder("/Admin");
             })
-            .AddMicrosoftIdentityUI();
+                .AddRazorRuntimeCompilation()
+                .AddMicrosoftIdentityUI();
 
 
             builder.Services.AddControllers().AddJsonOptions(options => {
