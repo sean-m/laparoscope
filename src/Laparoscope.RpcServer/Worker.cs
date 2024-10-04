@@ -68,12 +68,16 @@ namespace Laparoscope.RpcServer {
         private async Task RespondToRpcRequestsAsync(Stream stream, int clientId) {
             _logger.LogInformation($"Connection request {clientId} received.");
 
-
-
             var jsonRpc = JsonRpc.Attach(stream, new ServerActions());
             _logger.LogInformation($"JSON-RPC listener attached to {clientId}. Waiting for requests...");
-            await jsonRpc.Completion;
-            _logger.LogInformation($"Connection {clientId} terminated.");
+            try
+            {
+                await jsonRpc.Completion;
+                _logger.LogInformation($"Connection {clientId} terminated.");
+            }
+            catch (Exception e){
+                _logger.LogError(e, "Encountered exception in worker task.");
+            }
         }
 
         private void RunSafetyChecks()
