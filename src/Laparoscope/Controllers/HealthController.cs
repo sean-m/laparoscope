@@ -5,7 +5,6 @@ using StreamJsonRpc;
 using System.IO.Pipes;
 using System.Net;
 using System.Reflection;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Laparoscope.Controllers
 {
@@ -159,7 +158,7 @@ namespace Laparoscope.Controllers
             result.Add("BuildTimeUTC", LinkerTimeUtc);
             result.Add("Version", AssemblyVersion);
             result.Add("Sidecar", (await sidecarStatus.GetValueAsync(() => GetStatusAsync())).PipeStatus);
-            result.Add("StagingMode", (await scheduler.GetValueAsync(() => GetSchedulerAsync()))["StagingModeEnabled"]?.ToString());
+            result.Add("StagingMode", (await scheduler.GetValueAsync(() => GetSchedulerAsync()))?.GetValueOrDefault("StagingModeEnabled")?.ToString() ?? "Unknown");
             return result;
         }
     }
