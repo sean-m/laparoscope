@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Threading;
+using StreamJsonRpc;
 using System.IO.Pipes;
 using System.Threading;
 
@@ -31,8 +32,10 @@ namespace Laparoscope.Controllers
                 using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
                 {
                     await stream.ConnectAsync().WithTimeout(TimeSpan.FromSeconds(timeout));
-                    watch.Stop();
-                    stream.Close();
+                    using (var jsonRpc = JsonRpc.Attach(stream))
+                    {
+                        await jsonRpc.InvokeAsync<string>("Hello");
+                    }
                 }
             }
             catch (TimeoutException te)
