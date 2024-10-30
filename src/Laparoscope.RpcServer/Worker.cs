@@ -36,9 +36,6 @@ namespace Laparoscope.RpcServer {
             pipeSecurity.AddAccessRule(new PipeAccessRule(authenticatedUsers,
                 PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance,
                 AccessControlType.Allow));
-            pipeSecurity.AddAccessRule(new PipeAccessRule(localService,
-                PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance,
-                AccessControlType.Allow));
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {

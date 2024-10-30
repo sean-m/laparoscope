@@ -1,39 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Drawing;
-//using System.DirectoryServices;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Net;
-using System.Management.Automation;
-using Microsoft.VisualBasic.CompilerServices;
 using System.ComponentModel;
-using System.Globalization;
+using System.Diagnostics;
+using System.Linq;
+using System.Management.Automation;
+using System.Reflection;
+using System.Threading;
 
 namespace SMM.Helper
 {
     public static class Extensions
     {
-
-        /// <summary>
-        /// VisualBasic's string comparison with wildcard support.
-        /// </summary>
-        /// <param name="Base">The value to check.</param>
-        /// <param name="Pattern">The pattern compared to 'Base'. Supports wildcards
-        /// and other niceties. More info: https://docs.microsoft.com/en-us/office/vba/Language/Reference/User-Interface-Help/wildcard-characters-used-in-string-comparisons.
-        /// </param>
-        /// <returns></returns>
-        public static bool Like(this string Base, string Pattern)
-        {
-            return LikeOperator.LikeString(Base, Pattern, Microsoft.VisualBasic.CompareMethod.Text);
-        }
-
         #region PSObjectHandling
         /// <summary>
         /// Naivly unboxes a single PSObject into a Dictionary(string, object).
@@ -103,7 +80,7 @@ namespace SMM.Helper
                 var props = hintType.DeclaredProperties;
                 foreach (var p in props)
                 {
-                    var psprop = input.Properties.FirstOrDefault(x => x.Name.Like(p.Name));
+                    var psprop = input.Properties.FirstOrDefault(x => x.Name.Equals(p.Name, StringComparison.CurrentCultureIgnoreCase));
                     
                     if (psprop != null)
                     {
