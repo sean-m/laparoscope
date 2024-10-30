@@ -35,6 +35,7 @@ namespace Laparoscope.Controllers
                     using (var jsonRpc = JsonRpc.Attach(stream))
                     {
                         await jsonRpc.InvokeAsync<string>("Hello");
+                        watch.Stop();
                     }
                 }
             }
