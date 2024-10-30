@@ -74,6 +74,9 @@
 - [x] Port Owin MVC app to Asp.Net Core LTS.
 - [ ] ~~Move authorization processing to Asp.Net Core [resource based authorization]~~(https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-6.0).
   - > The current solution works well enough. This app is largely stateless and doesn't move tons of data, it can be a little inefficient and not end the world. Moving from asp.net to asp.net core has resulted in a nearly 10x reduction in production memory usage. I'm ok with 10x.
++ [x] Run sidecar as an unprivileged Windows Service.
+
+## TODO v2.5
 - [ ] Create worker service to make batch based information available to query:
   + [ ] Per-connector sync errors
   + [ ] Run history summary
