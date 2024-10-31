@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Laparoscope.RpcServer\Laparoscope.RpcServer.csproj" />
-    <ProjectReference Include="..\LaparoscopeRpc\LaparoscopeRpc.csproj" />
     <ProjectReference Include="..\McAuthorization\McAuthorization.csproj" />
   </ItemGroup>
 
