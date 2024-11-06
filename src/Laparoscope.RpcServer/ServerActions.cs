@@ -1,5 +1,6 @@
 ﻿using Laparoscope.Models;
 using LaparoscopeShared;
+using LaparoscopeShared.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SMM.Automation;
@@ -425,6 +426,48 @@ Get-ADSyncRule @PSBoundParameters
                 var resultValues = runner.Results.CapturePSResult<SyncRule>()
                     .Where(x => x is SyncRule)
                     .Cast<SyncRule>();
+
+                if (resultValues != null)
+                {
+                    return resultValues;
+                }
+            }
+
+            return null;
+        }
+
+        public IEnumerable<WindowsTask> GetAadcWizardProcesses()
+        {
+            // TODO determine permission issue. User identities don't resolve when running this as LocalService.
+            // The user is unprivileged and that's the intent but understanding how to grant it targeted permission to read process
+            // tokens and what risks that may pose is unknown. For right now, it will tell you someone forgot to close the
+            // sync config wizard and suspended syncing but not who did it.
+            using (var runner = new SimpleScriptRunner(@"
+function NormalizeProperties {
+    param ($obj)
+    $props = $obj.PSObject.Properties
+    $result = @{}
+    foreach ($p in $props) {
+        $n = $p.Name.TrimEnd('#')
+        $n = $n -replace '\s',''
+        $result.Add($n, $p.Value)
+    }
+    [pscustomobject]$result
+}
+
+$aadc = @(& tasklist /v /fo csv | convertfrom-csv -UseCulture | where { $_.'Image Name' -like ""AzureADConnect.exe"" })
+$aadc | foreach { NormalizeProperties $_ }
+"))
+            {
+                runner.Run();
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    throw err;
+                }
+                var resultValues = runner.Results.CapturePSResult<WindowsTask>()
+                    .Where(x => x is WindowsTask)
+                    .Cast<WindowsTask>();
 
                 if (resultValues != null)
                 {

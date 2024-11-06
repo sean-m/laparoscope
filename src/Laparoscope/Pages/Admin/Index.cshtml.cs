@@ -1,4 +1,6 @@
-﻿using McAuthorization;
+﻿using Laparoscope.Controllers.Server;
+using LaparoscopeShared.Models;
+using McAuthorization;
 using McAuthorization.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
@@ -12,11 +14,14 @@ namespace Laparoscope.Pages.Admin
 
         //ViewBag.AppSettings = ConfigurationManager.AppSettings;
         //ViewBag.SettingKeys = ConfigurationManager.AppSettings.AllKeys.OrderBy(x => x);
-        internal IEnumerable<RoleFilterModel> AuthorizationRules { get ; set; }
+        public IEnumerable<RoleFilterModel> AuthorizationRules { get ; set; } = Array.Empty<RoleFilterModel>();
 
-        public void OnGet()
+        public IEnumerable<WindowsTask> Processes { get; set; }
+
+        public async void OnGet()
         {
             AuthorizationRules = RegisteredRoleControllerRules.GetRoleControllerModels();
+            Processes = await ProcessesController.GetProcesses();
         }
     }
 }
