@@ -8,7 +8,7 @@ namespace Laparoscope.Models
     public class PasswordSyncState
     {
         public dynamic ConnectorId { get; set; }
-        public dynamic DN { get; set; }
+        public string DN { get; set; }
         public dynamic PasswordSyncLastSuccessfulCycleStartTimestamp { get; set; }
         public dynamic PasswordSyncLastSuccessfulCycleEndTimestamp { get; set; }
         public dynamic PasswordSyncLastCycleStartTimestamp { get; set; }

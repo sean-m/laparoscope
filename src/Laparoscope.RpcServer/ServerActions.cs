@@ -2,18 +2,12 @@
 using LaparoscopeShared;
 using LaparoscopeShared.Models;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SMM.Automation;
 using SMM.Helper;
-using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Laparoscope.RpcServer
 {
@@ -66,7 +60,7 @@ namespace Laparoscope.RpcServer
                 var resultValues = dynResults
                     .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as AadcConnector.
                     .Select(x => x as AadcConnector)    // Take as AadcConnector so typed call to WhereAuthorized avoids GetType() call.
-                    .ToArray();   
+                    .ToArray();
 
                 return resultValues;
             }
@@ -173,7 +167,7 @@ namespace Laparoscope.RpcServer
 
         public DomainReachabilityStatus GetADSyncDomainReachabilityStatus(string ConnectorName)
         {
-            
+
             // Run PowerShell command to get AADC connector configurations
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncDomainReachabilityStatus))
             {
@@ -477,5 +471,31 @@ $aadc | foreach { NormalizeProperties $_ }
 
             return null;
         }
+
+        public IEnumerable<HashSyncMetric> GetHashSyncMetrics()
+        {
+            HashSyncMetric IntoHashSyncMetric(PasswordSyncState syncState)
+            {
+                var metric = new HashSyncMetric();
+                metric.Name = syncState.DN;
+
+                var lastCycleEnd = (DateTime)syncState.PasswordSyncLastCycleEndTimestamp;
+                metric.LastCycle = new DateTimeOffset(lastCycleEnd).ToUnixTimeSeconds();
+
+                var lastSuccess = (DateTime)syncState.PasswordSyncLastCycleEndTimestamp;
+                metric.LastSuccess = new DateTimeOffset(lastSuccess).ToUnixTimeSeconds();
+
+                var lastSuccessEnd = (DateTime)syncState.PasswordSyncLastSuccessfulCycleEndTimestamp;
+                metric.LastSuccessDuration = (float)(lastSuccess - lastSuccessEnd).TotalSeconds;
+
+                metric.LastStatus = syncState.PasswordSyncLastCycleStatus?.ToString() ?? "Unknown";
+
+                return metric;
+            }
+
+            var state = GetADSyncPartitionPasswordSyncState();
+            return state.Select(x => IntoHashSyncMetric(x));
+        }
+
     }
 }
