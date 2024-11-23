@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Laparoscope.Models;
+using LaparoscopeShared.Models;
 using StreamJsonRpc;
 using System.Diagnostics;
 using System.IO.Pipes;
@@ -15,10 +16,26 @@ using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.
     await ActAsRpcClientAsync(stream);
     Console.WriteLine("Terminating stream...");
 }
-
+Console.ReadLine();
 
 static async Task ActAsRpcClientAsync(Stream stream) {
     using var jsonRpc = JsonRpc.Attach(stream);
+        
+    {
+        Console.WriteLine("\nConnected. Sending request...");
+        string function = "GetADSyncRunProfileResult";
+        Console.WriteLine($">> {function}()");
+        var result = await jsonRpc.InvokeAsync<IEnumerable<RunHistory>>(function);
+        Console.WriteLine("Result:");
+        foreach (var r in result)
+        {
+            Console.WriteLine($"Connector: {r.ConnectorName}  RunHistoryId: {r.RunHistoryId}  Result: {r.Result}");
+            var steps = await jsonRpc.InvokeAsync<IEnumerable<RunStepResult>>("GetADSyncRunStepResult", r.RunHistoryId);
+            Console.WriteLine($"Run step count: {steps?.Count().ToString() ?? "NULL"}");
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(steps) + Environment.NewLine);
+        }
+    }
+
     {
         Console.WriteLine("\nConnected. Sending request...");
         string function = "GetADSyncConnector";

@@ -21,6 +21,8 @@ namespace Laparoscope.RpcServer
             this.logger = logger;
         }
 
+        #region ServerCommands
+
         public string Hello() => "Hi there!";
 
         public SyncResult StartADSync()
@@ -472,7 +474,118 @@ $aadc | foreach { NormalizeProperties $_ }
             return null;
         }
 
-        public IEnumerable<HashSyncMetric> GetHashSyncMetrics()
+        /*
+Name             : Get-ADSyncRunProfileResult
+CommandType      : Cmdlet
+Definition       : 
+                   Get-ADSyncRunProfileResult [-RunHistoryId <guid>] [-ConnectorId <guid>] [-RunProfileId <guid>] [-RunNumber <int>] [-NumberRequested <int>] 
+                   [-RunStepDetails] [-StepNumber <int>] [-WhatIf] [-Confirm] [<CommonParameters>]
+                   
+Path             : 
+AssemblyInfo     : 
+DLL              : C:\Program Files\Microsoft Azure AD Sync\Bin\ADSync\Microsoft.IdentityManagement.PowerShell.Cmdlet.dll
+HelpFile         : Microsoft.IdentityManagement.PowerShell.Cmdlet.dll-Help.xml
+ParameterSets    : {[-RunHistoryId <guid>] [-ConnectorId <guid>] [-RunProfileId <guid>] [-RunNumber <int>] [-NumberRequested <int>] [-RunStepDetails] [-StepNumber <int>] 
+                   [-WhatIf] [-Confirm] [<CommonParameters>]}
+ImplementingType : Microsoft.IdentityManagement.PowerShell.Cmdlet.GetADSyncRunProfileResultCmdlet
+Verb             : Get
+Noun             : ADSyncRunProfileResult
+
+         * */
+        public IEnumerable<RunHistory> GetADSyncRunProfileResult()
+        {
+            // Run PowerShell command to get AADC sync rules
+            using (var runner = new SimpleScriptRunner(@"
+[CmdletBinding()]
+param([bool]$RunStepDetails)
+
+Get-ADSyncRunProfileResult | select -First 10
+"))
+            {
+                runner.Run();
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    throw err;
+                }
+                var resultValues = runner.Results.CapturePSResult<RunHistory>()
+                    .Where(x => x is RunHistory)
+                    .Cast<RunHistory>();
+
+                if (resultValues != null)
+                {
+                    return resultValues;
+                }
+            }
+
+            return null;
+        }
+
+        public IEnumerable<RunStepResult> GetADSyncRunStepResult(Guid RunHistoryId)
+        {
+            return GetADSyncRunStepResult(RunHistoryId, null, null);
+        }
+
+        public IEnumerable<RunStepResult> GetADSyncRunStepResult(Guid? RunHistoryId, int? StepNumber, bool? First)
+        {
+            // Run PowerShell command to get AADC sync rules
+            using (var runner = new SimpleScriptRunner(@"
+[CmdletBinding()]
+param($RunHistoryId, $StepHistoryId, $StepNumber, $First)
+
+$params = @{}
+if ($RunHistoryId -ne $null)
+{
+    $params.Add(""RunHistoryId"", $RunHistoryId);
+}
+if ($StepNumber -ne $null)
+{
+    $params.Add(""StepNumber"", $StepNumber);
+}
+if ($First -ne $null)
+{
+    $params.Add(""First"", $First);
+}
+
+Get-ADSyncRunProfileResult @params
+"))
+            {
+                if (RunHistoryId != null)
+                {
+                    runner.Parameters.Add("RunHistoryId", RunHistoryId);
+                }
+                if (StepNumber != null)
+                {
+                    runner.Parameters.Add("StepNumber", StepNumber);
+                }
+                if (First != null)
+                {
+                    runner.Parameters.Add("First", First);
+                }
+
+                runner.Run();
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    throw err;
+                }
+                var resultValues = runner.Results.CapturePSResult<RunStepResult>()
+                    .Where(x => x is RunStepResult)
+                    .Cast<RunStepResult>();
+
+                if (resultValues != null)
+                {
+                    return resultValues;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion  // ServerCommands
+
+        #region MetricsCollection
+        internal IEnumerable<HashSyncMetric> GetHashSyncMetrics()
         {
             HashSyncMetric IntoHashSyncMetric(PasswordSyncState syncState)
             {
@@ -496,6 +609,9 @@ $aadc | foreach { NormalizeProperties $_ }
             var state = GetADSyncPartitionPasswordSyncState();
             return state.Select(x => IntoHashSyncMetric(x));
         }
+
+        #endregion  // MetricsCollection
+
 
     }
 }
