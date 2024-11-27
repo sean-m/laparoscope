@@ -10,17 +10,22 @@
 
   <ItemGroup>
     <Compile Remove="Pages\account\**" />
+    <Compile Remove="Pages\Home\**" />
     <Compile Remove="Scripts\**" />
     <Compile Remove="wwwroot\NewFolder\**" />
     <Content Remove="Pages\account\**" />
+    <Content Remove="Pages\Home\**" />
     <Content Remove="Scripts\**" />
     <Content Remove="wwwroot\NewFolder\**" />
     <EmbeddedResource Remove="Pages\account\**" />
+    <EmbeddedResource Remove="Pages\Home\**" />
     <EmbeddedResource Remove="Scripts\**" />
     <EmbeddedResource Remove="wwwroot\NewFolder\**" />
     <None Remove="Pages\account\**" />
+    <None Remove="Pages\Home\**" />
     <None Remove="Scripts\**" />
     <None Remove="wwwroot\NewFolder\**" />
+    <TypeScriptCompile Remove="Pages\Home\**" />
     <TypeScriptCompile Remove="Scripts\**" />
     <TypeScriptCompile Remove="wwwroot\NewFolder\**" />
   </ItemGroup>
@@ -48,10 +53,6 @@
   <ItemGroup>
     <ProjectReference Include="..\McAuthorization\McAuthorization.csproj" />
     <ProjectReference Include="..\SharedModel\LaparoscopeShared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Home\" />
   </ItemGroup>
 
 </Project>
