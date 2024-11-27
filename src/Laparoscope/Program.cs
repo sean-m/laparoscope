@@ -7,6 +7,7 @@ using Microsoft.Identity.Web.UI;
 using Microsoft.Identity.Web.Resource;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using Prometheus;
 
 namespace Laparoscope
 {
@@ -105,15 +106,13 @@ namespace Laparoscope
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            app.ConfigureAuthorizationFilters();
             app.UseAuthorization();
-
             app.MapControllers();
 
             app.UseRouting();
 
-            app.ConfigureAuthorizationFilters();
-            app.UseAuthorization();
-
+            app.UseMetricServer();
 
             app.UseSwagger();
             //app.UseSwaggerUI();
