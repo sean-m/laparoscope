@@ -585,7 +585,7 @@ Get-ADSyncRunProfileResult @params
         #endregion  // ServerCommands
 
         #region MetricsCollection
-        internal IEnumerable<HashSyncMetric> GetHashSyncMetrics()
+        public IEnumerable<HashSyncMetric> GetHashSyncMetrics()
         {
             HashSyncMetric IntoHashSyncMetric(PasswordSyncState syncState)
             {
