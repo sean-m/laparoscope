@@ -432,7 +432,7 @@ Get-ADSyncRule @PSBoundParameters
             return null;
         }
 
-        public IEnumerable<WindowsTask> GetAadcWizardProcesses()
+        public IEnumerable<WindowsTask> GetAadcProcesses()
         {
             // TODO determine permission issue. User identities don't resolve when running this as LocalService.
             // The user is unprivileged and that's the intent but understanding how to grant it targeted permission to read process
