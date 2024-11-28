@@ -593,13 +593,13 @@ Get-ADSyncRunProfileResult @params
                 metric.Name = syncState.DN;
 
                 var lastCycleEnd = (DateTime)syncState.PasswordSyncLastCycleEndTimestamp;
-                metric.LastCycle = new DateTimeOffset(lastCycleEnd).ToUnixTimeSeconds();
+                metric.LastCycle = new DateTimeOffset(lastCycleEnd).ToUnixTimeSeconds().ToString();
 
                 var lastSuccess = (DateTime)syncState.PasswordSyncLastCycleEndTimestamp;
-                metric.LastSuccess = new DateTimeOffset(lastSuccess).ToUnixTimeSeconds();
+                metric.LastSuccess = new DateTimeOffset(lastSuccess).ToUnixTimeSeconds().ToString();
 
                 var lastSuccessEnd = (DateTime)syncState.PasswordSyncLastSuccessfulCycleEndTimestamp;
-                metric.LastSuccessDuration = (float)(lastSuccess - lastSuccessEnd).TotalSeconds;
+                metric.LastSuccessDuration = ((float)(lastSuccess - lastSuccessEnd).TotalSeconds).ToString("N4");
 
                 metric.LastStatus = syncState.PasswordSyncLastCycleStatus?.ToString() ?? "Unknown";
 

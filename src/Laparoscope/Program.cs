@@ -8,6 +8,7 @@ using Microsoft.Identity.Web.Resource;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Prometheus;
+using Laparoscope.Workers;
 
 namespace Laparoscope
 {
@@ -68,6 +69,7 @@ namespace Laparoscope
                 .AddRazorRuntimeCompilation()
                 .AddMicrosoftIdentityUI();
 
+            builder.Services.AddHostedService<HashSyncMetricCollector>();
 
             builder.Services.AddControllers().AddJsonOptions(options => {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -106,12 +108,12 @@ namespace Laparoscope
             app.UseStaticFiles();
 
             app.UseAuthentication();
-            app.ConfigureAuthorizationFilters();
-            app.UseAuthorization();
+            
             app.MapControllers();
 
             app.UseRouting();
-
+            app.ConfigureAuthorizationFilters();
+            app.UseAuthorization();
             app.UseMetricServer();
 
             app.UseSwagger();
