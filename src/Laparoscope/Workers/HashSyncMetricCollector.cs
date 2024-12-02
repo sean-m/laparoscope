@@ -1,6 +1,7 @@
 ﻿
 using Laparoscope.Models;
 using LaparoscopeShared.Models;
+using Polly.CircuitBreaker;
 using Prometheus;
 using StreamJsonRpc;
 using System.IO.Pipes;
@@ -24,27 +25,75 @@ namespace Laparoscope.Workers
                         var result = await jsonRpc.InvokeAsync<IEnumerable<HashSyncMetric>>(function);
                         
                         // Setup metric here
-                        var now = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString();
+                        double now = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
                         foreach (var metric in result)
                         {
                             Gauge counter;
-                            if (counters.ContainsKey(metric.Name))
+                            Double value;
+                            String key;
+
+                            // lastPollTime
+                            var name = $"laparoscope_hash_sync_lastPolled";
+                            key = name + metric.Name;
+                            if (counters.ContainsKey(key))
                             {
-                                counter = counters[metric.Name];
+                                counter = counters[key];
                             }
                             else
                             {
-                                counter = Metrics.CreateGauge("laparoscope_hash_sync", "Hash sync metrics by connector.", new[] { "computedTime", "name", "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
-                                counters.Add(metric.Name, counter);
+                                counter = Metrics.CreateGauge(name, "Last time hash sync metrics were collected.",
+                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                counters.Add(key, counter);
                             }
-                            counter.WithLabels(
-                               now,
-                               metric.Name,
-                               metric.LastCycle.ToString(),
-                               metric.LastSuccess.ToString(), 
-                               metric.LastSuccessDuration.ToString(), 
-                               metric.LastStatus
-                               );
+                            counter.WithLabels(metric.Name).Set(now);
+
+                            // lastCycleTime
+                            name = $"laparoscope_hash_sync_lastCycleTime";
+                            key = name + metric.Name;
+                            if (counters.ContainsKey(key))
+                            {
+                                counter = counters[key];
+                            }
+                            else
+                            {
+                                counter = Metrics.CreateGauge(name, "Start time of most reccent sync cycle.",
+                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                counters.Add(key, counter);
+                            }
+                            value = Double.Parse(metric.LastCycle);
+                            counter.WithLabels(metric.Name).Set(value);
+
+                            // lastSuccessTime
+                            name = $"laparoscope_hash_sync_lastSuccessTime";
+                            key = name + metric.Name;
+                            if (counters.ContainsKey(key))
+                            {
+                                counter = counters[key];
+                            }
+                            else
+                            {
+                                counter = Metrics.CreateGauge(name, "Start time of the last successful sync cycle.",
+                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                counters.Add(key, counter);
+                            }
+                            value = Double.Parse(metric.LastSuccess);
+                            counter.WithLabels(metric.Name).Set(value);
+
+                            // lastSuccessDuration
+                            name = $"laparoscope_hash_sync_lastSuccessDuration";
+                            key = name + metric.Name;
+                            if (counters.ContainsKey(key))
+                            {
+                                counter = counters[key];
+                            }
+                            else
+                            {
+                                counter = Metrics.CreateGauge(name, "Duration of the last succesful sync cycle.",
+                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                counters.Add(key, counter);
+                            }
+                            value = Double.Parse(metric.LastSuccessDuration);
+                            counter.WithLabels(metric.Name).Set(value);
                         }
                     }
                 }
