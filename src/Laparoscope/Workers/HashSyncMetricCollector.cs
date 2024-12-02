@@ -10,6 +10,12 @@ namespace Laparoscope.Workers
 {
     public class HashSyncMetricCollector : BackgroundService
     {
+        public HashSyncMetricCollector()
+        {
+            // TODO make this tunable
+            Metrics.SuppressDefaultMetrics();
+        }
+
         Dictionary<string, Gauge> counters = new Dictionary<string, Gauge>();
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
