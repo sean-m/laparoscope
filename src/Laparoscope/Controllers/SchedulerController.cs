@@ -23,6 +23,7 @@ namespace Laparoscope.Controllers.Server
         /// Executes Get-ADSyncScheduler and returns the result as a list of hashtables.
         /// </summary>
         /// <returns>List&lt; Dictionary &lt; string, object &gt; &gt;</returns>
+        [HttpGet]
         public async Task<Dictionary<string, object>> GetAsync()
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

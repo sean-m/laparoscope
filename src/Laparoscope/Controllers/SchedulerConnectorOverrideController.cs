@@ -33,6 +33,7 @@ namespace Laparoscope.Controllers.ServerApi
         /// <param name="ConnectorName"></param>
         /// <returns>SchedulerOverride or SchedulerOverrideResult</returns>
         /// <exception cref="HttpResponseException"></exception>
+        [HttpGet]
         public async Task<dynamic> GetAsync(string ConnectorName=null)
         {
             // Construct an anonymous object as the Model for IsAuthorized so we can
@@ -75,6 +76,7 @@ namespace Laparoscope.Controllers.ServerApi
         /// </summary>
         /// <param name="OverrideConfig"></param>
         /// <exception cref="HttpResponseException"></exception>
+        [HttpPost]
         public async Task<dynamic> PostAsync([FromBody] SchedulerOverride OverrideConfig)
         {
             string ConnectorName = OverrideConfig.ConnectorName;

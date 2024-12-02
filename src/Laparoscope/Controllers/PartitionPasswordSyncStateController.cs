@@ -25,6 +25,7 @@ namespace Laparoscope.Controllers.Server
         /// <returns>
         /// Yields these properties: ConnectorId, DN, PasswordSyncLastSuccessfulCycleStartTimestamp, PasswordSyncLastSuccessfulCycleEndTimestamp, PasswordSyncLastCycleStartTimestamp, PasswordSyncLastCycleEndTimestamp, PasswordSyncLastCycleStatus.
         /// </returns>
+        [HttpGet]
         public async Task<IEnumerable<PasswordSyncState>> GetAsync()
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

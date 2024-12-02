@@ -15,6 +15,7 @@ namespace Laparoscope.Controllers.Server
         /// Maps to Get-ADSyncExportDeletionThreshold cmdlet. This gives enabled/disabled (1/0)
         /// status and the numeric value of the current threshold.
         /// </summary>
+        [HttpGet]
         public async Task<dynamic> GetAsync()
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

@@ -24,6 +24,7 @@ namespace Laparoscope.Controllers.Server
         /// infinate redirect loop with Azure AD.
         /// </summary>
         /// <param name="ConnectorName">Name of the AADC connector for the target domain.</param>
+        [HttpGet]
         public async Task<DomainReachabilityStatus> GetAsync(string ConnectorName)
         {
             // Construct an anonymous object as the Model for IsAuthorized so we can

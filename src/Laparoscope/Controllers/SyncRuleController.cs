@@ -20,6 +20,7 @@ namespace Laparoscope.Controllers.Server
         /// </summary>
         /// <param name="Identifier">Guid identifier of a specific sync rule.</param>
         /// <returns></returns>
+        [HttpGet]
         public async Task<dynamic> GetAsync(string Identifier=null)
         {
             // TODO parse result and only return rules associated to authorized connectors

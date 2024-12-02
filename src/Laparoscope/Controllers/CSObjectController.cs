@@ -36,6 +36,7 @@ namespace Laparoscope.Controllers.Server
         /// <returns>
         /// https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsynccsobject
         /// </returns>
+        [HttpGet]
         public async Task<dynamic> GetAsync(string ConnectorName, string DistinguishedName)
         {
             // Construct an anonymous object as the Model for IsAuthorized so we can

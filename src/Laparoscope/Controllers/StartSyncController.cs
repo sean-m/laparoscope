@@ -29,6 +29,7 @@ namespace Laparoscope.Controllers.Server
         ///   "Started": false
         /// }
         /// </returns>
+        [HttpPost]
         public async Task<SyncResult> PostAsync()
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

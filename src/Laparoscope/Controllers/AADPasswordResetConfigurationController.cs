@@ -17,6 +17,7 @@ namespace Laparoscope.Controllers.Server
         /// resolved. If more than one AAD connector is found an exception is thrown as this is
         /// not a supported configuration.
         /// </summary>
+        [HttpGet]
         public async Task<dynamic> GetAsync()
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

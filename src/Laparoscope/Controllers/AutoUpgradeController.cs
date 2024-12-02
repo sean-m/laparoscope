@@ -16,6 +16,7 @@ namespace Laparoscope.Controllers.Server
         /// in a supported configuration. If status is not "Enabled" detail is given as to why.
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public async Task<dynamic> GetAsync()
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

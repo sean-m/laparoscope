@@ -21,6 +21,7 @@ namespace Laparoscope.Controllers.Server
         /// <returns>
         /// Yields: SourceConnector name, TargetConnector name, Enabled password sync status.
         /// </returns>
+        [HttpGet]
         public async Task<dynamic> GetAsync(string SourceConnector)
         {
             if (String.IsNullOrEmpty(SourceConnector))

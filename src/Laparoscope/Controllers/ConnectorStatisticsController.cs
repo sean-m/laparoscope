@@ -26,6 +26,7 @@ namespace Laparoscope.Controllers.Server
         /// infinate redirect loop with Azure AD.
         /// </summary>
         /// <param name="Name">Name of a valid AADC connector.</param>
+        [HttpGet]
         public async Task<dynamic> GetAsync(string Name)
         {
             if (String.IsNullOrEmpty(Name))

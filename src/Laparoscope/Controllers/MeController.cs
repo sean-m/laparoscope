@@ -14,6 +14,7 @@ namespace Laparoscope.Controllers.Server
         /// Provided for debugging purposes.
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public dynamic Get()
         {
             var json = JsonConvert.SerializeObject(

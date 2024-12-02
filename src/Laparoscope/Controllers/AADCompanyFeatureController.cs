@@ -16,6 +16,7 @@ namespace Laparoscope.Controllers.Server
         /// features that are global to the AADC install/tenat. These include: 
         /// PasswordHashSync, ForcePasswordChangeOnLogOn, UserWriteback, DeviceWriteback, UnifiedGroupWriteback, GroupWritebackV2.
         /// </summary>
+        [HttpGet]
         public async Task<dynamic> GetAsync()
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

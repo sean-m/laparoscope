@@ -42,6 +42,7 @@ namespace Laparoscope.Controllers.ServerApi
         ///   EndDate           : 2022-04-08T20:13:52.187
         ///   RunStepResults    : 
         /// </returns>
+        [HttpGet]
         public async Task<IEnumerable<Dictionary<string, object>>> GetAsync(Guid? RunHistoryId=null, Guid? ConnectorId=null, int NumberRequested=0, bool RunStepDetails=false)
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))

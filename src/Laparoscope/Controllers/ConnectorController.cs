@@ -25,6 +25,7 @@ namespace Laparoscope.Controllers.Server
         /// </summary>
         /// <param name="Name">Name of a specific connector to return.</param>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IEnumerable<AadcConnector>> GetAsync(string Name=null)
         {
 

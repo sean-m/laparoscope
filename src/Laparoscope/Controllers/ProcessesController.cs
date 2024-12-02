@@ -28,6 +28,7 @@ namespace Laparoscope.Controllers.Server
         /// Returns the: Version, InstanceId, SqlSchemaVersion, Parameters properties from Get-ADSyncGlobalSettings.
         /// Metavserse schema settings aren't very actionable without direct access to AADC so have been omitted.
         /// </returns>
+        [HttpGet]
         public async Task<IEnumerable<WindowsTask>> GetAsync()
         {
             // Test for authorization rules for this context with ModelProperty: Authorized,  ModelValue: true
