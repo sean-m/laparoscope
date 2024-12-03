@@ -146,7 +146,7 @@ namespace Laparoscope.Workers
                             }
                             else
                             {
-                                counter = Metrics.CreateGauge(name, "Total directory records connected for syncing with an external directory.",
+                                counter = Metrics.CreateGauge(name, "Total directory records connected for syncing.",
                                     new[] { "connector" }); 
                                 counters.Add(key, counter);
                             }
