@@ -38,8 +38,8 @@ namespace Laparoscope.Workers
                             Double value;
                             String key;
 
-                            // lastPollTime
-                            var name = $"laparoscope_hash_sync_lastPolled";
+                            // last_polled_time
+                            var name = $"laparoscope_hash_sync_last_polled_time";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -48,13 +48,13 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Last time hash sync metrics were collected.",
-                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                    new[] { "connector" }); 
                                 counters.Add(key, counter);
                             }
                             counter.WithLabels(metric.Name).Set(now);
 
-                            // lastCycleTime
-                            name = $"laparoscope_hash_sync_lastCycleTime";
+                            // last_cycle_time
+                            name = $"laparoscope_hash_sync_last_cycle_time";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -63,14 +63,14 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Start time of most reccent sync cycle.",
-                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                    new[] { "connector" }); 
                                 counters.Add(key, counter);
                             }
                             value = Double.Parse(metric.LastCycle);
                             counter.WithLabels(metric.Name).Set(value);
 
-                            // lastSuccessTime
-                            name = $"laparoscope_hash_sync_lastSuccessTime";
+                            // last_success_time
+                            name = $"laparoscope_hash_sync_last_success_time";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -79,14 +79,14 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Start time of the last successful sync cycle.",
-                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                    new[] { "connector" }); 
                                 counters.Add(key, counter);
                             }
                             value = Double.Parse(metric.LastSuccess);
                             counter.WithLabels(metric.Name).Set(value);
 
-                            // lastSuccessDuration
-                            name = $"laparoscope_hash_sync_lastSuccessDuration";
+                            // last_success_duration
+                            name = $"laparoscope_hash_sync_last_success_duration";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -95,7 +95,7 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Duration of the last succesful sync cycle.",
-                                    new[] { "connector" }); //, "lastCycleTime", "lastSuccessTime", "lastSuccessDuration", "lastStatus" });
+                                    new[] { "connector" }); 
                                 counters.Add(key, counter);
                             }
                             value = Double.Parse(metric.LastSuccessDuration);
