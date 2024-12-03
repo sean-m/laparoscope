@@ -70,6 +70,7 @@ namespace Laparoscope
                 .AddMicrosoftIdentityUI();
 
             builder.Services.AddHostedService<HashSyncMetricCollector>();
+            builder.Services.AddHostedService<ConnectorStatisticsMetricCollector>();
 
             builder.Services.AddControllers().AddJsonOptions(options => {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;

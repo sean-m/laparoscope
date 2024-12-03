@@ -610,6 +610,30 @@ Get-ADSyncRunProfileResult @params
             return state.Select(x => IntoHashSyncMetric(x));
         }
 
+        public IEnumerable<ConnectorStatistics> GetAllConnectorStatistics()
+        {
+            var script = "Get-ADSyncConnector | foreach {$name = $_.Name; Get-ADSyncConnectorStatistics $_.Name | Add-Member -MemberType NoteProperty -Name \"Connector\" -Value $name -PassThru }";
+            using (var runner = new SimpleScriptRunner(script))
+            {
+                runner.Run();
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    throw err;
+                }
+                var resultValues = runner.Results.CapturePSResult<ConnectorStatistics>()
+                    .Where(x => x is ConnectorStatistics)
+                    .Cast<ConnectorStatistics>();
+
+                if (resultValues != null)
+                {
+                    return resultValues;
+                }
+            }
+
+            return null;
+        }
+
         #endregion  // MetricsCollection
 
 
