@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Prometheus;
 using Laparoscope.Workers;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
 namespace Laparoscope
 {
@@ -36,12 +37,18 @@ namespace Laparoscope
                     config.AddCommandLine(args);
                 }
 
+
+
                 // NOTE: set the connection string value in an environment variable or appsettings json file with key: AppConfigConnectionString
                 configString = builder.Configuration.GetValue<string>("AppConfigConnectionString");
+                // NOTE: this allows for having different sets of configuration items in Azure App Config
+                var configLabel = builder.Configuration.GetValue<string>("AppConfigLabel", "Laparoscope");
                 if (!String.IsNullOrEmpty(configString))
                 {
                     config.AddAzureAppConfiguration(options => {
-                        options.Connect(configString);
+                        options.Connect(configString)
+                        .Select(KeyFilter.Any, LabelFilter.Null)
+                        .Select(KeyFilter.Any, configLabel);
                     });
                     didAzAppConfig = true;
                 }
