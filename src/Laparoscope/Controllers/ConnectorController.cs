@@ -50,7 +50,7 @@ namespace Laparoscope.Controllers.Server
                         if (r.AnchorConstructionSettings != null)
                             r.AnchorConstructionSettings = JObjectToTypeOrCollectionOfType<AnchorConstructionSetting>(r.AnchorConstructionSettings);
                     }
-                    return result;
+                    return resultValues;
                 }
             }
         }
