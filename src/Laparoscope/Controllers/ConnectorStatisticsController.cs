@@ -11,7 +11,7 @@ namespace Laparoscope.Controllers.Server
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy="HasRoles")]
     public class ConnectorStatisticsController : Controller
     {
         /// <summary>

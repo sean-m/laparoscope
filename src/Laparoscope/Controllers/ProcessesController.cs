@@ -16,7 +16,7 @@ namespace Laparoscope.Controllers.Server
     /// <summary>
     /// Maps to the Get-ADSyncGlobalSettings command without the schema data.
     /// </summary>
-    [Authorize]
+    [Authorize(Policy="HasRoles")]
     public class ProcessesController : Controller
     {
         /// <summary>

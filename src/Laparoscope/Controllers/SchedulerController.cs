@@ -15,7 +15,7 @@ namespace Laparoscope.Controllers.Server
     /// <summary>
     /// Maps to cmdlets for the AADC Scheduler. Unqualified GET returns the result of Get-ADSyncScheduler.
     /// </summary>
-    [Authorize]
+    [Authorize(Policy="HasRoles")]
     public class SchedulerController : Controller
     {
         // GET api/<controller>

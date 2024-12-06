@@ -15,7 +15,7 @@ namespace Laparoscope.Controllers.Server
     /// Unqualified GET returns a subset of information for connectors. With multiple connectors
     /// the result can be 100MB+ so some properties are left out.
     /// </summary>
-    [Authorize]
+    [Authorize(Policy="HasRoles")]
     public class ConnectorController : Controller
     {
         // GET: Connectors

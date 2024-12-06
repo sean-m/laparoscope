@@ -10,6 +10,7 @@ using System.Text.Json;
 using Prometheus;
 using Laparoscope.Workers;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using System.Security.Claims;
 
 namespace Laparoscope
 {
@@ -55,27 +56,38 @@ namespace Laparoscope
             });
 #pragma warning restore ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
 
+            // Logging
+            builder.Logging.AddConsole();
+
             // Azure AD Auth OIDC
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
             builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "AzureAd");
 
+            // This hedges against the Scopes being configured improperly.
+            // When Scopes only specifies access_as_user, authentication works but
+            // role claims aren't issued so authorization rules can't be applied.
+            // This policy results in a 403 when there are no role claims.
+            // All API controllers except the Me controller utilize the policy,
+            // so even if misconfigured, token issues can be troubleshot.
+            builder.Services.AddAuthorization(options => {
+                options.AddPolicy("HasRoles", policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role));
+            });
+
             // Use forwarded headers for hosting behind a proxy
             builder.Services.Configure<ForwardedHeadersOptions>(options => {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
-
-
-            // Logging
-            builder.Logging.AddConsole();
+            
 
             builder.Services.AddRazorPages(options => {
                 options.Conventions.AuthorizeFolder("/Server");
                 options.Conventions.AuthorizeFolder("/Admin");
             })
-                .AddRazorRuntimeCompilation()
-                .AddMicrosoftIdentityUI();
+            .AddRazorRuntimeCompilation()
+            .AddMicrosoftIdentityUI();
 
+            // Expose openmetrics endpoint for hash sync and connector stats
             builder.Services.AddHostedService<HashSyncMetricCollector>();
             builder.Services.AddHostedService<ConnectorStatisticsMetricCollector>();
 
