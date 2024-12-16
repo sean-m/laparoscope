@@ -582,6 +582,130 @@ Get-ADSyncRunProfileResult @params
             return null;
         }
 
+        public IEnumerable<Dictionary<string, object>> NslookupShort(string Name, string[] Server, string Type)
+        {
+            string requestName = Name;
+            string[] nameServer = Server;
+            string recordType = Type;
+            return Nslookup(requestName, nameServer, recordType, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
+
+        public IEnumerable<Dictionary<string,object>> Nslookup(
+            string Name,
+            string[] Server,
+            string Type,
+            bool? DnsOnly,
+            bool? CacheOnly,
+            bool? DnssecOk,
+            bool? DnssecCd,
+            bool? NoHostsFile,
+            bool? LlmnrNetbiosOnly,
+            bool? LlmnrFallback,
+            bool? LlmnrOnly,
+            bool? NetbiosFallback,
+            bool? NoIdn,
+            bool? NoRecursion,
+            bool? QuickTimeout,
+            bool? TcpOnly
+        )
+        {
+            // Run PowerShell command to get AADC sync rules
+            using (var runner = new SimpleScriptRunner(@"
+param (
+    [string]
+    $Name,
+    [string[]]
+    $Server,
+    [string]
+    [ValidateSet(""UNKNOWN"", ""A_AAAA"", ""A"", ""NS"", ""MD"", ""MF"", ""CNAME"", ""SOA"", ""MB"", ""MG"", ""MR"", ""NULL"", ""WKS"", ""PTR"", ""HINFO"", ""MINFO"", ""MX"", ""TXT"", ""RP"", ""AFSDB"", ""X25"", ""ISDN"", ""RT"", ""AAAA"", ""SRV"", ""DNAME"", ""OPT"", ""DS"", ""RRSIG"", ""NSEC"", ""DNSKEY"", ""DHCID"", ""NSEC3"", ""NSEC3PARAM"", ""ANY"", ""ALL"", ""WINS"")]
+    $Type='ANY',
+    [switch]
+    $DnsOnly,
+    [switch]
+    $CacheOnly,
+    [switch]
+    $DnssecOk,
+    [switch]
+    $DnssecCd,
+    [switch]
+    $NoHostsFile,
+    [switch]
+    $LlmnrNetbiosOnly,
+    [switch]
+    $LlmnrFallback,
+    [switch]
+    $LlmnrOnly,
+    [switch]
+    $NetbiosFallback,
+    [switch]
+    $NoIdn,
+    [switch]
+    $NoRecursion,
+    [switch]
+    $QuickTimeout,
+    [switch]
+    $TcpOnly
+)
+
+[hashtable]$params = @{
+    Name=$Name
+    Server=$Server
+    Type=$Type
+}
+
+if ($DnsOnly)          { $params.Add(""DnsOnly"", $DnsOnly); }
+if ($CacheOnly)        { $params.Add(""CacheOnly"", $CacheOnly); }
+if ($DnssecOk)         { $params.Add(""DnssecOk"", $DnssecOk); }
+if ($DnssecCd)         { $params.Add(""DnssecCd"", $DnssecCd); }
+if ($NoHostsFile)      { $params.Add(""NoHostsFile"", $NoHostsFile); }
+if ($LlmnrNetbiosOnly) { $params.Add(""LlmnrNetbiosOnly"", $LlmnrNetbiosOnly); }
+if ($LlmnrFallback)    { $params.Add(""LlmnrFallback"", $LlmnrFallback); }
+if ($LlmnrOnly)        { $params.Add(""LlmnrOnly"", $LlmnrOnly); }
+if ($NetbiosFallback)  { $params.Add(""NetbiosFallback"", $NetbiosFallback); }
+if ($NoIdn)            { $params.Add(""NoIdn"", $NoIdn); }
+if ($NoRecursion)      { $params.Add(""NoRecursion"", $NoRecursion); }
+if ($QuickTimeout)     { $params.Add(""QuickTimeout"", $QuickTimeout); }
+if ($TcpOnly)          { $params.Add(""TcpOnly"", $TcpOnly); }
+
+
+Resolve-DnsName @params
+"))
+            {
+                if (Name != null)   { runner.Parameters.Add("Name", Name); }
+                if (Server != null) { runner.Parameters.Add("Server", Server); }
+                if (Type != null)   { runner.Parameters.Add("Type", Type); }
+
+                if (DnsOnly != null)            { runner.Parameters.Add("DnsOnly", DnsOnly); }
+                if (CacheOnly != null)          { runner.Parameters.Add("CacheOnly", CacheOnly); }
+                if (DnssecOk != null)           { runner.Parameters.Add("DnssecOk", DnssecOk); }
+                if (DnssecCd != null)           { runner.Parameters.Add("DnssecCd", DnssecCd); }
+                if (NoHostsFile != null)        { runner.Parameters.Add("NoHostsFile", NoHostsFile); }
+                if (LlmnrNetbiosOnly != null)   { runner.Parameters.Add("LlmnrNetbiosOnly", LlmnrNetbiosOnly); }
+                if (LlmnrFallback != null)      { runner.Parameters.Add("LlmnrFallback", LlmnrFallback); }
+                if (LlmnrOnly != null)          { runner.Parameters.Add("LlmnrOnly", LlmnrOnly); }
+                if (NetbiosFallback != null)    { runner.Parameters.Add("NetbiosFallback", NetbiosFallback); }
+                if (NoIdn != null)              { runner.Parameters.Add("NoIdn", NoIdn); }
+                if (NoRecursion != null)        { runner.Parameters.Add("NoRecursion", NoRecursion); }
+                if (QuickTimeout != null)       { runner.Parameters.Add("QuickTimeout", QuickTimeout); }
+                if (TcpOnly != null)            { runner.Parameters.Add("TcpOnly", TcpOnly); }
+
+                runner.Run();
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    throw err;
+                }
+                var resultValues = runner.Results.ToDict();
+
+                if (resultValues != null)
+                {
+                    return resultValues;
+                }
+            }
+
+            return null;
+        }
+
         #endregion  // ServerCommands
 
         #region MetricsCollection
