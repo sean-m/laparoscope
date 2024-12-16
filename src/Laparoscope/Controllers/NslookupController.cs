@@ -30,6 +30,12 @@ namespace Laparoscope.Controllers
                             string typeName = RecordTypeName(type);
                             kvp["Type"] = typeName;
                         }
+                        if (kvp.ContainsKey("QueryType"))
+                        {
+                            int type = int.Parse(kvp["QueryType"]?.ToString() ?? "666");
+                            string typeName = RecordTypeName(type);
+                            kvp["QueryType"] = typeName;
+                        }
                     }
                     return result;
                 }
@@ -38,36 +44,37 @@ namespace Laparoscope.Controllers
             return null;
         }
 
-        static string RecordTypeName(int recordType)
+        static string RecordTypeName(int recordType) => recordType switch
         {
-            switch (recordType)
-            {
-                case 1: return "A";
-                case 2: return "NS";
-                case 3: return "MD";
-                case 4: return "MF";
-                case 5: return "CNAME";
-                case 6: return "SOA";
-                case 11: return "WKS";
-                case 12: return "PTR";
-                case 13: return "HINFO";
-                case 15: return "MX";
-                case 16: return "TXT";
-                case 17: return "RP";
-                case 19: return "X25";
-                case 20: return "ISDN";
-                case 24: return "SIG";
-                case 28: return "AAAA";
-                case 29: return "LOC";
-                case 33: return "SRV";
-                case 43: return "DS";
-                case 46: return "RRSIG";
-                case 47: return "NSEC";
-                case 50: return "NSEC3";
-                case 51: return "NSEC3PARAM";
-                default:
-                    return $"UNKNOWN:{recordType}";
-            }
-        }
+            1  => "A",
+            2  => "NS",
+            3  => "MD",
+            4  => "MF",
+            5  => "CNAME",
+            6  => "SOA",
+            10 => "NULL",
+            11 => "WKS",
+            12 => "PTR",
+            13 => "HINFO",
+            15 => "MX",
+            16 => "TXT",
+            17 => "RP",
+            19 => "X25",
+            20 => "ISDN",
+            24 => "SIG",
+            28 => "AAAA",
+            29 => "LOC",
+            33 => "SRV",
+            43 => "DS",
+            46 => "RRSIG",
+            47 => "NSEC",
+            50 => "NSEC3",
+            51 => "NSEC3PARAM",
+
+            // Query types
+            252 => "AXFR",
+            255 => "ALL",
+            _ => $"UNKNOWN:{recordType}",            
+        };
     }
 }
