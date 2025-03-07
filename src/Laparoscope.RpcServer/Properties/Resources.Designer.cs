@@ -138,6 +138,7 @@ namespace Laparoscope.RpcServer.Properties {
         ///    [Parameter(Mandatory=$true)]
         ///    $DistinguishedName)
         ///
+        ///try {
         ///Import-Module ADSync
         ///
         ///$attributes = @(
@@ -161,7 +162,7 @@ namespace Laparoscope.RpcServer.Properties {
         ///&quot;Attributes&quot;
         ///)
         ///
-        ///Get-ADSyncCSObject -Connector [rest of string was truncated]&quot;;.
+        ///Get-ADSyncCSObject -Co [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Get_ADSyncCSObjectStrict {
             get {

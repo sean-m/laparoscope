@@ -50,11 +50,12 @@ namespace McAuthorization
         /// <returns></returns>
         public static bool IsAuthorized<T>(T Model, string Context, IEnumerable<string> Roles)
         {
-            var rules = RegisteredRoleControllerRules.GetRoleControllerModelsByContext(Context);
+            var contextRules = RegisteredRoleControllerRules.GetRoleControllerModelsByContext(Context);
+            var rules = contextRules.Where(x => Roles.Any(r => x.Role.Like(r)));
             var connType = typeof(T);
             if (connType == typeof(object)) connType = Model.GetType();
             
-            return (bool) rules.Where(
+            var evalResult = (bool) rules.Where(
                     rule => {
                         bool result = (bool)Roles?.Any(
                             role => {
@@ -97,6 +98,7 @@ namespace McAuthorization
                             return testValue.Like(pattern);
                         }
                     });
+            return evalResult;
         }
 
 

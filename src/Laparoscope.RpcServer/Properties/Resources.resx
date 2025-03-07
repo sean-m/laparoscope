@@ -201,6 +201,7 @@ $aad + ($other | Sort Name) | select Name, Identifier, Description, CreationTime
     [Parameter(Mandatory=$true)]
     $DistinguishedName)
 
+try {
 Import-Module ADSync
 
 $attributes = @(
@@ -224,7 +225,11 @@ $attributes = @(
 "Attributes"
 )
 
-Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName | select $attributes</value>
+Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName | select $attributes | convertto-json -Depth 6
+}
+finally {
+    # this is here to make sure the function terminates on an exception
+}</value>
   </data>
   <data name="Get-ADSyncDomainReachabilityStatus" xml:space="preserve">
     <value>param ($ConnectorName)

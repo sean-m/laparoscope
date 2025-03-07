@@ -12,7 +12,7 @@ namespace Laparoscope
             var adminRoleBuiltinAuthz = @"[
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]},
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]},
-                {'LoadedFrom':'Built-in','Role':'Admin','Context':'Scheduler','ClaimProperty':null,'ClaimValue':null,'ModelProperty':'Setting','ModelValue':'SchedulerSuspended','ModelValues':null},
+                {'LoadedFrom':'Built-in','Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'DN','ModelValue':'*','ModelValues':[]},
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'Scheduler','ClaimProperty':null,'ClaimValue':null,'ModelProperty':'Setting','ModelValue':'SchedulerSuspended','ModelValues':null},
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'GlobalSettings','ClaimProperty':null,'ClaimValue':null,'ModelProperty':'Authorized','ModelValue':'True','ModelValues':null},
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'Processes','ClaimProperty':null,'ClaimValue':null,'ModelProperty':'Authorized','ModelValue':'True','ModelValues':null},

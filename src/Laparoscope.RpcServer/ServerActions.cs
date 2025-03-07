@@ -158,8 +158,9 @@ namespace Laparoscope.RpcServer
                     var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
                     throw err;
                 }
-                var resultValues = runner.Results.CapturePSResult<AadcCSObject>()
-                    .Where(x => x is AadcCSObject)
+                var resultList = runner.Results.CapturePSResult<String>().ToList();
+                var resultValues = resultList.Where(r => !String.IsNullOrEmpty(r["Output"]))
+                    .Select(r => Newtonsoft.Json.JsonConvert.DeserializeObject<AadcCSObject>(r["Output"]))
                     .Select(x => x as AadcCSObject);
 
                 var result = resultValues.FirstOrDefault();

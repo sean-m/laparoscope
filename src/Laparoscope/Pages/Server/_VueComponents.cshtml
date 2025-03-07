@@ -399,8 +399,7 @@
         </button>
 
         <syncobject-table class="flex-row"
-                          v-for="(c) in cs"
-                          :record="c"
+                          :record="cs"
                           :seed="getRandomInt(0,100).toString()"
                           :accordion="['Attributes']"></syncobject-table>
 

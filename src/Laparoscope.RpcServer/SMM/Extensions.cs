@@ -101,7 +101,7 @@ namespace SMM.Helper
             }
             catch (Exception e)
             {
-                Trace.WriteLine(e.GetAllMessages());
+                Console.WriteLine(e.GetAllMessages());
                 captureSuccess = false;
             }
 
