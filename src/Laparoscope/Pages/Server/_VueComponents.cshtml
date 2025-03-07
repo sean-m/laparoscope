@@ -429,25 +429,22 @@
                     if (json) {
                         this.cs = json;
                         console.log("cs lookup done");
+                        return this.cs;
                     }
-                }).then(() => {
+                }).then((cs) => {
                     // If the CS object was retrieved and it has a ConectedMVObjectId, look up
                     // the metaverse record that is connected to it. This can be used to
                     // troubleshoot issues where a user isn't syncing to the cloud correctly
                     // as the metaverse record will show if it is also projected to the
                     // AAD connector space.
-                    if (this.cs) {
-                        for (i in this.cs) {
-                            console.log(i);
-                            let cs = this.cs[i];
-                            if (cs.ConnectedMVObjectId) {
-                                var mvuri = this.apiMVObject + cs.ConnectedMVObjectId;
-                                $.getJSON(mvuri, json => {
-                                    this.mv = json[0];
-                                    console.log("mv lookup done");
-                                });
-                            }
-                        }
+                    if (cs) {
+                        if (cs.ConnectedMVObjectId) {
+                            var mvuri = this.apiMVObject + cs.ConnectedMVObjectId;
+                            $.getJSON(mvuri, json => {
+                                this.mv = json;
+                                console.log("mv lookup done");
+                            });
+                        }                        
                     }
                 });
 
@@ -463,7 +460,7 @@
                 apiCSObject: "/api/CSObject?ConnectorName=" + this.thisConnector.Name + "&DistinguishedName=",
                 apiMVObject: "/api/MVObject/",
                 dn: '',
-                cs: [],
+                cs: null,
                 mv: null,
             }
         }

@@ -26,7 +26,7 @@ namespace Laparoscope.Controllers.Server
         /// https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsyncmvobject
         /// </returns>
         // GET api/<controller>
-        [HttpGet]
+        [HttpGet("{Id}")]
         public async Task<dynamic> GetAsync(string Id)
         {
             // TODO require an MVObject role
