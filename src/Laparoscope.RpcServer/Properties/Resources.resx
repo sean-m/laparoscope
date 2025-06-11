@@ -194,6 +194,25 @@ $aad, $other = $conn.Where({$_.Subtype -like 'Windows Azure Active Directory (Mi
 $aad + ($other | Sort Name) | select Name, Identifier, Description, CreationTime, LastModificationTime, $fmt_partition_params, $fmt_connectivity_params, ObjectInclusionList, AttributeInclusionList, AnchorConstructionSettings, CompanyName, Type, Subtype</value>
     <comment>Semi-reduced output from Get-ADSyncConnector. Full output has too much nested data and is 100+ MB when there are many connectors.</comment>
   </data>
+  <data name="Get-ADSyncCSObjectPage" xml:space="preserve">
+    <value>param (
+    $connectorName, 
+    [ValidateRange(0, 99999)]
+    $startPage, 
+    [ValidateRange(1,250)]
+    $pageSize=100
+    )
+
+if (-not $connectorName) {
+    throw "Connector name not specified. `$connectorName is a required parameter."
+}
+
+$startIndex = [Math]::Max(0, $startPage-1) * $pageSize
+
+$result = @(Get-ADSyncCSObject -ConnectorName "$connectorName" -StartIndex $startIndex -MaxResultCount $pageSize `
+    | select * -ExcludeProperty SerializedXml | foreach { $_ | ConvertTo-Json -Depth 6 -Compress })
+$result</value>
+  </data>
   <data name="Get-ADSyncCSObjectStrict" xml:space="preserve">
     <value>param (
     [Parameter(Mandatory=$true)]

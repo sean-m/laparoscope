@@ -133,6 +133,30 @@ namespace Laparoscope.RpcServer.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to param (
+        ///    $connectorName, 
+        ///    [ValidateRange(0, 99999)]
+        ///    $startPage, 
+        ///    [ValidateRange(1,250)]
+        ///    $pageSize=100
+        ///    )
+        ///
+        ///if (-not $connectorName) {
+        ///    throw &quot;Connector name not specified. `$connectorName is a required parameter.&quot;
+        ///}
+        ///
+        ///$startIndex = [Math]::Max(0, $startPage-1) * $pageSize
+        ///
+        ///$result = @(Get-ADSyncCSObject -ConnectorName &quot;$connectorName&quot; -StartIndex $startIndex -MaxResultCount $pageSize `
+        ///    | select * -ExcludeProperty SerializedXml | foreach { $_ | ConvertTo-Json -Depth  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Get_ADSyncCSObjectPage {
+            get {
+                return ResourceManager.GetString("Get-ADSyncCSObjectPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to param (
         ///    [Parameter(Mandatory=$true)]
         ///    $ConnectorName,
         ///    [Parameter(Mandatory=$true)]

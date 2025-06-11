@@ -168,6 +168,28 @@ namespace Laparoscope.RpcServer
             }
         }
 
+        public List<AadcCSObject> GetADSyncCSObjectPage(string ConnectorName, int StartPage, int PageSize=100)
+        {
+            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncCSObjectPage))
+            {
+                runner.Parameters.Add("connectorName", ConnectorName);
+                runner.Parameters.Add("startPage", StartPage);
+                runner.Parameters.Add("pageSize", PageSize);
+                runner.Run();
+                if (runner.HadErrors)
+                {
+                    var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
+                    throw err;
+                }
+                var resultList = runner.Results.CapturePSResult<String>().ToList();
+                var resultValues = resultList.Where(r => !String.IsNullOrEmpty(r["Output"])).Select(r => r["Output"])
+                    .Select(r => Newtonsoft.Json.JsonConvert.DeserializeObject<AadcCSObject>(r) as AadcCSObject);
+
+                var resultRecords = resultValues?.ToList();
+                return resultRecords;
+            }
+        }
+
         public DomainReachabilityStatus GetADSyncDomainReachabilityStatus(string ConnectorName)
         {
 

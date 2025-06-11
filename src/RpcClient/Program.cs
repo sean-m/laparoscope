@@ -21,7 +21,18 @@ Console.ReadLine();
 static async Task ActAsRpcClientAsync(Stream stream) {
     using var jsonRpc = JsonRpc.Attach(stream);
 
-    
+
+    {
+        Console.WriteLine("\nConnected. Sending request...");
+        string function = "GetADSyncCSObjectPage";
+        Console.WriteLine($">> {function}()");
+        var ConnectorName = "garage.mcardletech.com";
+        var result = await jsonRpc.InvokeAsync<List<AadcCSObject>>(function, ConnectorName.Trim(), 0, 10);
+        Console.WriteLine("Result:");
+        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+    }
+
+    return;
     {
         Console.WriteLine("\nConnected. Sending request...");
         string function = "GetADSyncCSObjectStrict";
@@ -32,7 +43,7 @@ static async Task ActAsRpcClientAsync(Stream stream) {
         Console.WriteLine("Result:");
         Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
     }
-    return;
+
     {
         Console.WriteLine("\nConnected. Sending request...");
         string function = "GetADSyncRunProfileResult";
