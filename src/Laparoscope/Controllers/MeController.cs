@@ -4,8 +4,10 @@ using Newtonsoft.Json;
 
 namespace Laparoscope.Controllers.Server
 {
-    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    [Authorize(AuthenticationSchemes = Global.AuthSchemes)]
     public class MeController : Controller
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {

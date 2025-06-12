@@ -12,7 +12,7 @@ namespace Laparoscope.Controllers.ServerApi
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy="HasRoles")]
+    [Authorize(AuthenticationSchemes = Global.AuthSchemes, Policy ="HasRoles")]
     public class SchedulerConnectorOverrideController : Controller
     {
         // GET: api/SchedulerConnectorOverride

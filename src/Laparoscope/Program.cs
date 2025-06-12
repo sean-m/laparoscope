@@ -1,19 +1,28 @@
+using Laparoscope.Utils.Authorization;
+using Laparoscope.Workers;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
 using Microsoft.Identity.Web.Resource;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
+using Microsoft.Identity.Web.UI;
 using Prometheus;
-using Laparoscope.Workers;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Laparoscope
 {
+    public static class Global {
+        public const string AuthSchemes = $"{JwtBearerDefaults.AuthenticationScheme},{OpenIdConnectDefaults.AuthenticationScheme}";
+    }
     public class Program
     {
         public static void Main(string[] args)
@@ -57,11 +66,10 @@ namespace Laparoscope
 #pragma warning restore ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
 
             // Logging
-            builder.Logging.AddConsole();
+            builder.Logging.AddConsole(options => builder.Configuration.Bind("Logging"));
 
             // Azure AD Auth OIDC
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAd");
             builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "AzureAd");
 
             // This hedges against the Scopes being configured improperly.
@@ -71,7 +79,12 @@ namespace Laparoscope
             // All API controllers except the Me controller utilize the policy,
             // so even if misconfigured, token issues can be troubleshot.
             builder.Services.AddAuthorization(options => {
-                options.AddPolicy("HasRoles", policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role));
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(
+                    OpenIdConnectDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme
+                    ).RequireAuthenticatedUser().Build();
+                options.AddPolicy("HasRoles", policyBuilder =>
+                    policyBuilder.RequireAssertion(context =>
+                        context.User.RoleClaims().Any()));
             });
 
             // Use forwarded headers for hosting behind a proxy

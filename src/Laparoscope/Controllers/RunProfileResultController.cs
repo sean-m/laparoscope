@@ -13,7 +13,7 @@ namespace Laparoscope.Controllers.ServerApi
     /// Unqualified GET returns sync history for the last hour. Results are filtered
     /// to connectors you have rights to view in this context.
     /// </summary>
-    [Authorize(Policy="HasRoles")]
+    [Authorize(AuthenticationSchemes = Global.AuthSchemes, Policy ="HasRoles")]
     public class RunProfileResultController : Controller
     {
         /// <summary>

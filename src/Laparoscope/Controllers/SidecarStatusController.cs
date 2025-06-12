@@ -11,7 +11,7 @@ namespace Laparoscope.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy="HasRoles")]
+    [Authorize(AuthenticationSchemes = Global.AuthSchemes, Policy ="HasRoles")]
     public class SidecarStatusController : ControllerBase
     {
         ILogger logger;

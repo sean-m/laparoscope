@@ -12,7 +12,7 @@ namespace Laparoscope.Controllers.Server
     /// <summary>
     /// Enables starting of Delta sync cycles no sooner than every 10 minutes.
     /// </summary>
-    [Authorize(Policy="HasRoles")]
+    [Authorize(AuthenticationSchemes = Global.AuthSchemes, Policy ="HasRoles")]
     public class StartSyncController : Controller
     {
         // GET: Connectors

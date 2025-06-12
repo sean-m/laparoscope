@@ -15,7 +15,7 @@ namespace Laparoscope.Controllers.Server
 {
     [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy="HasRoles")]
+    [Authorize(AuthenticationSchemes = Global.AuthSchemes, Policy ="HasRoles")]
     public class CSObjectPageController : Controller
     {
         /// <summary>

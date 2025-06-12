@@ -8,7 +8,7 @@ namespace Laparoscope.Controllers.Server
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy="HasRoles")]
+    [Authorize(AuthenticationSchemes = Global.AuthSchemes, Policy ="HasRoles")]
     public class AADCompanyFeatureController : Controller
     {
         /// <summary>
