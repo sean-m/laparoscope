@@ -27,7 +27,7 @@ namespace Laparoscope.Controllers.Server
         /// </summary>
         /// <param name="Name">Name of a valid AADC connector.</param>
         [HttpGet]
-        public async Task<dynamic> GetAsync(string Name)
+        public async Task<Dictionary<string,int>> GetAsync(string Name)
         {
             if (String.IsNullOrEmpty(Name))
             {
@@ -49,7 +49,7 @@ namespace Laparoscope.Controllers.Server
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncConnectorStatistics";
-                    var result = await jsonRpc.InvokeAsync<dynamic>(function, Name.Trim());
+                    var result = await jsonRpc.InvokeAsync<Dictionary<string,int>>(function, Name.Trim());
                     return result;
                 }
             }

@@ -68,7 +68,7 @@ namespace Laparoscope.RpcServer
             }
         }
 
-        public dynamic GetADSyncConnectorStatistics(string Name)
+        public Dictionary<string,int> GetADSyncConnectorStatistics(string Name)
         {
             // Run PowerShell command to get AADC connector configurations
             using (var runner = new SimpleScriptRunner("param($ConnectorName) Get-ADSyncConnectorStatistics -ConnectorName $ConnectorName"))
@@ -80,7 +80,7 @@ namespace Laparoscope.RpcServer
                     var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
                     throw err;
                 }
-                var result = runner.Results.ToDict().FirstOrDefault();
+                var result = runner.Results.ToDict().FirstOrDefault()?.ToDictionary(p => p.Key, p => Convert.ToInt32(p.Value)); ;
                 return result;
             }
         }
