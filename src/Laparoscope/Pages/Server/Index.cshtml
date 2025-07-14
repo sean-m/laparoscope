@@ -63,7 +63,7 @@
                                     id="syncPauseBtn" type="button" v-on:click="pauseResumeSync" style="margin-left:0.5em; margin-bottom:12px;">
                                 {{ scheduler.SchedulerSuspended ? 'Resume' : 'Pause' }}
                             </button>
-                            <div class="p-2" style="float:right">{{ scheduler.SchedulerSuspended ? 'Paused' : 'Running' }}</div>
+                                <div class="p-2" style="float:right">{{ scheduler.SchedulerSuspended ? 'Scheduler Paused' : 'Scheduler Enabled' }}</div>
                         </div>
                         }
 
