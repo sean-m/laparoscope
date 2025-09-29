@@ -21,7 +21,7 @@ using System.Text.Json;
 namespace Laparoscope
 {
     public static class Global {
-        public const string AuthSchemes = $"{JwtBearerDefaults.AuthenticationScheme},{OpenIdConnectDefaults.AuthenticationScheme}";
+        public const string AuthSchemes = $"{OpenIdConnectDefaults.AuthenticationScheme},{JwtBearerDefaults.AuthenticationScheme}";
     }
     public class Program
     {
@@ -69,8 +69,8 @@ namespace Laparoscope
             builder.Logging.AddConsole(options => builder.Configuration.Bind("Logging"));
 
             // Azure AD Auth OIDC
-            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAd");
             builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "AzureAd");
+            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAd");
 
             // This hedges against the Scopes being configured improperly.
             // When Scopes only specifies access_as_user, authentication works but
@@ -82,6 +82,7 @@ namespace Laparoscope
                 options.DefaultPolicy = new AuthorizationPolicyBuilder(
                     OpenIdConnectDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme
                     ).RequireAuthenticatedUser().Build();
+
                 options.AddPolicy("HasRoles", policyBuilder =>
                     policyBuilder.RequireAssertion(context =>
                         context.User.RoleClaims().Any()));

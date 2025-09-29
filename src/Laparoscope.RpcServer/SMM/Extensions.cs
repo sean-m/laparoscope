@@ -9,6 +9,24 @@ using System.Threading;
 
 namespace SMM.Helper
 {
+
+    /// <summary>
+    /// A simple converter from Guid to string using Guid.ToString().
+    /// </summary>
+    public class GuidToStringConverter : IConverter<Guid, string> {
+        public string Convert(Guid value)
+        {
+            return value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Interface for converting one type to another.
+    /// </summary>
+    public interface IConverter<TSource, TDestination> {
+        TDestination Convert(TSource value);
+    }
+
     public static class Extensions
     {
         #region PSObjectHandling
@@ -53,6 +71,7 @@ namespace SMM.Helper
             return result;
         }
 
+
         /// <summary>
         /// Attempts to map properties from the PSObject to properties from the
         /// desired result type using a case insensitive property name match.
@@ -67,7 +86,7 @@ namespace SMM.Helper
             var asType = typeof(T);
 
             bool captureSuccess = true;
-
+            Type lastSeenType;
             try {
                 if (typeof(T) == typeof(bool))
                 {
@@ -84,6 +103,7 @@ namespace SMM.Helper
                     
                     if (psprop != null)
                     {
+                        lastSeenType = psprop.Value?.GetType();
                         if (psprop.Value is PSObject psobj)
                         {
                             if (p.PropertyType == typeof(T))
@@ -94,7 +114,15 @@ namespace SMM.Helper
                         }
                         else
                         {
-                            p.SetValue(result, psprop.Value);
+                            object value = psprop.Value;
+                            if (psprop.Value is Guid guid)
+                            {
+                                var guidstring = guid.ToString();
+                                p.SetValue(result, guidstring);
+                                continue;
+                            }
+
+                            p.SetValue(result, value);
                         }
                     }
                 }

@@ -77,11 +77,19 @@ namespace McAuthorization
                         // is employed to chose the property name that is the closest match
                         // to the wildcard. Without that, property selection depends on the order
                         // they're produced through reflection.
-                        var testValue = HasWildcard.IsMatch(rule.ModelProperty)
-                            ? connType.GetProperties().Where(p => p.Name.Like(rule.ModelProperty))
-                                ?.Closest(rule.ModelProperty)?.GetValue(Model).ToString()
-                            : connType.GetProperties().FirstOrDefault(p => p.Name.Like(rule.ModelProperty))
-                                ?.GetValue(Model).ToString();
+                        string testValue = string.Empty;
+                        var typeProperties = connType.GetProperties().Where(p => p.Name.Like(rule.ModelProperty));
+                        PropertyInfo pInfo;
+                        if (HasWildcard.IsMatch(rule.ModelProperty))
+                        {
+                            pInfo = typeProperties
+                                    ?.Closest(rule.ModelProperty);
+                        }
+                        else
+                        {
+                            pInfo = typeProperties.FirstOrDefault(p => p.Name.Like(rule.ModelProperty));
+                        }
+                        testValue = pInfo?.GetValue(Model)?.ToString();
 
                         // bail out if there's no property with that name on the value
                         if (testValue == null) return false;

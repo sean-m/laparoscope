@@ -293,7 +293,7 @@ namespace Laparoscope.RpcServer
             }
         }
 
-        public IEnumerable<Dictionary<string, object>> GetADSyncRunProfileLastHour(Guid? RunHistoryId = null, Guid? ConnectorId = null, int NumberRequested = 0, bool RunStepDetails = false)
+        public IEnumerable<RunHistoryEntry> GetADSyncRunProfileLastHour(Guid? RunHistoryId = null, Guid? ConnectorId = null, int NumberRequested = 0, bool RunStepDetails = false)
         {
             // Run PowerShell command to get AADC connector configurations
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncRunProfileLastHour))
@@ -318,8 +318,11 @@ namespace Laparoscope.RpcServer
                 // box type for PSObject. There is no real type safety but it serializes
                 // to JSON rather well which is the goal for a web api and allows
                 // for PowerShell models to change without requiring changes to this application.
-                var resultValues = runner.Results.ToDict()?.ToList();
-                return resultValues;
+                var resultValues = runner.Results.CapturePSResult<RunHistoryEntry>();
+                var casted = resultValues
+                    .Where(x => x is RunHistoryEntry)
+                    .Select(x => x as RunHistoryEntry);
+                return casted;
             }
         }
 
@@ -515,7 +518,7 @@ Verb             : Get
 Noun             : ADSyncRunProfileResult
 
          * */
-        public IEnumerable<RunHistory> GetADSyncRunProfileResult()
+        public IEnumerable<RunHistoryEntry> GetADSyncRunProfileResult()
         {
             // Run PowerShell command to get AADC sync rules
             using (var runner = new SimpleScriptRunner(@"
@@ -531,9 +534,9 @@ Get-ADSyncRunProfileResult | select -First 10
                     var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
                     throw err;
                 }
-                var resultValues = runner.Results.CapturePSResult<RunHistory>()
-                    .Where(x => x is RunHistory)
-                    .Cast<RunHistory>();
+                var resultValues = runner.Results.CapturePSResult<RunHistoryEntry>()
+                    .Where(x => x is RunHistoryEntry)
+                    .Cast<RunHistoryEntry>();
 
                 if (resultValues != null)
                 {
@@ -544,12 +547,12 @@ Get-ADSyncRunProfileResult | select -First 10
             return null;
         }
 
-        public IEnumerable<RunStepResult> GetADSyncRunStepResult(Guid RunHistoryId)
+        public IEnumerable<RunHistoryEntry> GetADSyncRunStepResult(Guid RunHistoryId)
         {
             return GetADSyncRunStepResult(RunHistoryId, null, null);
         }
 
-        public IEnumerable<RunStepResult> GetADSyncRunStepResult(Guid? RunHistoryId, int? StepNumber, bool? First)
+        public IEnumerable<RunHistoryEntry> GetADSyncRunStepResult(Guid? RunHistoryId, int? StepNumber, bool? First)
         {
             // Run PowerShell command to get AADC sync rules
             using (var runner = new SimpleScriptRunner(@"
@@ -592,9 +595,9 @@ Get-ADSyncRunProfileResult @params
                     var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
                     throw err;
                 }
-                var resultValues = runner.Results.CapturePSResult<RunStepResult>()
-                    .Where(x => x is RunStepResult)
-                    .Cast<RunStepResult>();
+                var resultValues = runner.Results.CapturePSResult<RunHistoryEntry>()
+                    .Where(x => x is RunHistoryEntry)
+                    .Cast<RunHistoryEntry>();
 
                 if (resultValues != null)
                 {

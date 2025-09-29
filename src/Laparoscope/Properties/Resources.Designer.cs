@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Laparoscope.UnitTests.Properties {
+namespace Laparoscope.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Laparoscope.UnitTests.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Laparoscope.UnitTests.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Laparoscope.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,66 +57,6 @@ namespace Laparoscope.UnitTests.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to param ($FromOutside)
-        ///
-        ///function TestingParameterValidation {
-        ///    param ( 
-        ///        [ValidateScript({$_ -in $validationList})]
-        ///        $TestInput
-        ///    )
-        ///
-        ///    $TestInput
-        ///}
-        ///
-        ///TestingParameterValidation -TestInput $FromOutside.
-        /// </summary>
-        internal static string PoshValidateParameterScript {
-            get {
-                return ResourceManager.GetString("PoshValidateParameterScript", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [
-        ///	{
-        ///		&quot;Id&quot;: &quot;424e5cfd-5139-417c-9300-79aa0fabc3c1&quot;,
-        ///		&quot;Role&quot;: &quot;Admin:Garage&quot;,
-        ///		&quot;Context&quot;: &quot;Connector&quot;,
-        ///		&quot;ClaimProperty&quot;: &quot;&quot;,
-        ///		&quot;ClaimValue&quot;: &quot;&quot;,
-        ///		&quot;ModelProperty&quot;: &quot;Foo&quot;,
-        ///		&quot;ModelValue&quot;: &quot;Bar&quot;,
-        ///		&quot;ModelValues&quot;: null
-        ///	},
-        ///	{
-        ///		&quot;Id&quot;: &quot;2356095b-9462-465b-af8b-1edaeeb47455&quot;,
-        ///		&quot;Role&quot;: &quot;Admin:Garage&quot;,
-        ///		&quot;Context&quot;: &quot;RunStepResult&quot;,
-        ///		&quot;ClaimProperty&quot;: null,
-        ///		&quot;ClaimValue&quot;: null,
-        ///		&quot;ModelProperty&quot;: &quot;ConnectorName&quot;,
-        ///		&quot;ModelValue&quot;: &quot;garage.mcardletech.com&quot;,
-        ///		&quot;ModelValues&quot;: null
-        ///	}
-        ///].
-        /// </summary>
-        internal static string TestRules {
-            get {
-                return ResourceManager.GetString("TestRules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] TestRunHistory {
-            get {
-                object obj = ResourceManager.GetObject("TestRunHistory", resourceCulture);
-                return ((byte[])(obj));
             }
         }
     }

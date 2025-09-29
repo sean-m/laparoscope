@@ -53,7 +53,7 @@ static async Task ActAsRpcClientAsync(Stream stream) {
         foreach (var r in result)
         {
             Console.WriteLine($"Connector: {r.ConnectorName}  RunHistoryId: {r.RunHistoryId}  Result: {r.Result}");
-            var steps = await jsonRpc.InvokeAsync<IEnumerable<RunStepResult>>("GetADSyncRunStepResult", r.RunHistoryId);
+            var steps = await jsonRpc.InvokeAsync<IEnumerable<RunHistoryEntry>>("GetADSyncRunStepResult", r.RunHistoryId);
             Console.WriteLine($"Run step count: {steps?.Count().ToString() ?? "NULL"}");
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(steps) + Environment.NewLine);
         }

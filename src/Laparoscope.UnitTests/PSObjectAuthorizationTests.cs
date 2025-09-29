@@ -53,7 +53,7 @@ namespace Laparoscope.UnitTests
             Assert.That(testModels.Count, Is.Not.Zero);
 
             // The test rule should filter out two of the records
-            var matches = testModels.Where(x => Filter.IsAuthorized(x, "RunProfileResult", testRoles))?.ToList();
+            var matches = testModels.Where(x => Filter.IsAuthorized(x, "RunStepResult", testRoles))?.ToList();
 
             Assert.That(matches, Is.Not.Null);
             Assert.That(matches.Count, Is.Not.Zero);

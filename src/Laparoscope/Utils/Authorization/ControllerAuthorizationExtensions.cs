@@ -57,6 +57,26 @@ namespace Laparoscope.Utils.Authorization
         }
 
         /// <summary>
+        /// Given a controller, filter a collection of objects that the principal can access in that context.
+        /// Simply a helper function so filtering a collection from within a controller can be simplified.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Controller"></param>
+        /// <param name="Collection"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> WhereAuthorized<T>(this Controller Controller, IEnumerable<T> Collection, string ContextName)
+        {
+            var context = Controller.ControllerName();
+            var roles = (Controller?.Request?.HttpContext.User)?.RoleClaims();
+            if (roles != null)
+            {
+                // TODO LOGME (Sean) log null role set
+            }
+
+            return Collection.Where(x => Filter.IsAuthorized<T>(x, ContextName, roles));
+        }
+
+        /// <summary>
         /// IsAuthorized extension method for evaluating rules against a single object
         /// from within a controller method.
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using Laparoscope.Utils.Authorization;
+using LaparoscopeShared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Threading;
@@ -43,7 +44,7 @@ namespace Laparoscope.Controllers.ServerApi
         ///   RunStepResults    : 
         /// </returns>
         [HttpGet]
-        public async Task<IEnumerable<Dictionary<string, object>>> GetAsync(Guid? RunHistoryId=null, Guid? ConnectorId=null, int NumberRequested=0, bool RunStepDetails=false)
+        public async Task<IEnumerable<RunHistoryEntry>> GetAsync(Guid? RunHistoryId=null, Guid? ConnectorId=null, int NumberRequested=0, bool RunStepDetails=false)
         {
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
             {
@@ -51,8 +52,8 @@ namespace Laparoscope.Controllers.ServerApi
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncRunProfileLastHour";
-                    var result = await jsonRpc.InvokeAsync<IEnumerable<Dictionary<string, object>>>(function, RunHistoryId, ConnectorId, NumberRequested, RunStepDetails);
-                    result = this.WhereAuthorized(result);
+                    var result = await jsonRpc.InvokeAsync<IEnumerable<RunHistoryEntry>>(function, RunHistoryId, ConnectorId, NumberRequested, RunStepDetails);
+                    result = this.WhereAuthorized(result, "CSObject");
                     return result;
                 }
             }
