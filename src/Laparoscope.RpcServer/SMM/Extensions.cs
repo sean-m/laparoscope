@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Cim;
+using Microsoft.VisualBasic.CompilerServices;
+using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,8 +12,7 @@ using System.Reflection;
 using System.Threading;
 
 namespace SMM.Helper
-{
-
+{    
     /// <summary>
     /// A simple converter from Guid to string using Guid.ToString().
     /// </summary>
@@ -29,6 +32,20 @@ namespace SMM.Helper
 
     public static class Extensions
     {
+        /// <summary>
+        /// VisualBasic's string comparison with wildcard support.
+        /// </summary>
+        /// <param name="Base">The value to check.</param>
+        /// <param name="Pattern">The pattern compared to 'Base'. Supports wildcards
+        /// and other niceties. More info: https://docs.microsoft.com/en-us/office/vba/Language/Reference/User-Interface-Help/wildcard-characters-used-in-string-comparisons.
+        /// </param>
+        /// <returns></returns>
+        public static bool Like(this string Base, string Pattern)
+        {
+            return LikeOperator.LikeString(Base, Pattern, Microsoft.VisualBasic.CompareMethod.Text);
+        }
+
+
         #region PSObjectHandling
         /// <summary>
         /// Naivly unboxes a single PSObject into a Dictionary(string, object).
@@ -86,7 +103,14 @@ namespace SMM.Helper
             var asType = typeof(T);
 
             bool captureSuccess = true;
-            Type lastSeenType;
+
+            // These are to help figure out issues with casting types by setting
+            // a breakpoint inside the catch block below and inspecting these variables
+            Type lastSeenSourceType;
+            string lastSeenTypeName;
+            PropertyInfo destinationType;
+            string lastPropertyName = string.Empty;
+            
             try {
                 if (typeof(T) == typeof(bool))
                 {
@@ -99,12 +123,33 @@ namespace SMM.Helper
                 var props = hintType.DeclaredProperties;
                 foreach (var p in props)
                 {
+                    if (string.IsNullOrEmpty(p.Name)) continue;
+
+                    lastPropertyName = p.Name;
+                    destinationType = p;
                     var psprop = input.Properties.FirstOrDefault(x => x.Name.Equals(p.Name, StringComparison.CurrentCultureIgnoreCase));
-                    
+                    var foo = false;
+                    foo = lastPropertyName.Equals("SourceAddress");
+
                     if (psprop != null)
                     {
-                        lastSeenType = psprop.Value?.GetType();
-                        if (psprop.Value is PSObject psobj)
+                        lastSeenTypeName = psprop.TypeNameOfValue;
+                        lastSeenSourceType = psprop.MemberType.GetType();
+                        if (lastSeenSourceType?.Name == "CimInstance" && lastSeenTypeName.Like("System.String")) {
+                            string strVal = psprop.Value.ToString();
+                            p.SetValue(result, strVal);
+                        }
+                        //else if (lastSeenSourceType?.Name.Like("*Address") ?? false && lastSeenTypeName.Like("System.String"))
+                        //{
+                        //    string strVal = psprop.Value as String;
+                        //    p.SetValue(result, strVal);
+                        //}
+                        else if (lastSeenTypeName.Like("System.String"))
+                        {
+                            string strVal = (string)psprop.Value;
+                            p.SetValue(result, strVal);
+                        }
+                        else if (psprop.Value is PSObject psobj)
                         {
                             if (p.PropertyType == typeof(T))
                             {
@@ -119,12 +164,14 @@ namespace SMM.Helper
                             {
                                 var guidstring = guid.ToString();
                                 p.SetValue(result, guidstring);
+                                lastSeenSourceType = typeof(FinishedLoop);
                                 continue;
                             }
 
                             p.SetValue(result, value);
                         }
                     }
+                    lastSeenSourceType = typeof(FinishedLoop);
                 }
             }
             catch (Exception e)
@@ -140,6 +187,8 @@ namespace SMM.Helper
             return result;
         }
 
+        class FinishedLoop { }
+        
         /// <summary>
         /// Loop through the collection and capture the PSObjects as the desired type T.
         /// If the mapping fails, results are returned as a Dictionary(string, object) so

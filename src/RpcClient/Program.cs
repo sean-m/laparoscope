@@ -48,7 +48,7 @@ static async Task ActAsRpcClientAsync(Stream stream) {
         Console.WriteLine("\nConnected. Sending request...");
         string function = "GetADSyncRunProfileResult";
         Console.WriteLine($">> {function}()");
-        var result = await jsonRpc.InvokeAsync<IEnumerable<RunHistory>>(function);
+        var result = await jsonRpc.InvokeAsync<IEnumerable<RunHistoryEntry>>(function);
         Console.WriteLine("Result:");
         foreach (var r in result)
         {
