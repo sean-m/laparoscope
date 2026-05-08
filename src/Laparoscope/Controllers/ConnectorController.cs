@@ -35,21 +35,8 @@ namespace Laparoscope.Controllers.Server
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     var result = await jsonRpc.InvokeAsync<AadcConnector[]>("GetADSyncConnector", Name);
-
                     var resultValues = this.WhereAuthorized<AadcConnector>(result);
 
-                    // This is just plain horrible but it's the only way I could thing to get it working
-                    // If connector.Partitions only has a single value, PowerShell will box the property
-                    // as a single value even though it's a collection. It's trying to do us a favor in
-                    // a terrible way.
-                    foreach (var r in resultValues)
-                    {
-                        if (r.Partitions != null) 
-                            r.Partitions = JObjectToTypeOrCollectionOfType<Partition>(r.Partitions);
-                        
-                        if (r.AnchorConstructionSettings != null)
-                            r.AnchorConstructionSettings = JObjectToTypeOrCollectionOfType<AnchorConstructionSetting>(r.AnchorConstructionSettings);
-                    }
                     return resultValues;
                 }
             }

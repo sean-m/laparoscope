@@ -53,15 +53,15 @@ namespace Laparoscope.RpcServer
                     throw err;
                 }
                 // Map PowerShell objects to models, C# classes with matching property names.
-                // All results should be AadcConnector but CapturePSResult can return as
+                // All results should be Connector but CapturePSResult can return as
                 // type: dynamic if the PowerShell object doesn't successfully map to the
                 // desired model type. For those that are the correct model, we pass them
                 // to the IsAuthorized method which loads and runs any rules for this connector
                 // who match the requestors roles.
                 var dynResults = runner.Results.CapturePSResult<AadcConnector>();
                 var resultValues = dynResults
-                    .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as AadcConnector.
-                    .Select(x => x as AadcConnector)    // Take as AadcConnector so typed call to WhereAuthorized avoids GetType() call.
+                    .Where(x => x is AadcConnector)     // Filter out results that couldn't be captured as Connector.
+                    .Select(x => x as AadcConnector)    // Take as Connector so typed call to WhereAuthorized avoids GetType() call.
                     .ToArray();
 
                 return resultValues;

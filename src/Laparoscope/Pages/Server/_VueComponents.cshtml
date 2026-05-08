@@ -125,7 +125,7 @@
                                 connector's configuration so it's rendered as a nested object table.
                             -->
                             <td v-else-if="key == 'Partitions'">
-                                <object-table :record="value" :expand="['ConnectorPartitionScope']" :list="['ObjectClasses','ContainerInclusionList','ContainerExclusionList']"></object-table>
+                                <object-table :record="value" :expand="ConnectorPartitionScope" :list="['ObjectClasses','ContainerInclusionList','ContainerExclusionList']"></object-table>
                             </td>
                             <!--
                                 AnchorConstructionSettings show a list of anchor attributes by object
