@@ -93,102 +93,29 @@ namespace SMM.Helper
         /// Attempts to map properties from the PSObject to properties from the
         /// desired result type using a case insensitive property name match.
         /// If successful, the dynamic result will be of the desired type.
+        /// This method now delegates to TypeBinder for cleaner type handling.
         /// </summary>
         /// <typeparam name="T">The type to map to.</typeparam>
         /// <param name="input">The PSObject we're mapping values from.</param>
         /// <returns></returns>
         public static dynamic CapturePSResult<T>(this PSObject input)
         {
-            dynamic result = default(dynamic);
-            var asType = typeof(T);
+            if (input == null) return default(T);
 
-            bool captureSuccess = true;
-
-            // These are to help figure out issues with casting types by setting
-            // a breakpoint inside the catch block below and inspecting these variables
-            Type lastSeenSourceType;
-            string lastSeenTypeName;
-            PropertyInfo destinationType;
-            string lastPropertyName = string.Empty;
-            
-            try {
-                if (typeof(T) == typeof(bool))
-                {
-                    result = Convert.ToBoolean(input.BaseObject);
-                    return result;
-                }
-
-                result = Activator.CreateInstance(asType);
-                var hintType = asType.GetTypeInfo();
-                var props = hintType.DeclaredProperties;
-                foreach (var p in props)
-                {
-                    if (string.IsNullOrEmpty(p.Name)) continue;
-
-                    lastPropertyName = p.Name;
-                    destinationType = p;
-                    var psprop = input.Properties.FirstOrDefault(x => x.Name.Equals(p.Name, StringComparison.CurrentCultureIgnoreCase));
-                    var foo = false;
-                    foo = lastPropertyName.Equals("SourceAddress");
-
-                    if (psprop != null)
-                    {
-                        lastSeenTypeName = psprop.TypeNameOfValue;
-                        lastSeenSourceType = psprop.MemberType.GetType();
-                        if (lastSeenSourceType?.Name == "CimInstance" && lastSeenTypeName.Like("System.String")) {
-                            string strVal = psprop.Value.ToString();
-                            p.SetValue(result, strVal);
-                        }
-                        //else if (lastSeenSourceType?.Name.Like("*Address") ?? false && lastSeenTypeName.Like("System.String"))
-                        //{
-                        //    string strVal = psprop.Value as String;
-                        //    p.SetValue(result, strVal);
-                        //}
-                        else if (lastSeenTypeName.Like("System.String"))
-                        {
-                            string strVal = (string)psprop.Value;
-                            p.SetValue(result, strVal);
-                        }
-                        else if (psprop.Value is PSObject psobj)
-                        {
-                            if (p.PropertyType == typeof(T))
-                            {
-                                p.SetValue(result, psobj.CapturePSResult<T>());
-                            }
-                            else { p.SetValue(result, psobj.ToDict()); }
-                        }
-                        else
-                        {
-                            object value = psprop.Value;
-                            if (psprop.Value is Guid guid)
-                            {
-                                var guidstring = guid.ToString();
-                                p.SetValue(result, guidstring);
-                                lastSeenSourceType = typeof(FinishedLoop);
-                                continue;
-                            }
-
-                            p.SetValue(result, value);
-                        }
-                    }
-                    lastSeenSourceType = typeof(FinishedLoop);
-                }
+            try
+            {
+                // Use TypeBinder for clean, type-safe conversion
+                var result = TypeBinder.CopyValue<T>(input);
+                return result;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.GetAllMessages());
-                captureSuccess = false;
+                // Fall back to returning a Dictionary<string, object>
+                return input.ToDict();
             }
-
-            // Capturing the PSObject as the desired type failed.
-            // Fall back to returning a Dictionary<string, object>.
-            if (!captureSuccess) result = input.ToDict();
-
-            return result;
         }
 
-        class FinishedLoop { }
-        
         /// <summary>
         /// Loop through the collection and capture the PSObjects as the desired type T.
         /// If the mapping fails, results are returned as a Dictionary(string, object) so

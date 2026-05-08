@@ -1,11 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 
-namespace LaparoscopeShared.Models {
-
-    public class RunHistoryEntry {
+namespace LaparoscopeShared.Models.RunHistory
+{
+    /// <summary>
+    /// Represents the result of a sync run profile execution.
+    /// Maps to Microsoft.IdentityManagement.PowerShell.ObjectModel.RunProfileResult
+    /// </summary>
+    public class RunProfileResult
+    {
         public string RunHistoryId { get; set; }
         public string ConnectorId { get; set; }
         public string ConnectorName { get; set; }
@@ -19,7 +22,6 @@ namespace LaparoscopeShared.Models {
         public int TotalSteps { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-
         public IEnumerable<RunStepResult> RunStepResults { get; set; }
     }
 
@@ -29,8 +31,6 @@ namespace LaparoscopeShared.Models {
     /// </summary>
     public class RunStepResult
     {
-        public RunStepResult() { }
-
         public string RunHistoryId { get; set; }
         public string StepHistoryId { get; set; }
         public int StepNumber { get; set; }
@@ -93,6 +93,7 @@ namespace LaparoscopeShared.Models {
 
     /// <summary>
     /// Represents connector discovery errors for a run step.
+    /// Maps to Microsoft.IdentityManagement.PowerShell.ObjectModel.RunStepResultConnectorDiscoveryErrors
     /// </summary>
     public class RunStepResultConnectorDiscoveryErrors
     {
@@ -103,6 +104,7 @@ namespace LaparoscopeShared.Models {
 
     /// <summary>
     /// Represents sync errors for a run step.
+    /// Maps to Microsoft.IdentityManagement.PowerShell.ObjectModel.RunStepResultSyncErrors
     /// </summary>
     public class RunStepResultSyncErrors
     {
@@ -114,6 +116,7 @@ namespace LaparoscopeShared.Models {
 
     /// <summary>
     /// Represents metaverse retry errors for a run step.
+    /// Maps to Microsoft.IdentityManagement.PowerShell.ObjectModel.RunStepResultMvRetryErrors
     /// </summary>
     public class RunStepResultMvRetryErrors
     {
@@ -124,6 +127,7 @@ namespace LaparoscopeShared.Models {
 
     /// <summary>
     /// Represents a sync error object.
+    /// Maps to Microsoft.IdentityManagement.PowerShell.ObjectModel.RunStepErrorObject
     /// </summary>
     public class RunStepErrorObject
     {
@@ -142,104 +146,4 @@ namespace LaparoscopeShared.Models {
         public string ExtensionErrorInfo { get; set; }
         public string CdError { get; set; }
     }
-
-    // === OLD CONNECTOR CONFIGURATION MODELS (kept for backward compatibility) ===
-    // These were incorrectly named RunStepResult but are actually connector configuration models.
-
-    public class ConfigurationParameter {
-        public string Name { get; set; }
-        public int InputType { get; set; }
-        public int Scope { get; set; }
-        public string Description { get; set; }
-        public string RegexValidationPattern { get; set; }
-        public string DefaultValue { get; set; }
-        public string Value { get; set; }
-        public bool Extensible { get; set; }
-        public int PageNumber { get; set; }
-        public bool Intrinsic { get; set; }
-        public int DataType { get; set; }
-    }
-
-    public class Componentprovisioningmappings {
-    }
-
-    public class Schema {
-        public string Identifier { get; set; }
-        public string[] ObjectTypes { get; set; }
-        public string[] AttributeTypes { get; set; }
-        public bool IsConnectorSchema { get; set; }
-        public string[] IntrinsicAttributes { get; set; }
-        public object[] AllDNComponents { get; set; }
-    }
-
-    public class Extensionconfiguration {
-        public int ExportType { get; set; }
-        public long CapabilityBits { get; set; }
-        public bool IsImportFileBased { get; set; }
-        public bool IsExportFileBased { get; set; }
-        public bool IsImportEnabled { get; set; }
-        public bool IsExportEnabled { get; set; }
-        public string ExtensionFileName { get; set; }
-        public int CachedImportDefaultPageSize { get; set; }
-        public int CachedExportDefaultPageSize { get; set; }
-        public int CachedImportMaxPageSize { get; set; }
-        public int CachedExportMaxPageSize { get; set; }
-        public bool PartitionDiscoveryEnabled { get; set; }
-        public bool SchemaDiscoveryEnabled { get; set; }
-        public bool HierarchyDiscoveryEnabled { get; set; }
-        public bool PasswordManagementEnabled { get; set; }
-        public Assemblyversion AssemblyVersion { get; set; }
-    }
-
-    public class Assemblyversion {
-        public int Major { get; set; }
-        public int Minor { get; set; }
-        public int Build { get; set; }
-        public int Revision { get; set; }
-        public int MajorRevision { get; set; }
-        public int MinorRevision { get; set; }
-    }
-
-    public class Partition {
-        public string Identifier { get; set; }
-        public string DN { get; set; }
-        public int Version { get; set; }
-        public DateTime CreationTime { get; set; }
-        public DateTime LastModificationTime { get; set; }
-        public bool Selected { get; set; }
-        public string ConnectorPartitionScope { get; set; }
-        public string Name { get; set; }
-        public string Parameters { get; set; }
-        public string PreferredDCs { get; set; }
-        public bool IsDomain { get; set; }
-    }
-
-    public class Runprofile {
-        public string Identifier { get; set; }
-        public string Name { get; set; }
-        public string RunSteps { get; set; }
-        public string ConnectorIdentifier { get; set; }
-        public int Version { get; set; }
-    }
-
-    public class Allparameterdefinition {
-        public string Name { get; set; }
-        public int InputType { get; set; }
-        public int Scope { get; set; }
-        public string Description { get; set; }
-        public string RegexValidationPattern { get; set; }
-        public string DefaultValue { get; set; }
-        public object Value { get; set; }
-        public bool Extensible { get; set; }
-        public int PageNumber { get; set; }
-        public bool Intrinsic { get; set; }
-        public int DataType { get; set; }
-    }
-
-    public class Anchorconstructionsetting {
-        public string ObjectType { get; set; }
-        public string Attributes { get; set; }
-        public bool Locked { get; set; }
-    }
-
 }

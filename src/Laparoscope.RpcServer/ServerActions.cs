@@ -314,6 +314,13 @@ namespace Laparoscope.RpcServer
                     var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
                     throw err;
                 }
+
+                var rawResults = runner.Results.ToList();
+                foreach (var rawResult in rawResults)
+                {
+                    logger?.LogInformation($"Raw Result: {rawResult}");
+                }
+
                 // Map PowerShell objects to Dictionary<string,object> as a generic
                 // box type for PSObject. There is no real type safety but it serializes
                 // to JSON rather well which is the goal for a web api and allows

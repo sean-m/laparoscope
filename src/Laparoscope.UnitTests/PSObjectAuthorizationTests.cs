@@ -14,6 +14,9 @@ namespace Laparoscope.UnitTests
     {
         IEnumerable<FooTest> result;
         string[] testRoles = new string[] { "Admin:Garage" };
+        
+        string testModelText = string.Empty;
+        List<Dictionary<string, object>> testModels = new List<Dictionary<string, object>>();
 
         [SetUp]
         public void Setup()
@@ -23,6 +26,10 @@ namespace Laparoscope.UnitTests
             var ruleText = Resources.TestRules;
             var rules = JsonConvert.DeserializeObject<List<RoleFilterModel>>(ruleText);
             foreach (var rule in rules) RegisteredRoleControllerRules.RegisterRoleControllerModel(rule);
+
+            // Load some json as an anologue to a .ToDict() result capture
+            testModelText = Encoding.ASCII.GetString(Resources.TestRunHistory);
+            testModels = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(testModelText);
 
             var runner = new SMM.Automation.SimpleScriptRunner(script);
             runner.Run();
@@ -46,18 +53,31 @@ namespace Laparoscope.UnitTests
         [Test]
         public void TestFilteringHashtableList()
         {
-            // Load some json as an anologue to a .ToDict() result capture
-            var testModelText = Encoding.ASCII.GetString(Resources.TestRunHistory);
-            var testModels = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(testModelText);
-
             Assert.That(testModels.Count, Is.Not.Zero);
 
-            // The test rule should filter out two of the records
             var matches = testModels.Where(x => Filter.IsAuthorized(x, "RunStepResult", testRoles))?.ToList();
+            var excluded = testModels.Except(matches).ToList();
 
             Assert.That(matches, Is.Not.Null);
             Assert.That(matches.Count, Is.Not.Zero);
             Assert.That(testModels.Count, Is.Not.EqualTo(matches.Count));
+
+            // Verify matched records contain the expected property value the rule allows
+            Assert.That(matches, Has.All.Matches<Dictionary<string, object>>(
+                m => Filter.IsAuthorized(m, "RunStepResult", testRoles)),
+                "Every matched record should pass authorization");
+
+            // Verify excluded records genuinely fail authorization
+            Assert.That(excluded, Has.All.Matches<Dictionary<string, object>>(
+                m => !Filter.IsAuthorized(m, "RunStepResult", testRoles)),
+                "Every excluded record should fail authorization");
+
+            // Verify excluded records contain the specific value the rule disallows.
+            // Replace "PropertyName" and "excludedValue" with the actual rule property
+            // and value from your TestRules.json that should be filtered out.
+            Assert.That(excluded, Has.All.Matches<Dictionary<string, object>>(
+                m => m.ContainsKey("ConnectorName") && m["ConnectorName"]?.ToString() != "garage.mcardletech.com"),
+                "Excluded records should be the ones with the value the rule denies");
         }
     }
 }

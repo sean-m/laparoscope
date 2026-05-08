@@ -110,7 +110,7 @@ namespace Laparoscope.UnitTests
             using (var runner = new SimpleScriptRunner("1..5 | foreach { Write-Output \"$_\" }"))
             {
                 runner.Run();
-                resultList.AddRange(runner.Results.CapturePSResult<string>().Select(x => x["Output"]));
+                resultList.AddRange(runner.Results.CapturePSResult<string>());
                 Assert.That(runner.Results.Count, Is.EqualTo(5));
             }
             System.Threading.Thread.Sleep(500);
