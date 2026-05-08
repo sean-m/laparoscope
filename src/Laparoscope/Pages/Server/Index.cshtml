@@ -29,9 +29,19 @@
                     <a v-bind:class="'nav-link' + (hashSyncEnabled ? '' : ' disabled')" id="hashSync-tab" data-toggle="tab" href="#hashSync" role="tab" aria-orientation="vertical" aria-controls="Password Hash Sync" aria-selected="true">Password Hash Sync</a>
                 </li>
 
-                <!-- Sync Connector Nav Tabs -->
-                <li class="nav-item" v-for="(c) in connectors">
-                    <!-- For AD connectors whos name does not indicate an organizational affiliation, joining it with the connector description can help. -->
+                <!-- Sync Connector Nav Tab for Entra/AAD Connector -->
+                <li class="nav-item" v-for="(c) in entraConnectors">
+                    <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ c.Name }}</a>
+                </li>
+
+                <!-- Sync Connector Nav Tabs for AD Connectors -->
+                <li class="nav-item" v-for="(c) in adConnectors">
+                    <!-- For AD connectors whose name does not indicate an organizational affiliation, joining it with the connector description can help. -->
+                    <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ [c.Name, c.Description].filter(x => x).join(' | ') }}</a>
+                </li>
+
+                <!-- Sync Connector Nav Tabs for Other Connectors -->
+                <li class="nav-item" v-for="(c) in otherConnectors">
                     <a class="nav-link" :id="'tab-' + c.Identifier" data-toggle="tab" :href="'#conn-' + c.Identifier" role="tab" :aria-controls="c.Name" aria-selected="false">{{ [c.Name, c.Description].filter(x => x).join(' | ') }}</a>
                 </li>
             </ul>
@@ -82,17 +92,17 @@
                 </div>
 
                 <!-- Sync Connector Tabs : AAD -->
-                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Subtype == 'Windows Azure Active Directory (Microsoft)')" role="tabpanel" aria-selected="false">
+                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in entraConnectors" role="tabpanel" aria-selected="false">
                     <server-connector :connector="c" :hashsync="hashSync"></server-connector>
                 </div>
 
                 <!-- Sync Connector Tabs : AD -->
-                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type == 'AD')" role="tabpanel" aria-selected="false">
+                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in adConnectors" role="tabpanel" aria-selected="false">
                     <server-connector :connector="c" :hashsync="hashSync"></server-connector>
                 </div>
 
                 <!-- Sync Connector Tabs : Other -->
-                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in connectors.filter(x => x.Type != 'AD' && x.Subtype != 'Windows Azure Active Directory (Microsoft)')" role="tabpanel" aria-selected="false">
+                <div :id="'conn-' + c.Identifier" class="tab-pane container fluid" v-for="(c) in otherConnectors" role="tabpanel" aria-selected="false">
                     <server-connector :connector="c" :hashsync="hashSync"></server-connector>
                 </div>
             </div>
@@ -138,6 +148,23 @@
         computed: {
             progressWidth: function () {
                 return ""
+            },
+            entraConnectors: function () {
+                return this.connectors.filter(x => x.Subtype == 'Windows Azure Active Directory (Microsoft)');
+            },
+            adConnectors: function () {
+                return this.connectors.filter(x => x.Type == 'AD').sort((a, b) => {
+                    if (a.Name > b.Name) return 1;
+                    if (a.Name < b.Name) return -1;
+                    return 0;
+                });
+            },
+            otherConnectors: function () {
+                return this.connectors.filter(x => x.Type != 'AD' && x.Subtype != 'Windows Azure Active Directory (Microsoft)').sort((a, b) => {
+                    if (a.Name > b.Name) return 1;
+                    if (a.Name < b.Name) return -1;
+                    return 0;
+                });
             }
         },
         mounted: function () {
@@ -186,7 +213,11 @@
             // List all connectors you have rights to.
             fetchConnectors() {
                 $.getJSON(apiConnector, json => {
-                    this.connectors = json.sort((a, b) => { a.Name > b.Name ? 1 : -1; });
+                    this.connectors = json.sort((a, b) => {
+                        if (a.Name > b.Name) return 1;
+                        if (a.Name < b.Name) return -1;
+                        return 0;
+                    });
                     this.progLoad += 25;
                 });
             },
@@ -235,10 +266,10 @@
                         this.pauseMsg = "Failed suspend or resume sync scheduler. Verify authorization policies."
                     }
                 })
-            },
-            beforeDestroy() {
-                clearInterval(this.schedulePolling);
             }
+        },
+        beforeDestroy() {
+            clearInterval(this.schedulePolling);
         },
         watch: {
             // Remove the progress bar after everything is fetched.
