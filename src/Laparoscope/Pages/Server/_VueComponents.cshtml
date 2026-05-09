@@ -87,8 +87,10 @@
                             format some values as a list. AttributeInclusionList for
                             instance can be huge and doesn't make sense to show by default
                             so it is rendered as a collapsed accordion element.
+
+                            Skip properties that are not useful for display or are too complex.
                         -->
-                        <tr v-for="(value, key, i) in connector">
+                        <tr v-for="(value, key, i) in connector" v-if="!shouldSkipProperty(key)">
                             <td>{{ expandOnCase(key) }}</td>
                             <td v-if="key == 'AttributeInclusionList'">
                                 <div :id="'accordion' + key">
@@ -121,23 +123,155 @@
                                 </ul>
                             </td>
                             <!--
-                                Partitions offer some reasonable complex information about the
-                                connector's configuration so it's rendered as a nested object table.
+                                Partitions is an array of ConnectorPartition objects.
+                                Each partition contains complex nested information so we render
+                                them as expandable sections with nested object tables.
                             -->
                             <td v-else-if="key == 'Partitions'">
-                                <object-table :record="value" :expand="ConnectorPartitionScope" :list="['ObjectClasses','ContainerInclusionList','ContainerExclusionList']"></object-table>
+                                <div v-if="Array.isArray(value) && value.length > 0">
+                                    <div v-for="(partition, index) in value" :key="partition.Identifier" class="mb-3">
+                                        <h6>{{ partition.Name || 'Partition ' + (index + 1) }}</h6>
+                                        <table class="table table-sm table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>DN</strong></td>
+                                                    <td>{{ partition.DN }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Selected</strong></td>
+                                                    <td>{{ partition.Selected }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Is Domain</strong></td>
+                                                    <td>{{ partition.IsDomain }}</td>
+                                                </tr>
+                                                <tr v-if="partition.PreferredDCs && partition.PreferredDCs.length > 0">
+                                                    <td><strong>Preferred DCs</strong></td>
+                                                    <td>
+                                                        <ul class="no-bullets">
+                                                            <li v-for="dc in partition.PreferredDCs">{{ dc }}</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                                <tr v-if="partition.ConnectorPartitionScope">
+                                                    <td><strong>Object Classes</strong></td>
+                                                    <td>
+                                                        <ul class="no-bullets">
+                                                            <li v-for="objClass in partition.ConnectorPartitionScope.ObjectClasses">{{ objClass }}</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                                <tr v-if="partition.ConnectorPartitionScope && partition.ConnectorPartitionScope.ContainerInclusionList && partition.ConnectorPartitionScope.ContainerInclusionList.length > 0">
+                                                    <td><strong>Container Inclusion List</strong></td>
+                                                    <td>
+                                                        <ul class="no-bullets">
+                                                            <li v-for="container in partition.ConnectorPartitionScope.ContainerInclusionList">{{ container }}</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                                <tr v-if="partition.ConnectorPartitionScope && partition.ConnectorPartitionScope.ContainerExclusionList && partition.ConnectorPartitionScope.ContainerExclusionList.length > 0">
+                                                    <td><strong>Container Exclusion List</strong></td>
+                                                    <td>
+                                                        <ul class="no-bullets">
+                                                            <li v-for="container in partition.ConnectorPartitionScope.ContainerExclusionList">{{ container }}</li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <em>No partitions configured</em>
+                                </div>
                             </td>
                             <!--
-                                AnchorConstructionSettings show a list of anchor attributes by object
-                                type so render best as a wide object table, think of it like Format-Table
-                                in PowerShell.
+                                AnchorConstructionSettings is a keyed collection that contains
+                                a list of anchor settings. We display it as a table showing
+                                object types and their anchor attributes.
                             -->
                             <td v-else-if="key == 'AnchorConstructionSettings'">
-                                <wide-object-table :record="value" :header="['ObjectType','Attributes','Locked']"></wide-object-table>
+                                <div v-if="value && value.KeyedCollectionAsList && value.KeyedCollectionAsList.length > 0">
+                                    <wide-object-table :record="value.KeyedCollectionAsList" :header="['ObjectType','Attributes','Locked']"></wide-object-table>
+                                </div>
+                                <div v-else-if="value && Array.isArray(value) && value.length > 0">
+                                    <!-- Fallback if it's a direct array -->
+                                    <wide-object-table :record="value" :header="['ObjectType','Attributes','Locked']"></wide-object-table>
+                                </div>
+                                <div v-else>
+                                    <em>Not configured</em>
+                                </div>
                             </td>
-                            <td v-else-if="key == 'ConnectivityParameters'">
-                                <object-table :record="value"></object-table>
+                            <!--
+                                RunProfiles is an array showing the sync profiles configured
+                                for this connector.
+                            -->
+                            <td v-else-if="key == 'RunProfiles'">
+                                <div v-if="Array.isArray(value) && value.length > 0">
+                                    <ul class="no-bullets">
+                                        <li v-for="profile in value">{{ profile.Name }}</li>
+                                    </ul>
+                                </div>
+                                <div v-else>
+                                    <em>No run profiles configured</em>
+                                </div>
                             </td>
+                            <!--
+                                ConnectivityParameters, GlobalParameters, etc. are keyed collections.
+                                Display the KeyedCollectionAsList if available.
+                            -->
+                            <td v-else-if="key == 'ConnectivityParameters' || key == 'GlobalParameters' || key == 'CapabilityParameters' || key == 'SchemaParameters'">
+                                <div v-if="value && value.KeyedCollectionAsList && value.KeyedCollectionAsList.length > 0">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="param in value.KeyedCollectionAsList">
+                                                <td>{{ param.Name }}</td>
+                                                <td>{{ param.Value }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div v-else>
+                                    <em>Not configured</em>
+                                </div>
+                            </td>
+                            <!--
+                                ExtensionConfiguration shows connector extension settings.
+                                Only show if it contains meaningful data.
+                            -->
+                            <td v-else-if="key == 'ExtensionConfiguration'">
+                                <div v-if="value && (value.ExtensionFileName || value.PasswordManagementEnabled)">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr v-if="value.ExtensionFileName">
+                                                <td><strong>Extension File</strong></td>
+                                                <td>{{ value.ExtensionFileName }}</td>
+                                            </tr>
+                                            <tr v-if="value.AssemblyVersion">
+                                                <td><strong>Assembly Version</strong></td>
+                                                <td>{{ value.AssemblyVersion }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Password Management</strong></td>
+                                                <td>{{ value.PasswordManagementEnabled ? 'Enabled' : 'Disabled' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div v-else>
+                                    <em>No extension configured</em>
+                                </div>
+                            </td>
+                            <!--
+                                For simple values or objects we haven't specifically handled,
+                                just display them as-is (Vue will call toString() on objects).
+                            -->
                             <td v-else>{{ value }}</td>
                         </tr>
                     </tbody>
@@ -192,6 +326,22 @@
         methods: {
             expandOnCase(input) {
                 return input.replace(/([a-z])([A-Z])/g, '$1 $2')
+            },
+            shouldSkipProperty(key) {
+                // Skip properties that are not useful for UI display or too complex
+                const skipList = [
+                    'Schema',                      // Too complex, mostly empty
+                    'AllParameterDefinitions',     // Usually empty or redundant
+                    'ComponentProvisioningMappings', // Usually null
+                    'Identifier',                  // Internal GUID, not user-friendly
+                    'Version',                     // Internal version numbers
+                    'InternalVersion',
+                    'FormatVersion',
+                    'IsUpgradeOrImportScenario',   // Internal flag
+                    'ListName',                    // Usually empty
+                    'ConnectorTypeName'            // Redundant with Type
+                ];
+                return skipList.includes(key);
             }
         }
     });
