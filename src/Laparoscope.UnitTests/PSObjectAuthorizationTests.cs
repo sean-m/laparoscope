@@ -72,12 +72,33 @@ namespace Laparoscope.UnitTests
                 m => !Filter.IsAuthorized(m, "RunStepResult", testRoles)),
                 "Every excluded record should fail authorization");
 
-            // Verify excluded records contain the specific value the rule disallows.
-            // Replace "PropertyName" and "excludedValue" with the actual rule property
-            // and value from your TestRules.json that should be filtered out.
+            // Verify excluded records contain values denied by at least one applicable rule.
+            var applicableRules = RegisteredRoleControllerRules
+                .GetRoleControllerModelsByContext("RunStepResult")
+                .Where(r => testRoles.Any(role => role.Like(r.Role) || r.Role.Like(role)))
+                .Where(r => !string.IsNullOrEmpty(r.ModelProperty))
+                .ToList();
+
+            Assert.That(applicableRules.Count, Is.Not.Zero, "Expected at least one applicable RunStepResult rule");
+
             Assert.That(excluded, Has.All.Matches<Dictionary<string, object>>(
-                m => m.ContainsKey("ConnectorName") && m["ConnectorName"]?.ToString() != "garage.mcardletech.com"),
-                "Excluded records should be the ones with the value the rule denies");
+                m => applicableRules.Any(rule =>
+                {
+                    if (!m.TryGetValue(rule.ModelProperty, out var value) || value == null)
+                    {
+                        return true; // Missing required property causes authorization failure.
+                    }
+
+                    var testValue = value.ToString();
+
+                    if (rule.ModelValues != null && rule.ModelValues.Any())
+                    {
+                        return !rule.ModelValues.Any(pattern => testValue.Like(pattern));
+                    }
+
+                    return !testValue.Like(rule.ModelValue);
+                })),
+                "Excluded records should be the ones with values the rule denies");
         }
     }
 }

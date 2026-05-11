@@ -23,11 +23,13 @@
     <PackageReference Include="NUnit.Engine" Version="3.18.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="StreamJsonRpc" Version="2.20.20" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Laparoscope.RpcServer\Laparoscope.RpcServer.csproj" />
     <ProjectReference Include="..\McAuthorization\McAuthorization.csproj" />
+    <ProjectReference Include="..\SharedModel\LaparoscopeShared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

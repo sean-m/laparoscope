@@ -45,7 +45,7 @@ namespace Laparoscope.Controllers.Server
         /// https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsynccsobject
         /// </returns>
         [HttpGet]
-        public async Task<List<AadcCSObject>?> GetAsync(string ConnectorName, int? StartPage, int? PageSize)
+        public async Task<List<CsObject>?> GetAsync(string ConnectorName, int? StartPage, int? PageSize)
         {
             // Construct an anonymous object as the Model for IsAuthorized so we can
             // pass in Connector as the context. This will allow the authorization engine
@@ -78,7 +78,7 @@ namespace Laparoscope.Controllers.Server
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncCSObjectPage";
-                    var result = await jsonRpc.InvokeAsync<List<AadcCSObject>>(function, ConnectorName.Trim(), (int)StartPage, (int)PageSize);
+                    var result = await jsonRpc.InvokeAsync<List<CsObject>>(function, ConnectorName.Trim(), (int)StartPage, (int)PageSize);
                     return result;
                 }
             }

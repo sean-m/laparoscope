@@ -165,28 +165,12 @@ namespace Laparoscope.RpcServer.Properties {
         ///try {
         ///Import-Module ADSync
         ///
-        ///$attributes = @(
-        ///&quot;ObjectId&quot;,
-        ///&quot;ConnectorId&quot;,
-        ///&quot;ConnectorName&quot;,
-        ///&quot;ConnectorType&quot;,
-        ///&quot;PartitionId&quot;,
-        ///&quot;DistinguishedName&quot;,
-        ///&quot;AnchorValue&quot;,
-        ///&quot;ObjectType&quot;,
-        ///&quot;IsTransient&quot;,
-        ///&quot;IsPlaceHolder&quot;,
-        ///&quot;IsConnector&quot;,
-        ///&quot;HasSyncError&quot;,
-        ///&quot;HasExportError&quot;,
-        ///&quot;ExportError&quot;,
-        ///&quot;SynchronizationError&quot;,
-        ///&quot;ConnectedMVObjectId&quot;,
-        ///&quot;Lineage&quot;,
-        ///&quot;Attributes&quot;
-        ///)
         ///
-        ///Get-ADSyncCSObject -Co [rest of string was truncated]&quot;;.
+        ///Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName
+        ///}
+        ///finally {
+        ///    # this is here to make sure the function terminates on an exception
+        ///}.
         /// </summary>
         internal static string Get_ADSyncCSObjectStrict {
             get {

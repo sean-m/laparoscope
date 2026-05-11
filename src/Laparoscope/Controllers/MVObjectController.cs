@@ -27,7 +27,7 @@ namespace Laparoscope.Controllers.Server
         /// </returns>
         // GET api/<controller>
         [HttpGet("{Id}")]
-        public async Task<dynamic> GetAsync(string Id)
+        public async Task<MvObject> GetAsync(string Id)
         {
             // TODO require an MVObject role
             using (var stream = new NamedPipeClientStream(".", "Laparoscope", PipeDirection.InOut, PipeOptions.Asynchronous))
@@ -36,7 +36,7 @@ namespace Laparoscope.Controllers.Server
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncMVObjectStrict";
-                    var result = await jsonRpc.InvokeAsync<AadcCSObject>(function, Id.Trim());
+                    var result = await jsonRpc.InvokeAsync<MvObject>(function, Id.Trim());
                     return result;
                 }
             }

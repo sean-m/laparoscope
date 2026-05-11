@@ -146,7 +146,7 @@ namespace Laparoscope.RpcServer
             }
         }
 
-        public AadcCSObject GetADSyncCSObjectStrict(string ConnectorName, string DistinguishedName)
+        public CsObject GetADSyncCSObjectStrict(string ConnectorName, string DistinguishedName)
         {
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncCSObjectStrict))
             {
@@ -158,17 +158,16 @@ namespace Laparoscope.RpcServer
                     var err = runner.LastError ?? new Exception("Encountered an error in PowerShell but could not capture the exception.");
                     throw err;
                 }
-                var resultList = runner.Results.CapturePSResult<String>().ToList();
-                var resultValues = resultList.Where(r => !String.IsNullOrEmpty(r["Output"]))
-                    .Select(r => Newtonsoft.Json.JsonConvert.DeserializeObject<AadcCSObject>(r["Output"]))
-                    .Select(x => x as AadcCSObject);
+                var resultList = runner.Results.CapturePSResult<CsObject>();
+                var resultValues = resultList
+                    .Select(x => x as CsObject);
 
                 var result = resultValues.FirstOrDefault();
                 return result;
             }
         }
 
-        public List<AadcCSObject> GetADSyncCSObjectPage(string ConnectorName, int StartPage, int PageSize=100)
+        public List<CsObject> GetADSyncCSObjectPage(string ConnectorName, int StartPage, int PageSize=100)
         {
             using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncCSObjectPage))
             {
@@ -183,7 +182,7 @@ namespace Laparoscope.RpcServer
                 }
                 var resultList = runner.Results.CapturePSResult<String>().ToList();
                 var resultValues = resultList.Where(r => !String.IsNullOrEmpty(r["Output"])).Select(r => r["Output"])
-                    .Select(r => Newtonsoft.Json.JsonConvert.DeserializeObject<AadcCSObject>(r) as AadcCSObject);
+                    .Select(r => Newtonsoft.Json.JsonConvert.DeserializeObject<CsObject>(r) as CsObject);
 
                 var resultRecords = resultValues?.ToList();
                 return resultRecords;

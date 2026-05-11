@@ -37,7 +37,7 @@ namespace Laparoscope.Controllers.Server
         /// https://docs.microsoft.com/en-us/azure/active-directory/hybrid/reference-connect-adsync#get-adsynccsobject
         /// </returns>
         [HttpGet]
-        public async Task<AadcCSObject?> GetAsync(string ConnectorName, string DistinguishedName)
+        public async Task<CsObject?> GetAsync(string ConnectorName, string DistinguishedName)
         {
             // Construct an anonymous object as the Model for IsAuthorized so we can
             // pass in Connector as the context. This will allow the authorization engine
@@ -60,8 +60,8 @@ namespace Laparoscope.Controllers.Server
                 using (var jsonRpc = JsonRpc.Attach(stream))
                 {
                     string function = "GetADSyncCSObjectStrict";
-                    var result = await jsonRpc.InvokeAsync<AadcCSObject>(function, ConnectorName.Trim(), DistinguishedName.Trim());
-                    if (this.IsAuthorized<AadcCSObject>(result))
+                    var result = await jsonRpc.InvokeAsync<CsObject>(function, ConnectorName.Trim(), DistinguishedName.Trim());
+                    if (this.IsAuthorized<CsObject>(result))
                     {
                         var uac = result?.Attributes?.FirstOrDefault(a => a.Name.Equals("userAccountControl", StringComparison.CurrentCultureIgnoreCase));
                         if (uac != null)

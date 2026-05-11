@@ -222,28 +222,8 @@ $result</value>
 try {
 Import-Module ADSync
 
-$attributes = @(
-"ObjectId",
-"ConnectorId",
-"ConnectorName",
-"ConnectorType",
-"PartitionId",
-"DistinguishedName",
-"AnchorValue",
-"ObjectType",
-"IsTransient",
-"IsPlaceHolder",
-"IsConnector",
-"HasSyncError",
-"HasExportError",
-"ExportError",
-"SynchronizationError",
-"ConnectedMVObjectId",
-"Lineage",
-"Attributes"
-)
 
-Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName | select $attributes | convertto-json -Depth 6
+Get-ADSyncCSObject -ConnectorName $ConnectorName -DistinguishedName $DistinguishedName
 }
 finally {
     # this is here to make sure the function terminates on an exception
