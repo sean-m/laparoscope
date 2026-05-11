@@ -154,15 +154,19 @@
             },
             adConnectors: function () {
                 return this.connectors.filter(x => x.Type == 'AD').sort((a, b) => {
-                    if (a.Name > b.Name) return 1;
-                    if (a.Name < b.Name) return -1;
+                    const nameA = (a.Name || '').toLowerCase();
+                    const nameB = (b.Name || '').toLowerCase();
+                    if (nameA > nameB) return 1;
+                    if (nameA < nameB) return -1;
                     return 0;
                 });
             },
             otherConnectors: function () {
                 return this.connectors.filter(x => x.Type != 'AD' && x.Subtype != 'Windows Azure Active Directory (Microsoft)').sort((a, b) => {
-                    if (a.Name > b.Name) return 1;
-                    if (a.Name < b.Name) return -1;
+                    const nameA = (a.Name || '').toLowerCase();
+                    const nameB = (b.Name || '').toLowerCase();
+                    if (nameA > nameB) return 1;
+                    if (nameA < nameB) return -1;
                     return 0;
                 });
             }
@@ -214,8 +218,10 @@
             fetchConnectors() {
                 $.getJSON(apiConnector, json => {
                     this.connectors = json.sort((a, b) => {
-                        if (a.Name > b.Name) return 1;
-                        if (a.Name < b.Name) return -1;
+                        const nameA = (a.Name || '').toLowerCase();
+                        const nameB = (b.Name || '').toLowerCase();
+                        if (nameA > nameB) return 1;
+                        if (nameA < nameB) return -1;
                         return 0;
                     });
                     this.progLoad += 25;
