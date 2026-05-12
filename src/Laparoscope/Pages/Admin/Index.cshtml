@@ -9,41 +9,10 @@
 <h3>Application Configuration</h3>
 <div class="accordion">
     <div class="card" id="globals">
-        <div class="card-header" id="headingOne">
-            <h4>
-                <a class="btn btn-link collapsed" href="#globals" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Application Globals
-                </a>
-            </h4>
-        </div>
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
-            <div class="card-body">
-                <table class="table table-striped">
-                    <thead class="">
-                        <tr>
-                            <th>Property</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @* @foreach (var p in Model.GlobalProps)
-                        {
-                            <tr>
-                                <td>@p.Name</td>
-                                <td>@( SMM.Helper.Extensions.Like(p.Name, "*Secret*") ? "**************" : p.GetValue(null, null) )</td>
-                            </tr>
-                        } *@
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="card" id="globals">
         <div class="card-header" id="headingSettings">
             <h4>
                 <a class="btn btn-link collapsed" href="#globals" data-toggle="collapse" data-target="#collapseSettings" aria-expanded="true" aria-controls="collapseSettings">
-                    Application Settings
+                    Application Settings - (@Model.AppSettings.Count())
                 </a>
             </h4>
         </div>
@@ -52,18 +21,20 @@
                 <table class="table table-striped">
                     <thead class="">
                         <tr>
-                            <th>Property</th>
+                            <th>Source</th>
+                            <th>Key</th>
                             <th>Value</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @* @foreach (var k in ViewBag.SettingKeys)
+                        @foreach (var setting in Model.AppSettings.OrderBy(x => x.Source).ThenBy(x => x.Key))
                         {
                             <tr>
-                                <td>@k</td>
-                                <td>@( SMM.Helper.Extensions.Like(k, "*Secret*") ? "**************" : ViewBag.AppSettings[k] )</td>
+                                <td><code>@setting.Source</code></td>
+                                <td>@setting.Key</td>
+                                <td>@( SMM.Helper.Extensions.Like(setting.Key, "*Secret*") || SMM.Helper.Extensions.Like(setting.Key, "*Password*") || SMM.Helper.Extensions.Like(setting.Key, "*Key*") ? "**************" : setting.Value )</td>
                             </tr>
-                        } *@
+                        }
                     </tbody>
                 </table>
             </div>
