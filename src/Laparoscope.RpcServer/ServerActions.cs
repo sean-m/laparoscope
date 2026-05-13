@@ -553,12 +553,12 @@ Get-ADSyncRunProfileResult | select -First 10
             return null;
         }
 
-        public IEnumerable<RunHistoryEntry> GetADSyncRunStepResult(Guid RunHistoryId)
+        public IEnumerable<RunStepResult> GetADSyncRunStepResult(Guid RunHistoryId)
         {
             return GetADSyncRunStepResult(RunHistoryId, null, null);
         }
 
-        public IEnumerable<RunHistoryEntry> GetADSyncRunStepResult(Guid? RunHistoryId, int? StepNumber, bool? First)
+        public IEnumerable<RunStepResult> GetADSyncRunStepResult(Guid? RunHistoryId, int? StepNumber, bool? First)
         {
             // Run PowerShell command to get AADC sync rules
             using (var runner = new SimpleScriptRunner(@"
@@ -579,7 +579,7 @@ if ($First -ne $null)
     $params.Add(""First"", $First);
 }
 
-Get-ADSyncRunProfileResult @params
+Get-ADSyncRunProfileResult -RunStepDetails @params
 "))
             {
                 if (RunHistoryId != null)
@@ -602,8 +602,8 @@ Get-ADSyncRunProfileResult @params
                     throw err;
                 }
                 var resultValues = runner.Results.CapturePSResult<RunHistoryEntry>()
-                    .Where(x => x is RunHistoryEntry)
-                    .Cast<RunHistoryEntry>();
+                    .Where(x => x is RunHistoryEntry).Cast<RunHistoryEntry>()
+                    .SelectMany(x => x.RunStepResults);
 
                 if (resultValues != null)
                 {

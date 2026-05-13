@@ -109,8 +109,9 @@ Tested using:
     $signedB64Signature = ConvertTo-Base64Url -InputObject $bytesSignedSignature
 
     
-    $payload = $baseSignature + '.' + $signedB64Signature
-    do { $payload += '=' } while ((($payload.Length * 6) % 8) -ne 0)
+    $payload = $baseSignature, $signedB64Signature -join '.'
+    $padSize = (4 - ($payload.Length) % 4) % 4
+    $payload += ('=' * $padSize)
 
     return ($payload)
 }
@@ -993,13 +994,13 @@ function Get-LapRunProfileResult {
                         </step-type>
                         <partition>DC=garage,DC=mcardletech,DC=com</partition>
                         <custom-data>
-                     
+
                                           <adma-step-data>
                                              <batch-size>30</batch-size>
                                              <page-size>500</page-size>
                                              <time-limit>120</time-limit>
                                           </adma-step-data>
-                                   
+
                         </custom-data>
                         ; MvRetryErrors=; FlowCountersXml=}}
 #>
@@ -1028,6 +1029,224 @@ function Get-LapRunProfileResult {
     if ($requestArgs.Count -gt 0) { $params.Add('RequestArgs', $requestArgs) }
 
     Invoke-LapApi @params 
+}
+
+
+function Get-LapRunStepResult {
+<#
+.Synopsis
+   Invokes GET /api/RunStepResult.
+.DESCRIPTION
+   Analogue to Get-ADSyncRunStepResult cmdlet. Returns detailed step-level
+   information for a specific sync run. Includes stage counters (adds, updates,
+   deletes), disconnector information, export/import statistics, and step-level
+   errors and status.
+.PARAMETER RunHistoryId
+   The GUID of the run history to get step results for. Required for the basic call.
+.PARAMETER StepNumber
+   Optional filter to retrieve a specific step number within the run.
+.PARAMETER First
+   If specified, returns only the first step of the run.
+.EXAMPLE
+   PS C:\scripts> Get-LapRunStepResult -RunHistoryId 8a654dc1-cf23-40ed-86f4-b745bd553c22
+
+   RunHistoryId      : 8a654dc1-cf23-40ed-86f4-b745bd553c22
+   StepNumber        : 1
+   StepResult        : success
+   StartDate         : 2024-01-15T10:30:00
+   EndDate           : 2024-01-15T10:35:00
+   StageAdd          : 5
+   StageUpdate       : 12
+   StageDelete       : 0
+   DisconnectorFiltered : 2
+   ExportAdd         : 5
+   ExportUpdate      : 12
+   ...
+
+.EXAMPLE
+   PS C:\scripts> Get-LapRunStepResult -RunHistoryId 8a654dc1-cf23-40ed-86f4-b745bd553c22 -StepNumber 1
+
+   Returns only step 1 from the specified run history.
+
+.EXAMPLE
+   PS C:\scripts> Get-LapRunStepResult -First
+
+   Returns the first step from the most recent sync run.
+
+.EXAMPLE
+   # Get detailed step information for a specific run
+   $runHistory = Get-LapRunProfileResult -NumberRequested 1
+   $steps = Get-LapRunStepResult -RunHistoryId $runHistory.RunHistoryId
+
+   # Analyze step counters
+   $steps | ForEach-Object {
+       Write-Host "Step $($_.StepNumber): Added=$($_.StageAdd), Updated=$($_.StageUpdate), Deleted=$($_.StageDelete)"
+   }
+#>
+    [CmdletBinding(DefaultParameterSetName='ByRunHistoryId')]
+    param(
+        [Parameter(Mandatory=$true,
+                   ParameterSetName='ByRunHistoryId',
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [Guid]
+        $RunHistoryId,
+
+        [Parameter(Mandatory=$false,
+                   ParameterSetName='ByRunHistoryId')]
+        [Parameter(Mandatory=$false,
+                   ParameterSetName='Filtered')]
+        [ValidateRange(0, [int]::MaxValue)]
+        [int]
+        $StepNumber,
+
+        [Parameter(Mandatory=$false,
+                   ParameterSetName='Filtered')]
+        [switch]
+        $First
+    )
+
+    process {
+        $requestArgs = @{}
+        $params = @{
+            Path = '/api/RunStepResult'
+        }
+
+        if ($PSCmdlet.ParameterSetName -eq 'ByRunHistoryId') {
+            $requestArgs.Add('RunHistoryId', $RunHistoryId)
+            if ($PSBoundParameters.ContainsKey('StepNumber')) {
+                $requestArgs.Add('StepNumber', $StepNumber)
+            }
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq 'Filtered') {
+            if ($PSBoundParameters.ContainsKey('StepNumber')) {
+                $requestArgs.Add('StepNumber', $StepNumber)
+            }
+            if ($First) {
+                $requestArgs.Add('First', $true)
+            }
+        }
+
+        if ($requestArgs.Count -gt 0) {
+            $params.Add('RequestArgs', $requestArgs)
+        }
+
+        Invoke-LapApi @params
+    }
+}
+
+
+function Get-LapRunStepResultById {
+<#
+.Synopsis
+   Invokes GET /api/RunStepResult/{runHistoryId}.
+.DESCRIPTION
+   Alternative syntax for Get-LapRunStepResult using a RESTful route-based approach.
+   Returns all step results for a specific run history ID.
+.PARAMETER RunHistoryId
+   The GUID of the run history to get step results for. Required.
+.EXAMPLE
+   PS C:\scripts> Get-LapRunStepResultById -RunHistoryId 8a654dc1-cf23-40ed-86f4-b745bd553c22
+
+   Returns all steps for the specified run history using the route-based endpoint.
+
+.EXAMPLE
+   # Pipeline support from Get-LapRunProfileResult
+   Get-LapRunProfileResult -NumberRequested 5 | 
+       ForEach-Object { Get-LapRunStepResultById -RunHistoryId $_.RunHistoryId }
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true,
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [Guid]
+        $RunHistoryId
+    )
+
+    process {
+        if ($RunHistoryId -eq [Guid]::Empty) {
+            throw "RunHistoryId cannot be empty"
+        }
+
+        $params = @{
+            Path = "/api/RunStepResult/$RunHistoryId"
+        }
+
+        Invoke-LapApi @params
+    }
+}
+
+
+function Get-LapRunStepResultByNumber {
+<#
+.Synopsis
+   Invokes GET /api/RunStepResult/{runHistoryId}/step/{stepNumber}.
+.DESCRIPTION
+   Gets a specific step result by run history ID and step number.
+   Returns a single step object instead of a collection.
+.PARAMETER RunHistoryId
+   The GUID of the run history. Required.
+.PARAMETER StepNumber
+   The specific step number to retrieve. Required. Must be a positive integer.
+.EXAMPLE
+   PS C:\scripts> Get-LapRunStepResultByNumber -RunHistoryId 8a654dc1-cf23-40ed-86f4-b745bd553c22 -StepNumber 1
+
+   StepNumber        : 1
+   StepResult        : success
+   StartDate         : 2024-01-15T10:30:00
+   EndDate           : 2024-01-15T10:35:00
+   StageAdd          : 5
+   StageUpdate       : 12
+   ...
+
+.EXAMPLE
+   # Get first step details for multiple runs
+   Get-LapRunProfileResult -NumberRequested 10 | ForEach-Object {
+       Get-LapRunStepResultByNumber -RunHistoryId $_.RunHistoryId -StepNumber 1
+   }
+
+.EXAMPLE
+   # Error handling example
+   try {
+       $step = Get-LapRunStepResultByNumber -RunHistoryId $runId -StepNumber 99
+   }
+   catch {
+       Write-Warning "Step 99 not found: $_"
+   }
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [Guid]
+        $RunHistoryId,
+
+        [Parameter(Mandatory=$true,
+                   Position=1)]
+        [ValidateRange(0, [int]::MaxValue)]
+        [int]
+        $StepNumber
+    )
+
+    process {
+        if ($RunHistoryId -eq [Guid]::Empty) {
+            throw "RunHistoryId cannot be empty"
+        }
+
+        if ($StepNumber -lt 0) {
+            throw "StepNumber must be a positive integer"
+        }
+
+        $params = @{
+            Path = "/api/RunStepResult/$RunHistoryId/step/$StepNumber"
+        }
+
+        Invoke-LapApi @params
+    }
 }
 
 
@@ -1080,7 +1299,10 @@ $exportedFunctions = @(
 "Get-LapPartitionPasswordSyncState",
 "Start-LapSync",
 "Get-LapSyncScheduler",
-"Set-LapSyncScheduler"
-"Get-LapRunProfileResult"
+"Set-LapSyncScheduler",
+"Get-LapRunProfileResult",
+"Get-LapRunStepResult",
+"Get-LapRunStepResultById",
+"Get-LapRunStepResultByNumber"
 )
 Export-ModuleMember -Function $exportedFunctions

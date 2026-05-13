@@ -86,9 +86,9 @@ namespace LaparoscopeShared.Models {
         public RunStepResultConnectorDiscoveryErrors ConnectorDiscoveryErrors { get; set; }
         public string ConnectorCountersXml { get; set; }
         public RunStepResultSyncErrors SyncErrors { get; set; }
-        public string StepXml { get; set; }
+        //public string StepXml { get; set; }
         public RunStepResultMvRetryErrors MvRetryErrors { get; set; }
-        public string FlowCountersXml { get; set; }
+        //public string FlowCountersXml { get; set; }
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ namespace LaparoscopeShared.Models {
     /// </summary>
     public class RunStepResultMvRetryErrors
     {
-        public string MvRetryErrorsXml { get; set; }
+        //public string MvRetryErrorsXml { get; set; }
         public IEnumerable<RunStepErrorObject> MvRetryErrorsList { get; set; }
         public string MvRetryErrorsSummaryXml { get; set; }
     }
