@@ -1,4 +1,6 @@
 ﻿@page
+@using SMM.Helper
+@using System.Text.RegularExpressions
 @model Laparoscope.Pages.Admin.IndexModel;
 @{
     ViewBag.Title = "Application Configuration";
@@ -32,7 +34,11 @@
                             <tr>
                                 <td><code>@setting.Source</code></td>
                                 <td>@setting.Key</td>
-                                <td>@( SMM.Helper.Extensions.Like(setting.Key, "*Secret*") || SMM.Helper.Extensions.Like(setting.Key, "*Password*") || SMM.Helper.Extensions.Like(setting.Key, "*Key*") ? "**************" : setting.Value )</td>
+                                <td>@((setting.Key.Like("*AppConfigConnectionString*")) ?                                            
+                                        Model.MaskingAction(new[] { "*AppConfigConnectionString*" }, setting.Key, setting.Value, (string x) => { return Regex.Replace(x, @"(?i)(?<=Secret\=).+(?=\=)", "********************"); }) :                                            
+                                        Model.MaskingAction(new[] { "*Secret*", "*Password*", "*Key*" }, setting.Key, setting.Value, null)
+                                    )
+                                </td>
                             </tr>
                         }
                     </tbody>
