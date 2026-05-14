@@ -34,11 +34,7 @@
                             <tr>
                                 <td><code>@setting.Source</code></td>
                                 <td>@setting.Key</td>
-                                <td>@((setting.Key.Like("*AppConfigConnectionString*")) ?                                            
-                                        Model.MaskingAction(new[] { "*AppConfigConnectionString*" }, setting.Key, setting.Value, (string x) => { return Regex.Replace(x, @"(?i)(?<=Secret\=).+(?=\=)", "********************"); }) :                                            
-                                        Model.MaskingAction(new[] { "*Secret*", "*Password*", "*Key*" }, setting.Key, setting.Value, null)
-                                    )
-                                </td>
+                                <td>@setting.Value</td>
                             </tr>
                         }
                     </tbody>

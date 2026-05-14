@@ -1,19 +1,29 @@
 ﻿using Laparoscope.Controllers.Server;
+using Laparoscope.Controllers.Server;
 using LaparoscopeShared.Models;
 using McAuthorization;
 using McAuthorization.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Configuration;
-using System.Security.Claims;
-using System.Linq;
-using Laparoscope.Controllers.Server;
-using SMM.Helper;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Configuration;
+using SMM.Helper;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Reflection;
+using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace Laparoscope.Pages.Admin
 {
     public class IndexModel : PageModel {
         private readonly IConfiguration _configuration;
+
+        private List<MaskingPattern> _patterns = new List<MaskingPattern>()
+        {
+            new MaskingPattern() { Patterns = new[] { "*Secret*", "*Password*", "*Key*" }, Transform = (string x) => { return "****************"; } },
+            new MaskingPattern() { Patterns = new[] { "*AppConfigConnectionString*" }, Transform = (string x) => { return Regex.Replace(x, @"(?i)(?<=Secret\=).+?(?=(\=|$|;))", "********************"); } }
+        };
+
 
         public IndexModel(IConfiguration configuration)
         {
@@ -51,29 +61,53 @@ namespace Laparoscope.Pages.Admin
                         // Fix for CS8601: Ensure v is not null
                         var value = provider.TryGet(k, out var v) && v != null ? v : string.Empty;
                         if (!string.IsNullOrEmpty(value))
+                        {
+                            foreach (var pattern in _patterns)
+                            {
+                                value = MaskingAction(pattern.WithTargetValue(k, value));
+                            }
                             result[k] = new Setting() { Key = k, Value = value, Source = providerName };
+                        }
                     }
                 }
             }
 
             return result;
         }
-
-        static internal Func<string,string> maskIt = (string x) => { return "****************"; };
-        public string MaskingAction(IEnumerable<string> patterns, string matchTarget, string value, Func<string, string>? transform)
+                
+        internal string MaskingAction(MaskingPattern pattern)
         {
-            if (string.IsNullOrEmpty(value))
-                return value;
+            if (string.IsNullOrEmpty(pattern.Value))
+                return pattern.Value;
 
-            if (transform == null)
-                transform = maskIt;
-
-            string result = value;
-            if (patterns.Any(x => matchTarget.Like(x)))
+            string result = pattern.Value;
+            if (pattern.Patterns.Any(x => pattern.MatchTarget.Like(x)))
             {
-                return transform(value);
+                return pattern.Transform(result);
             }
             return result;
+        }
+    }
+
+    internal class MaskingPattern
+    {
+        //Model.MaskingAction(new[] { "*AppConfigConnectionString*" }, setting.Key, setting.Value, (string x) => { return Regex.Replace(x, @"(?i)(?<=Secret\=).+(?=(\=|$|;))", "********************"); }) :
+        //Model.MaskingAction(new[] { "*Secret*", "*Password*", "*Key*" }, setting.Key, setting.Value, null)
+
+        public IEnumerable<string> Patterns { get; set; } = Array.Empty<string>();
+        public string MatchTarget { get; set; }
+        public string Value { get; set; }
+        public Func<string, string> Transform { get; set; } = (string x) => { return "****************"; };
+
+        public MaskingPattern WithTargetValue(string target, string value)
+        {
+            return new MaskingPattern()
+            {
+                MatchTarget = target,
+                Patterns = this.Patterns,
+                Transform = this.Transform,
+                Value = value
+            };
         }
     }
 
