@@ -39,7 +39,7 @@ namespace Laparoscope.Workers
                             String key;
 
                             // last_polled_time
-                            var name = $"laparoscope_hash_sync_last_polled_time";
+                            var name = $"hash_sync_last_polled_time";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -48,13 +48,13 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Last time hash sync metrics were collected.",
-                                    new[] { "connector" }); 
+                                    new[] { "partition" }); 
                                 counters.Add(key, counter);
                             }
                             counter.WithLabels(metric.Name).Set(now);
 
                             // last_cycle_time
-                            name = $"laparoscope_hash_sync_last_cycle_time";
+                            name = $"hash_sync_last_cycle_time";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -63,14 +63,14 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Start time of most reccent sync cycle.",
-                                    new[] { "connector" }); 
+                                    new[] { "partition" }); 
                                 counters.Add(key, counter);
                             }
                             value = Double.Parse(metric.LastCycle);
                             counter.WithLabels(metric.Name).Set(value);
 
                             // last_success_time
-                            name = $"laparoscope_hash_sync_last_success_time";
+                            name = $"hash_sync_last_success_time";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -79,14 +79,14 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Start time of the last successful sync cycle.",
-                                    new[] { "connector" }); 
+                                    new[] { "partition" }); 
                                 counters.Add(key, counter);
                             }
                             value = Double.Parse(metric.LastSuccess);
                             counter.WithLabels(metric.Name).Set(value);
 
                             // last_success_duration
-                            name = $"laparoscope_hash_sync_last_success_duration";
+                            name = $"hash_sync_last_success_duration";
                             key = name + metric.Name;
                             if (counters.ContainsKey(key))
                             {
@@ -95,7 +95,7 @@ namespace Laparoscope.Workers
                             else
                             {
                                 counter = Metrics.CreateGauge(name, "Duration of the last succesful sync cycle.",
-                                    new[] { "connector" }); 
+                                    new[] { "partition" }); 
                                 counters.Add(key, counter);
                             }
                             value = Double.Parse(metric.LastSuccessDuration);

@@ -33,7 +33,7 @@ namespace Laparoscope.Workers
                             String key;
 
                             // export_adds
-                            name = $"laparoscope_connector_statistic_export_adds";
+                            name = $"connector_statistic_export_adds";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
@@ -48,7 +48,7 @@ namespace Laparoscope.Workers
                             counter.WithLabels(metric.Connector).Set(metric.ExportAdds);
 
                             // export_updates
-                            name = $"laparoscope_connector_statistic_export_updates";
+                            name = $"connector_statistic_export_updates";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
@@ -63,7 +63,7 @@ namespace Laparoscope.Workers
                             counter.WithLabels(metric.Connector).Set(metric.ExportUpdates);
 
                             // export_deletes
-                            name = $"laparoscope_connector_statistic_export_deletes";
+                            name = $"connector_statistic_export_deletes";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
@@ -78,7 +78,7 @@ namespace Laparoscope.Workers
                             counter.WithLabels(metric.Connector).Set(metric.ExportDeletes);
 
                             // import_adds
-                            name = $"laparoscope_connector_statistic_import_adds";
+                            name = $"connector_statistic_import_adds";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
@@ -93,7 +93,7 @@ namespace Laparoscope.Workers
                             counter.WithLabels(metric.Connector).Set(metric.ImportAdds);
 
                             // import_updates
-                            name = $"laparoscope_connector_statistic_import_updates";
+                            name = $"connector_statistic_import_updates";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
@@ -108,7 +108,7 @@ namespace Laparoscope.Workers
                             counter.WithLabels(metric.Connector).Set(metric.ImportUpdates);
 
                             // import_deletes
-                            name = $"laparoscope_connector_statistic_import_deletes";
+                            name = $"connector_statistic_import_deletes";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
@@ -123,7 +123,7 @@ namespace Laparoscope.Workers
                             counter.WithLabels(metric.Connector).Set(metric.ImportDeletes);
 
                             // import_no_change
-                            name = $"laparoscope_connector_statistic_import_no_change";
+                            name = $"connector_statistic_import_no_change";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
@@ -138,7 +138,7 @@ namespace Laparoscope.Workers
                             counter.WithLabels(metric.Connector).Set(metric.ImportNoChange);
 
                             // total_connectors
-                            name = $"laparoscope_connector_statistic_total_connectors";
+                            name = $"connector_statistic_total_connectors";
                             key = name + metric.Connector;
                             if (counters.ContainsKey(key))
                             {
