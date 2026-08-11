@@ -1,8 +1,7 @@
 using NUnit.Framework;
+using SMM.Helper;
 using System;
 using System.Linq;
-using System.Management.Automation;
-using static SMM.Helper.Extensions;
 
 namespace Laparoscope.UnitTests
 {
@@ -13,7 +12,7 @@ namespace Laparoscope.UnitTests
         [SetUp]
         public void Setup()
         {
-            var runner = new SMM.Automation.SimpleScriptRunner("[PSCustomObject]@{'Foo'='Bar';'FooBar'='Baz';Nested=[PSCustomObject]@{'Foo'='Bar';'FooBar'='Baz';}}");
+            var runner = new SMM.Automation.ScriptRunner("[PSCustomObject]@{'Foo'='Bar';'FooBar'='Baz';Nested=[PSCustomObject]@{'Foo'='Bar';'FooBar'='Baz';}}", null);
             runner.Run();
             result = runner.Results.CapturePSResult<FooTest>().Cast<FooTest>().FirstOrDefault();
         }

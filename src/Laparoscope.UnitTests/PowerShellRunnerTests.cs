@@ -23,7 +23,7 @@ namespace Laparoscope.UnitTests
         [Test]
         public void TestParameterValidationFromProxyVariable()
         {
-            using (var runner = new SimpleScriptRunner("[bool]($validationList -notlike $null)"))
+            using (var runner = new ScriptRunner("[bool]($validationList -notlike $null)", null))
             {
                 runner.SetProxyVariable("validationList", validInputs);
                 runner.Run();
@@ -39,7 +39,7 @@ namespace Laparoscope.UnitTests
         [Test]
         public void TestParameterValidationFromProxyVariableShouldNotHaveErrors()
         {
-            using (var runner = new SimpleScriptRunner(ParameterValidationScript))
+            using (var runner = new ScriptRunner(ParameterValidationScript, null))
             {
                 runner.Parameters.Add("FromOutside", "Hello World!");
                 runner.SetProxyVariable("validationList", validInputs);
@@ -53,7 +53,7 @@ namespace Laparoscope.UnitTests
         [Test]
         public void TestParameterValidationFromProxyVariableShouldHaveErrors()
         {
-            using (var runner = new SimpleScriptRunner(ParameterValidationScript))
+            using (var runner = new ScriptRunner(ParameterValidationScript, null))
             {
                 runner.Parameters.Add("FromOutside", "Hello Universe!");
                 runner.SetProxyVariable("validationList", validInputs);
@@ -71,7 +71,7 @@ namespace Laparoscope.UnitTests
         [Test]
         public void TestCapturingException()
         {
-            using (var runner = new SimpleScriptRunner("throw New-Object System.Exception 'Thrown from PowerShell'"))
+            using (var runner = new ScriptRunner("throw New-Object System.Exception 'Thrown from PowerShell'", null))
             {
                 runner.Run();
 
@@ -90,12 +90,17 @@ namespace Laparoscope.UnitTests
         [Test]
         public void TestCodeInjectionByParameter()
         {
-            using (var runner = new SimpleScriptRunner("param([string]$stringIn) Write-Host Testing $stringIn"))
+            using (var runner = new ScriptRunner("param([string]$stringIn) Write-Output \"Testing $stringIn\"", null))
             {
+                // Semicolon should place the Write-Output on the following line if interpreted  as code rather than data
+                // meaning result count should be higher than 1.
                 runner.Parameters.Add("stringIn", "; Write-Output 'Should be on the same line.'");
-                runner.Run();
+                var task = runner.RunAsyncWithStreams();
+                Task.WaitAll(new Task[] { task }, 5000);
+                var result = task.Result;
 
-                Assert.That(runner.Results.Count, Is.EqualTo(1));
+                Assert.That(result.Count, Is.Not.EqualTo(0), "No results were returned from the script.");
+                Assert.That(result.Count, Is.EqualTo(1), $"Expected 1 result but found {result.Count}.");
             }
         }
 
@@ -107,7 +112,7 @@ namespace Laparoscope.UnitTests
             // That said, I just want to be sure the results of a PowerShell session do
             // properly outlive a script runner with a bounded lifetime.
             var resultList = new List<dynamic>();
-            using (var runner = new SimpleScriptRunner("1..5 | foreach { Write-Output \"$_\" }"))
+            using (var runner = new ScriptRunner("1..5 | foreach { Write-Output \"$_\" }", null))
             {
                 runner.Run();
                 resultList.AddRange(runner.Results.CapturePSResult<string>());

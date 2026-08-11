@@ -27,7 +27,7 @@ namespace Laparoscope.RpcServer
 
         public SyncResult StartADSync()
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Start_ADSyncDelta))
+            using (var runner = new ScriptRunner(Properties.Resources.Start_ADSyncDelta, null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -43,7 +43,7 @@ namespace Laparoscope.RpcServer
         public AadcConnector[] GetADSyncConnector(string Name = null)
         {
             // Run PowerShell command to get AADC connector configurations
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncConnectorsBasic))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncConnectorsBasic, null))
             {
                 runner.Parameters.Add("Name", Name);
                 runner.Run();
@@ -71,7 +71,7 @@ namespace Laparoscope.RpcServer
         public Dictionary<string,int> GetADSyncConnectorStatistics(string Name)
         {
             // Run PowerShell command to get AADC connector configurations
-            using (var runner = new SimpleScriptRunner("param($ConnectorName) Get-ADSyncConnectorStatistics -ConnectorName $ConnectorName"))
+            using (var runner = new ScriptRunner("param($ConnectorName) Get-ADSyncConnectorStatistics -ConnectorName $ConnectorName", null))
             {
                 runner.Parameters.Add("ConnectorName", Name);
                 runner.Run();
@@ -87,7 +87,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetADSyncAADCompanyFeature()
         {
-            using (var runner = new SimpleScriptRunner("Get-ADSyncAADCompanyFeature"))
+            using (var runner = new ScriptRunner("Get-ADSyncAADCompanyFeature", null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -102,7 +102,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetADSyncAADPasswordResetConfiguration()
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAADPasswordResetConfiguration))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncAADPasswordResetConfiguration, null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -117,7 +117,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetADSyncAADPasswordSyncConfiguration(string SourceConnector)
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAADPasswordSyncConfiguration))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncAADPasswordSyncConfiguration, null))
             {
                 runner.Parameters.Add("SourceConnector", SourceConnector.Trim());
                 runner.Run();
@@ -133,7 +133,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetADSyncAutoUpgrade()
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncAutoUpgrade))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncAutoUpgrade, null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -148,7 +148,7 @@ namespace Laparoscope.RpcServer
 
         public CsObject GetADSyncCSObjectStrict(string ConnectorName, string DistinguishedName)
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncCSObjectStrict))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncCSObjectStrict, null))
             {
                 runner.Parameters.Add("ConnectorName", ConnectorName);
                 runner.Parameters.Add("DistinguishedName", DistinguishedName);
@@ -169,7 +169,7 @@ namespace Laparoscope.RpcServer
 
         public List<CsObject> GetADSyncCSObjectPage(string ConnectorName, int StartPage, int PageSize=100)
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncCSObjectPage))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncCSObjectPage, null))
             {
                 runner.Parameters.Add("connectorName", ConnectorName);
                 runner.Parameters.Add("startPage", StartPage);
@@ -193,7 +193,7 @@ namespace Laparoscope.RpcServer
         {
 
             // Run PowerShell command to get AADC connector configurations
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncDomainReachabilityStatus))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncDomainReachabilityStatus, null))
             {
                 runner.Parameters.Add("ConnectorName", ConnectorName);
                 runner.Run();
@@ -223,7 +223,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetADSyncExportDeletionThreshold()
         {
-            using (var runner = new SimpleScriptRunner("Get-ADSyncExportDeletionThreshold"))
+            using (var runner = new ScriptRunner("Get-ADSyncExportDeletionThreshold", null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -238,7 +238,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetAdSyncGlobalSettingsStrict()
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_AdSyncGlobalSettingsStrict))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_AdSyncGlobalSettingsStrict, null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -253,7 +253,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetADSyncMVObjectStrict(string Id)
         {
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncMVObjectStrict))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncMVObjectStrict, null))
             {
                 runner.Parameters.Add("Identifier", Id);
                 runner.Run();
@@ -270,7 +270,7 @@ namespace Laparoscope.RpcServer
         public IEnumerable<PasswordSyncState> GetADSyncPartitionPasswordSyncState()
         {
             // Filter out the 'default' connector before yielding any results.
-            using (var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncPartitionPasswordSyncState | ? DN -notlike 'default'"))
+            using (var runner = new ScriptRunner("Import-Module ADSync; Get-ADSyncPartitionPasswordSyncState | ? DN -notlike 'default'", null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -295,7 +295,7 @@ namespace Laparoscope.RpcServer
         public IEnumerable<RunHistoryEntry> GetADSyncRunProfileLastHour(Guid? RunHistoryId = null, Guid? ConnectorId = null, int NumberRequested = 0, bool RunStepDetails = false)
         {
             // Run PowerShell command to get AADC connector configurations
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncRunProfileLastHour))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncRunProfileLastHour, null))
             {
                 if (RunHistoryId != null)
                     runner.Parameters.Add("Id", RunHistoryId);
@@ -339,7 +339,7 @@ namespace Laparoscope.RpcServer
                 return new SchedulerOverride();
             }
 
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Get_ADSyncSchedulerConnectorOverride))
+            using (var runner = new ScriptRunner(Properties.Resources.Get_ADSyncSchedulerConnectorOverride, null))
             {
                 runner.Parameters.Add("ConnectorName", ConnectorName);
                 runner.Run();
@@ -361,7 +361,7 @@ namespace Laparoscope.RpcServer
                 throw new Exception("Bad request. Must specify ConnectorName");
             }
 
-            using (var runner = new SimpleScriptRunner(Properties.Resources.Set_ADSyncSchedulerConnectorOverride))
+            using (var runner = new ScriptRunner(Properties.Resources.Set_ADSyncSchedulerConnectorOverride, null))
             {
                 runner.Parameters.Add("ConnectorName", OverrideConfig.ConnectorName);
                 runner.Parameters.Add("FullSyncRequired", OverrideConfig.FullSyncRequired);
@@ -376,7 +376,7 @@ namespace Laparoscope.RpcServer
 
         public Dictionary<string, object> GetADSyncScheduler()
         {
-            using (var runner = new SimpleScriptRunner("Import-Module ADSync; Get-ADSyncScheduler"))
+            using (var runner = new ScriptRunner("Import-Module ADSync; Get-ADSyncScheduler", null))
             {
                 runner.Run();
 
@@ -401,7 +401,7 @@ namespace Laparoscope.RpcServer
             if (null != settings.MaintenanceEnabled) { parameters.Add(nameof(settings.MaintenanceEnabled), settings.MaintenanceEnabled); }
             if (null != settings.NextSyncCyclePolicyType) { parameters.Add(nameof(settings.NextSyncCyclePolicyType), settings.NextSyncCyclePolicyType); }
 
-            using (var runner = new SimpleScriptRunner(@"
+            using (var runner = new ScriptRunner(@"
 [CmdletBinding()]
 param(
     [bool]$SyncCycleEnabled,
@@ -411,7 +411,7 @@ param(
 )
 
 Set-AdSyncScheduler @PSBoundParameters
-"))
+", null))
             {
                 runner.Parameters = parameters;
                 runner.Run();
@@ -434,12 +434,12 @@ Set-AdSyncScheduler @PSBoundParameters
         public IEnumerable<object> GetADSyncRule(string Identifier = null)
         {
             // Run PowerShell command to get AADC sync rules
-            using (var runner = new SimpleScriptRunner(@"
+            using (var runner = new ScriptRunner(@"
 [CmdletBinding()]
 param([Guid]$Identifier)
 
 Get-ADSyncRule @PSBoundParameters
-"))
+", null))
             {
                 if (Identifier != null)
                 {
@@ -470,7 +470,7 @@ Get-ADSyncRule @PSBoundParameters
             // The user is unprivileged and that's the intent but understanding how to grant it targeted permission to read process
             // tokens and what risks that may pose is unknown. For right now, it will tell you someone forgot to close the
             // sync config wizard and suspended syncing but not who did it.
-            using (var runner = new SimpleScriptRunner(@"
+            using (var runner = new ScriptRunner(@"
 function NormalizeProperties {
     param ($obj)
     $props = $obj.PSObject.Properties
@@ -485,7 +485,7 @@ function NormalizeProperties {
 
 $aadc = @(& tasklist /v /fo csv | convertfrom-csv -UseCulture | where { $_.'Image Name' -like ""AzureADConnect.exe"" })
 $aadc | foreach { NormalizeProperties $_ }
-"))
+", null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -527,12 +527,12 @@ Noun             : ADSyncRunProfileResult
         public IEnumerable<RunHistoryEntry> GetADSyncRunProfileResult()
         {
             // Run PowerShell command to get AADC sync rules
-            using (var runner = new SimpleScriptRunner(@"
+            using (var runner = new ScriptRunner(@"
 [CmdletBinding()]
 param([bool]$RunStepDetails)
 
 Get-ADSyncRunProfileResult | select -First 10
-"))
+", null))
             {
                 runner.Run();
                 if (runner.HadErrors)
@@ -561,7 +561,7 @@ Get-ADSyncRunProfileResult | select -First 10
         public IEnumerable<RunStepResult> GetADSyncRunStepResult(Guid? RunHistoryId, int? StepNumber, bool? First)
         {
             // Run PowerShell command to get AADC sync rules
-            using (var runner = new SimpleScriptRunner(@"
+            using (var runner = new ScriptRunner(@"
 [CmdletBinding()]
 param($RunHistoryId, $StepHistoryId, $StepNumber, $First)
 
@@ -580,7 +580,7 @@ if ($First -ne $null)
 }
 
 Get-ADSyncRunProfileResult -RunStepDetails @params
-"))
+", null))
             {
                 if (RunHistoryId != null)
                 {
@@ -642,7 +642,7 @@ Get-ADSyncRunProfileResult -RunStepDetails @params
         )
         {
             // Run PowerShell command to get AADC sync rules
-            using (var runner = new SimpleScriptRunner(@"
+            using (var runner = new ScriptRunner(@"
 param (
     [string]
     $Name,
@@ -701,7 +701,7 @@ if ($TcpOnly)          { $params.Add(""TcpOnly"", $TcpOnly); }
 
 
 Resolve-DnsName @params
-"))
+", null))
             {
                 if (Name != null)   { runner.Parameters.Add("Name", Name); }
                 if (Server != null) { runner.Parameters.Add("Server", Server); }
@@ -779,7 +779,7 @@ if ($result) {
                 ";
 
             // Run PowerShell command to get AADC sync rules
-            using (var runner = new SimpleScriptRunner(script))
+            using (var runner = new ScriptRunner(script, null))
             {
                 runner.Parameters.Add("ComputerName", ComputerName);
                 if (Port != null) { runner.Parameters.Add("Port", Port); }
@@ -833,7 +833,7 @@ if ($result) {
         public IEnumerable<ConnectorStatistics> GetAllConnectorStatistics()
         {
             var script = "Get-ADSyncConnector | foreach {$name = $_.Name; Get-ADSyncConnectorStatistics $_.Name | Add-Member -MemberType NoteProperty -Name \"Connector\" -Value $name -PassThru }";
-            using (var runner = new SimpleScriptRunner(script))
+            using (var runner = new ScriptRunner(script, null))
             {
                 runner.Run();
                 if (runner.HadErrors)

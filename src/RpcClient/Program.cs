@@ -27,7 +27,7 @@ static async Task ActAsRpcClientAsync(Stream stream) {
         string function = "GetADSyncCSObjectPage";
         Console.WriteLine($">> {function}()");
         var ConnectorName = "garage.mcardletech.com";
-        var result = await jsonRpc.InvokeAsync<List<AadcCSObject>>(function, ConnectorName.Trim(), 0, 10);
+        var result = await jsonRpc.InvokeAsync<List<CsObject>>(function, ConnectorName.Trim(), 0, 10);
         Console.WriteLine("Result:");
         Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
     }
@@ -39,7 +39,7 @@ static async Task ActAsRpcClientAsync(Stream stream) {
         Console.WriteLine($">> {function}()");
         var ConnectorName = "garage.mcardletech.com";
         var DistinguishedName = "CN=astultz,OU=Standard,OU=All Users,DC=garage,DC=mcardletech,DC=com";
-        var result = await jsonRpc.InvokeAsync<AadcCSObject>(function, ConnectorName.Trim(), DistinguishedName.Trim());
+        var result = await jsonRpc.InvokeAsync<CsObject>(function, ConnectorName.Trim(), DistinguishedName.Trim());
         Console.WriteLine("Result:");
         Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
     }

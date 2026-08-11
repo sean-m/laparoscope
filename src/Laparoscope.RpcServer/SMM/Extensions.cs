@@ -30,7 +30,7 @@ namespace SMM.Helper
         TDestination Convert(TSource value);
     }
 
-    public static class Extensions
+    public static partial class Extensions
     {
         /// <summary>
         /// VisualBasic's string comparison with wildcard support.
@@ -44,100 +44,6 @@ namespace SMM.Helper
         {
             return LikeOperator.LikeString(Base, Pattern, Microsoft.VisualBasic.CompareMethod.Text);
         }
-
-
-        #region PSObjectHandling
-        /// <summary>
-        /// Naivly unboxes a single PSObject into a Dictionary(string, object).
-        /// If the PSObject is a string, it is stored as "Output": value.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static Dictionary<string, object> ToDict(this PSObject input)
-        {
-            var result = new Dictionary<string, object>();
-            if (input.TypeNames.Contains(typeof(string).FullName))
-            {
-                result.Add("Output", String.Copy(input.ToString()));
-            }
-            else
-            {
-                foreach (var p in input.Properties)
-                {
-                    result.Add(p.Name, p.Value);
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Unboxes a collection of PSObjects, returning as a List(Dictionary(string, object)).
-        /// The resulting value is not very ergonomic but serializes to JSON well.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static List<Dictionary<string, object>> ToDict(this PSDataCollection<PSObject> input)
-        {
-            if (input == null) return null;
-
-            var result = new List<Dictionary<string, object>>();
-            foreach (var i in input)
-            {
-                result.Add(i.ToDict());
-            }
-            return result;
-        }
-
-
-        /// <summary>
-        /// Attempts to map properties from the PSObject to properties from the
-        /// desired result type using a case insensitive property name match.
-        /// If successful, the dynamic result will be of the desired type.
-        /// This method now delegates to TypeBinder for cleaner type handling.
-        /// </summary>
-        /// <typeparam name="T">The type to map to.</typeparam>
-        /// <param name="input">The PSObject we're mapping values from.</param>
-        /// <returns></returns>
-        public static dynamic CapturePSResult<T>(this PSObject input)
-        {
-            if (input == null) return default(T);
-
-            try
-            {
-                // Use TypeBinder for clean, type-safe conversion
-                var result = TypeBinder.CopyValue<T>(input);
-                return result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.GetAllMessages());
-                // Fall back to returning a Dictionary<string, object>
-                return input.ToDict();
-            }
-        }
-
-        /// <summary>
-        /// Loop through the collection and capture the PSObjects as the desired type T.
-        /// If the mapping fails, results are returned as a Dictionary(string, object) so
-        /// though the return type is dynamic, it should be checked with the as operator
-        /// or GetType().
-        /// </summary>
-        /// <typeparam name="T">Desired result type.</typeparam>
-        /// <param name="input">PSObject collection to capture values from.</param>
-        /// <returns></returns>
-        public static IEnumerable<dynamic> CapturePSResult<T>(this PSDataCollection<PSObject> input)
-        {
-            var result = new List<dynamic>();
-            var asType = typeof(T);
-
-            foreach (var i in input)
-            {
-                result.Add(i.CapturePSResult<T>());
-            }
-
-            return result;
-        }
-        #endregion  // PSObjectHandling
 
         public static bool TryCast<T>(object obj, out T result)
         {
@@ -218,32 +124,6 @@ namespace SMM.Helper
             {
                 Monitor.Exit(_lock);
             }
-        }
-
-        public static IEnumerable<TSource> FromHierarchy<TSource>(
-            this TSource source,
-            Func<TSource, TSource> nextItem,
-            Func<TSource, bool> canContinue)
-        {
-            for (var current = source; canContinue(current); current = nextItem(current))
-            {
-                yield return current;
-            }
-        }
-
-        public static IEnumerable<TSource> FromHierarchy<TSource>(
-            this TSource source,
-            Func<TSource, TSource> nextItem)
-            where TSource : class
-        {
-            return FromHierarchy(source, nextItem, s => s != null);
-        }
-
-        public static string GetAllMessages(this Exception exception)
-        {
-            var messages = exception.FromHierarchy(ex => ex.InnerException)
-                .Select(ex => ex.Message);
-            return String.Join(Environment.NewLine, messages);
         }
     }
 }

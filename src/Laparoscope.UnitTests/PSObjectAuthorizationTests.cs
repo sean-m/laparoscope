@@ -31,7 +31,7 @@ namespace Laparoscope.UnitTests
             testModelText = Encoding.ASCII.GetString(Resources.TestRunHistory);
             testModels = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(testModelText);
 
-            var runner = new SMM.Automation.SimpleScriptRunner(script);
+            var runner = new SMM.Automation.ScriptRunner(script, null);
             runner.Run();
             result = runner.Results.CapturePSResult<FooTest>().Cast<FooTest>();
         }
