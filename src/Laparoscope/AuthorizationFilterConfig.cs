@@ -1,5 +1,6 @@
 ﻿using McAuthorization;
 using McAuthorization.Models;
+using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
@@ -9,7 +10,7 @@ namespace Laparoscope
     {
         public static IApplicationBuilder ConfigureAuthorizationFilters(this IApplicationBuilder app)
         {
-            var adminRoleBuiltinAuthz = @"[
+            string adminRoleBuiltinAuthz = @"[
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'*id*','ModelValue':'*','ModelValues':[]},
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'ConnectorName','ModelValue':'*','ModelValues':[]},
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'*','ClaimProperty':'','ClaimValue':'','ModelProperty':'DN','ModelValue':'*','ModelValues':[]},
@@ -18,6 +19,8 @@ namespace Laparoscope
                 {'LoadedFrom':'Built-in','Role':'Admin','Context':'Processes','ClaimProperty':null,'ClaimValue':null,'ModelProperty':'Authorized','ModelValue':'True','ModelValues':null},
             ]";
             var rules = JsonConvert.DeserializeObject<List<RoleFilterModel>>(adminRoleBuiltinAuthz);
+
+            if (rules == null) throw new Exception("Failed to deserialize built-in admin role rules.");
 
             foreach (var rule in rules) RegisteredRoleControllerRules.RegisterRoleControllerModel(rule);
 
@@ -34,6 +37,7 @@ namespace Laparoscope
                         var rule = kv.Value;
                         if (rule == null) continue;
                         var rule_model = JsonConvert.DeserializeObject<RoleFilterModel>(rule);
+                        if (rule_model == null) continue;
                         if (string.IsNullOrEmpty(rule_model.LoadedFrom)) rule_model.LoadedFrom = configSource;
                         RegisteredRoleControllerRules.RegisterRoleControllerModel(rule_model);
                     }
