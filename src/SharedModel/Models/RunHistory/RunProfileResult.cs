@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LaparoscopeShared.Models.RunHistory
+namespace Laparoscope.Models.RunHistory
 {
     /// <summary>
     /// Represents the result of a sync run profile execution.

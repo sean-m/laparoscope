@@ -1,5 +1,5 @@
 ﻿using Laparoscope.Utils.Authorization;
-using LaparoscopeShared.Models;
+using Laparoscope.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Threading;

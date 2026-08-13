@@ -1,4 +1,4 @@
-﻿using LaparoscopeShared.Models;
+﻿using Laparoscope.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace LaparoscopeShared.Models {
+namespace Laparoscope.Models {
 
     public class RunHistoryEntry {
         public string RunHistoryId { get; set; }
@@ -146,30 +146,21 @@ namespace LaparoscopeShared.Models {
     // === OLD CONNECTOR CONFIGURATION MODELS (kept for backward compatibility) ===
     // These were incorrectly named RunStepResult but are actually connector configuration models.
 
-    public class ConfigurationParameter {
-        public string Name { get; set; }
-        public int InputType { get; set; }
-        public int Scope { get; set; }
-        public string Description { get; set; }
-        public string RegexValidationPattern { get; set; }
-        public string DefaultValue { get; set; }
-        public string Value { get; set; }
-        public bool Extensible { get; set; }
-        public int PageNumber { get; set; }
-        public bool Intrinsic { get; set; }
-        public int DataType { get; set; }
-    }
+    //public class ConfigurationParameter {
+    //    public string Name { get; set; }
+    //    public int InputType { get; set; }
+    //    public int Scope { get; set; }
+    //    public string Description { get; set; }
+    //    public string RegexValidationPattern { get; set; }
+    //    public string DefaultValue { get; set; }
+    //    public string Value { get; set; }
+    //    public bool Extensible { get; set; }
+    //    public int PageNumber { get; set; }
+    //    public bool Intrinsic { get; set; }
+    //    public int DataType { get; set; }
+    //}
 
     public class Componentprovisioningmappings {
-    }
-
-    public class Schema {
-        public string Identifier { get; set; }
-        public string[] ObjectTypes { get; set; }
-        public string[] AttributeTypes { get; set; }
-        public bool IsConnectorSchema { get; set; }
-        public string[] IntrinsicAttributes { get; set; }
-        public object[] AllDNComponents { get; set; }
     }
 
     public class Extensionconfiguration {

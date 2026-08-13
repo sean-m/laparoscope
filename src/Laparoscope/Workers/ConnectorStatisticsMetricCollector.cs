@@ -1,5 +1,5 @@
 ﻿
-using LaparoscopeShared.Models;
+using Laparoscope.Models;
 using Prometheus;
 using StreamJsonRpc;
 using System.IO.Pipes;

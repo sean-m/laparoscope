@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Laparoscope.Models;
 using Laparoscope.RpcServer;
-using LaparoscopeShared.Models;
 
 namespace Laparoscope.UnitTests
 {

@@ -1,6 +1,6 @@
 ﻿using Laparoscope.Controllers.Server;
 using Laparoscope.Controllers.Server;
-using LaparoscopeShared.Models;
+using Laparoscope.Models;
 using McAuthorization;
 using McAuthorization.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;

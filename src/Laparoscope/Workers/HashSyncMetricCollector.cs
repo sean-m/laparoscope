@@ -1,6 +1,6 @@
 ﻿
 using Laparoscope.Models;
-using LaparoscopeShared.Models;
+using Laparoscope.Models;
 using Polly.CircuitBreaker;
 using Prometheus;
 using StreamJsonRpc;

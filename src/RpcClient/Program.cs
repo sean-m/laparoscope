@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Laparoscope.Models;
-using LaparoscopeShared.Models;
+using Laparoscope.Models;
 using StreamJsonRpc;
 using System.Diagnostics;
 using System.IO.Pipes;

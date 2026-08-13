@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using static System.Collections.Specialized.BitVector32;
 
-namespace LaparoscopeShared.Models
+namespace Laparoscope.Models
 {
     public class WindowsTask
     {

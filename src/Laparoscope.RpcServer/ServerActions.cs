@@ -1,6 +1,5 @@
 ﻿using Laparoscope.Models;
-using LaparoscopeShared;
-using LaparoscopeShared.Models;
+using Laparoscope;
 using Microsoft.Extensions.Logging;
 using SMM.Automation;
 using SMM.Helper;
@@ -770,7 +769,7 @@ $result = Test-NetConnection -WarningAction SilentlyContinue @params | select $p
 ## This result binding actually works.
 ## TODO make this a generic type of SimpleScriptRunner that will offer a TypedResult T.
 if ($result) {
-    $realResult = [LaparoscopeShared.Models.NetConnectionStatus]::new()
+    $realResult = [Laparoscope.Models.NetConnectionStatus]::new()
     foreach ($p in $result.PSObject.Properties.Name) {
         $realResult.$p = $result.$p
     }

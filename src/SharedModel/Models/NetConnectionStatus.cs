@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 
-namespace LaparoscopeShared.Models {
+namespace Laparoscope.Models {
     public class NetConnectionStatus {
         public NetConnectionStatus() { }
         public string ComputerName { get; set; }
