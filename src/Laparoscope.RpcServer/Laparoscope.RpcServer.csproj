@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="McPowerShell" Version="0.1.2" />
-    <PackageReference Include="MessagePack" Version="3.1.8" />
+    <PackageReference Include="MessagePack" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="9.0.0" />
